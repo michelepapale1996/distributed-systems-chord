@@ -21,22 +21,50 @@ public class Node {
         this.items.add(item);
     }
 
+    public int getId() {
+        return id;
+    }
+
     private Ip getIp(){
         return this.ip;
     }
 
     public Ip lookUp(int key){
-        Node successor = this.findSuccessor(key);
-        return successor.getIp();
+        if (this.hasItem(key)){
+            return this.ip;
+        }
+        Node successor = null;
+        try {
+            successor = this.findSuccessor(key);
+            return successor.getIp();
+        } catch (Exception e) {
+            // TODO: 28/03/2019 handle this exception of file not found
+            e.printStackTrace();
+            return null;
+        }
     }
 
-    private Node findSuccessor(int key) {
-        for (Item item : this.items) {
-            if (item.getKey() == key){
-                return this;
+    private Node findSuccessor(int key) throws Exception{
+        Node successor = this.fingerTable.getSuccessor(key);
+        if (key > this.id && key <= successor.getId()){
+            if (successor.hasItem(key)){
+                return successor;
+            }
+            else {
+                throw new Exception("Item not found");
             }
         }
-        Node successor = this.fingerTable.getSuccessor(key);
-        return successor.findSuccessor(key);
+        else {
+            return successor.findSuccessor(key);
+        }
+    }
+
+    private boolean hasItem(int key) {
+        for (Item item : this.items) {
+            if (item.getKey() == key){
+                return true;
+            }
+        }
+        return false;
     }
 }
