@@ -1,8 +1,5 @@
 import java.util.ArrayList;
 
-/**
- * Created by andrea on 28/03/2019.
- */
 public class Node {
     private Ip ip;
     private int id;

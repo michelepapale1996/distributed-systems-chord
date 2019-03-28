@@ -1,8 +1,5 @@
 import java.util.HashMap;
 
-/**
- * Created by andrea on 28/03/2019.
- */
 public class FingerTable {
 
     private int id;
