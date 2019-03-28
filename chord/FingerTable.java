@@ -1,7 +1,6 @@
 import java.util.HashMap;
 
 public class FingerTable {
-
     private int id;
     private int size;
     private HashMap<Integer,Node> map;
@@ -12,7 +11,11 @@ public class FingerTable {
         this.map = new HashMap<>();
     }
 
-    public Node getSuccessor(int key) {
+    public Node getSuccessor(int key){
         return map.get(key);
+    }
+
+    public void setSuccessor(int key, Node successor){
+        this.map.put(key, successor);
     }
 }
