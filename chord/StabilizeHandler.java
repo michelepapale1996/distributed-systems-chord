@@ -1,4 +1,3 @@
-
 public class StabilizeHandler {
 
     private Node owner;
