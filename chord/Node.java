@@ -25,7 +25,7 @@ public class Node {
             this.id = -1;
             //TODO: 29/03/2019 handle exception
         }
-        if (!simpleKeyLocation) this.fingerTable = new FingerTable(this.id, this.num_bits_identifiers);
+        if (!simpleKeyLocation) this.fingerTable = new FingerTable(this , this.num_bits_identifiers);
     }
 
     public void addItem (Item item){
