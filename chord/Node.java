@@ -23,14 +23,12 @@ public class Node {
             //TODO: 29/03/2019 handle exception
         }
         if (simpleKeyLocation){
-            this.fingerTable = new FingerTable(this.id,1);
+            this.fingerTable = new FingerTable(this,1);
         }
         else {
             //todo: log of max_num_of_nodes
-            this.fingerTable = new FingerTable(this.id,this.num_bits_identifiers);
+            this.fingerTable = new FingerTable(this,this.num_bits_identifiers);
         }
-        // TODO: 28/03/2019 initialize id and handle size.
-
         this.items = new ArrayList<>();
     }
 
