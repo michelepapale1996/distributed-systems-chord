@@ -1,23 +1,38 @@
 import java.util.HashMap;
-import java.util.Set;
 
 public class FingerTable {
-    private int id;
+    private Node owner;
     private int size;
     private HashMap<Integer,Node> map;
 
-    public FingerTable(int id, int size) {
-        this.id = id;
+    public FingerTable(Node node, int size) {
+        this.owner = node;
         this.size = size;
         this.map = new HashMap<>();
     }
 
     public Node getSuccessor(int key){
-        Set<Integer> keys = map.keySet();
-        for(Integer k: keys){
-            return map.get(k);
+        int i;
+        int m = (int) Math.pow(2,this.size);
+        for (i = this.size; i >= 1; i--){
+            int tmp = (int) Math.pow(2,i);
+            tmp = tmp + this.owner.getId();
+            tmp = tmp % m;
+            if (tmp < this.owner.getId()) {
+                int a = tmp + (int) Math.pow(2,this.size);
+                if (isBetween(key,this.owner.getId(),a)){
+                    return this.map.get(tmp);
+                }
+            }
+            if (isBetween(key,this.owner.getId(),tmp)){
+                return this.map.get(tmp);
+            }
         }
-        return null;
+        return this.owner;
+    }
+
+    private boolean isBetween(int key, int n,int tmp){
+        return key > n && key < tmp;
     }
 
     public void setSuccessor(int key, Node successor){
