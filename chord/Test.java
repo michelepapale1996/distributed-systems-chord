@@ -8,9 +8,7 @@ public class Test {
         System.out.println("Id nodo2: " + node2.getId());
         System.out.println("Id nodo3: " + node3.getId());
 
-        node1.setSuccessor(node2.getId(), node2);
-        node2.setSuccessor(node3.getId(), node3);
-        node3.setSuccessor(node1.getId(), node1);
+        node1.setSuccessor(node2);
 
         Item item1 = new Item("nodo1", 8);
         System.out.println("Id item1: " + item1.getKey());

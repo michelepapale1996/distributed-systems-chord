@@ -11,8 +11,10 @@ public class Node {
     private boolean simpleLookupAlgorithm;
     private FingerTable fingerTable;
     private ArrayList<Item> items;
+    private StabilizeHandler handler;
 
     public Node(Ip ip, int num_bits_identifiers,Boolean simpleKeyLocation) {
+        this.handler = new StabilizeHandler(this);
         this.successor = null;
         this.predecessor = null;
         this.num_bits_identifiers = num_bits_identifiers;
@@ -108,6 +110,7 @@ public class Node {
     public void create(){
         this.successor = this;
         this.predecessor = null;
+        this.handler.start();
     }
 
     //join a Chord ring containing node
@@ -115,6 +118,7 @@ public class Node {
         this.predecessor = null;
         int key = node.getId();
         this.successor = node.findSuccessor(key);
+        this.handler.start();
     }
 
     @Override
