@@ -1,19 +1,34 @@
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 public class Node {
     private Ip ip;
     private int id;
+    private Boolean finger;
     private int num_bits_identifier;
     private FingerTable fingerTable;
     private ArrayList<Item> items;
 
-    public Node(Ip ip, int num_bits_identifier) {
+    public Node(Ip ip, int num_bits_identifier,Boolean simpleKeyLocation) {
         this.num_bits_identifier = num_bits_identifier;
-        this.num_bits_identifier = 4;
         this.ip = ip;
+        this.finger = simpleKeyLocation;
+        try {
+            this.id = Sha1.getSha1(this.ip.getIp(),Integer.toString(this.num_bits_identifier));
+        }
+        catch (NoSuchAlgorithmException e){
+            e.printStackTrace();
+            this.id = -1;
+            // TODO: 29/03/2019 handle exception
+        }
+        if (simpleKeyLocation){
+            this.fingerTable = new FingerTable(this.id,1);
+        }
+        else {
+            this.fingerTable = new FingerTable(this.id,this.num_bits_identifier);
+        }
         // TODO: 28/03/2019 initialize id and handle size.
-        int size = 1;
-        this.fingerTable = new FingerTable(this.id,size);
+
         this.items = new ArrayList<>();
     }
 
@@ -29,6 +44,7 @@ public class Node {
         return this.ip;
     }
 
+    //to find the successor given the item's key
     public Ip lookUp(int key){
         if (this.hasItem(key)){
             return this.ip;
