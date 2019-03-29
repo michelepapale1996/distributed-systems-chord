@@ -40,22 +40,23 @@ public class Node {
         return this.id;
     }
 
-    private Ip getIp(){
+    public Ip getIp(){
         return this.ip;
     }
 
     //to find the successor given the item's key
-    public Ip lookUp(int key){
+    //if the right node has not the item, lookup will return null
+    public Node lookUp(int key){
+        System.out.println("Ricerco chiave " + key + " partendo da " + this);
         if (this.hasItem(key)){
-            return this.ip;
+            return this;
         }
         Node successor = null;
         try {
             successor = this.findSuccessor(key);
-            return successor.getIp();
+            return successor;
         } catch (Exception e) {
             // TODO: 28/03/2019 handle this exception of file not found
-            e.printStackTrace();
             return null;
         }
     }
@@ -63,6 +64,7 @@ public class Node {
     //key is the hash of the key of the item, in module 2^N
     private Node findSuccessor(int key) throws Exception{
         Node successor = this.fingerTable.getSuccessor(key);
+        System.out.println("Il successore per idKey " + key + " partendo da " + this + " è:\n" + successor);
 
         if (this.isBetweenMyIdAndMySuccessorId(key, successor)){
             if (successor.hasItem(key)){
@@ -98,5 +100,10 @@ public class Node {
 
     public void setSuccessor(int key, Node successor){
         this.fingerTable.setSuccessor(key, successor);
+    }
+
+    @Override
+    public String toString() {
+        return "Nodo con id: " + this.id + ", indirizzo ip: " + this.ip;
     }
 }

@@ -15,7 +15,6 @@ public class FingerTable {
     public Node getSuccessor(int key){
         Set<Integer> keys = map.keySet();
         for(Integer k: keys){
-            System.out.println(k);
             return map.get(k);
         }
         return null;

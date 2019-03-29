@@ -12,11 +12,11 @@ public class Test {
         node2.setSuccessor(node3.getId(), node3);
         node3.setSuccessor(node1.getId(), node1);
 
-        Item item1 = new Item("nodo1", "8");
-        node1.addItem(item1);
+        Item item1 = new Item("nodo1", 8);
         System.out.println("Id item1: " + item1.getKey());
+        node3.addItem(item1);
 
-        Ip whoKeepsItem = node2.lookUp(item1.getKey());
+        Node whoKeepsItem = node3.lookUp(item1.getKey());
         System.out.println(whoKeepsItem);
     }
 }
