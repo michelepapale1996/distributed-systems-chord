@@ -11,10 +11,10 @@ public class Node {
     private boolean simpleLookupAlgorithm;
     private FingerTable fingerTable;
     private ArrayList<Item> items;
-    private StabilizeHandler handler;
+    private Handler handler;
 
     public Node(Ip ip, int num_bits_identifiers,Boolean simpleKeyLocation) {
-        this.handler = new StabilizeHandler(this);
+        this.handler = new Handler(this);
         this.successor = null;
         this.predecessor = null;
         this.num_bits_identifiers = num_bits_identifiers;
@@ -32,6 +32,14 @@ public class Node {
 
     public void addItem (Item item){
         this.items.add(item);
+    }
+
+    public Node getSuccessor() {
+        return successor;
+    }
+
+    public Node getPredecessor() {
+        return predecessor;
     }
 
     public int getId() {
@@ -81,7 +89,7 @@ public class Node {
         }
     }
 
-    private boolean isBetweenMyIdAndMySuccessorId(int key, Node successor){
+    public boolean isBetweenMyIdAndMySuccessorId(int key, Node successor){
         int successorId = successor.getId();
         int max_nodes = (int) Math.pow(2, this.num_bits_identifiers);
         if(this.id > successorId){
@@ -106,6 +114,14 @@ public class Node {
         this.successor = successor;
     }
 
+    public void setPredecessor(Node predecessor) {
+        this.predecessor = predecessor;
+    }
+
+    public void setHandler() {
+        this.handler = new Handler(this);
+    }
+
     //create a new Chord ring
     public void create(){
         this.successor = this;
@@ -124,5 +140,10 @@ public class Node {
     @Override
     public String toString() {
         return "Nodo con id: " + this.id + ", indirizzo ip: " + this.ip;
+    }
+
+    //TODO: poi verrà eliminato
+    public void setId(int id) {
+        this.id = id;
     }
 }
