@@ -27,7 +27,7 @@ public class Node {
         }
         else {
             //todo: log of max_num_of_nodes
-            this.fingerTable = new FingerTable(this,this.num_bits_identifiers);
+            this.fingerTable = new FingerTable(this ,this.num_bits_identifiers);
         }
         this.items = new ArrayList<>();
     }
