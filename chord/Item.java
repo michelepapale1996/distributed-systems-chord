@@ -27,4 +27,8 @@ public class Item {
     public String toString() {
         return "Item con chiave: " + key;
     }
+
+    public void setKey(int key) {
+        this.key = key;
+    }
 }

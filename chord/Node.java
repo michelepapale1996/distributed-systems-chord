@@ -53,7 +53,7 @@ public class Node {
     //to find the successor given the item's key
     //if the right node has not the item, lookup will return null
     public Node lookUp(int key){
-        System.out.println("Ricerco chiave " + key + " partendo da " + this);
+        System.out.println("Cerco chiave " + key + " partendo da " + this);
         //check if the current node has the item
         if (this.hasItem(key)) return this;
 
@@ -77,37 +77,30 @@ public class Node {
         }
         System.out.println("Il successore per idKey " + key + " partendo da " + this + " è:\n" + successor);
 
-        if (this.isBetweenMyIdAndMySuccessorId(key, successor)){
+        if (this.isBetween(key, successor.getId())){
             if (successor.hasItem(key)){
                 return successor;
             }else{
                 throw new NoSuchElementException();
             }
-        }
-        else {
+        }else{
             return successor.findSuccessor(key);
         }
     }
 
-    public boolean isBetweenMyIdAndMySuccessorId(int key, Node successor){
-        int successorId = successor.getId();
+    public boolean isBetween(int firstKey, int secondKey){
         int max_nodes = (int) Math.pow(2, this.num_bits_identifiers);
-        if(this.id > successorId){
-            successorId = (successorId + max_nodes);
-            if(this.id > key){
-                key = (key + max_nodes);
+        if(this.id > secondKey){
+            secondKey = secondKey + max_nodes;
+            if(this.id > firstKey){
+                firstKey = firstKey + max_nodes;
             }
         }
-        return (key > this.id && key <= successorId);
+        return (firstKey > this.id && firstKey <= secondKey);
     }
 
     private boolean hasItem(int key) {
-        for (Item item : this.items) {
-            if (item.getKey() == key){
-                return true;
-            }
-        }
-        return false;
+        return this.items.contains(key);
     }
 
     public void setSuccessor(Node successor){
@@ -132,8 +125,15 @@ public class Node {
     //join a Chord ring containing node
     public void join(Node node){
         this.predecessor = null;
-        int key = node.getId();
-        this.successor = node.findSuccessor(key);
+
+        //if node has as successor himself, he is the only one in the ring -> he becomes my successor
+        if(node == node.getSuccessor()){
+            this.successor = node;
+        }else{
+            int key = node.getId();
+            this.successor = node.findSuccessor(key);
+        }
+        //start tasks to stabilize node
         this.handler.start();
     }
 

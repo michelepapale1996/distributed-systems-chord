@@ -18,13 +18,15 @@ public class Test {
 
         node1.create();
 
+        node3.join(node1);
 
 
-        /*Item item1 = new Item("nodo1", 8);
+        Item item1 = new Item("nodo1", 8);
+        item1.setKey(6);
         System.out.println("Id item1: " + item1.getKey());
-        node3.addItem(item1);
+        node1.addItem(item1);
 
         Node whoKeepsItem = node3.lookUp(item1.getKey());
-        System.out.println(whoKeepsItem);*/
+        System.out.println(whoKeepsItem);
     }
 }
