@@ -4,28 +4,30 @@ import java.util.ArrayList;
 public class Node {
     private Ip ip;
     private int id;
-    private Boolean finger;
-    private int max_number_of_nodes;
+    private int num_bits_identifiers;
+    private Node successor;
+    private Node predecessor;
     private FingerTable fingerTable;
     private ArrayList<Item> items;
 
-    public Node(Ip ip, int max_number_of_nodes,Boolean simpleKeyLocation) {
-        this.max_number_of_nodes = max_number_of_nodes;
+    public Node(Ip ip, int num_bits_identifiers,Boolean simpleKeyLocation) {
+        this.successor = null;
+        this.predecessor = null;
+        this.num_bits_identifiers = num_bits_identifiers;
         this.ip = ip;
-        this.finger = simpleKeyLocation;
         try {
-            this.id = Sha1.getSha1(this.ip.getIp(), Integer.toString(this.max_number_of_nodes));
-        }
-        catch (NoSuchAlgorithmException e){
+            this.id = Sha1.getSha1(this.ip.getIp(), Integer.toString(this.num_bits_identifiers));
+        } catch (NoSuchAlgorithmException e){
             e.printStackTrace();
             this.id = -1;
-            // TODO: 29/03/2019 handle exception
+            //TODO: 29/03/2019 handle exception
         }
         if (simpleKeyLocation){
             this.fingerTable = new FingerTable(this.id,1);
         }
         else {
-            this.fingerTable = new FingerTable(this.id,this.max_number_of_nodes);
+            //todo: log of max_num_of_nodes
+            this.fingerTable = new FingerTable(this.id,this.num_bits_identifiers);
         }
         // TODO: 28/03/2019 initialize id and handle size.
 
@@ -81,9 +83,9 @@ public class Node {
     private boolean isBetweenMyIdAndMySuccessorId(int key, Node successor){
         int successorId = successor.getId();
         if(this.id > successorId){
-            successorId = (int) (successorId + this.max_number_of_nodes);
+            successorId = (int) (successorId + this.num_bits_identifiers);
             if(this.id > key){
-                key = (int) (key + this.max_number_of_nodes);
+                key = (int) (key + this.num_bits_identifiers);
             }
         }
         return (key > this.id && key <= successorId);
@@ -100,6 +102,10 @@ public class Node {
 
     public void setSuccessor(int key, Node successor){
         this.fingerTable.setSuccessor(key, successor);
+    }
+
+    public void create(){
+
     }
 
     @Override
