@@ -31,11 +31,11 @@ public class FingerTable {
         return this.owner;
     }
 
-    public void setSuccessor(int key, Node successor){
-        this.map.put(key, successor);
-    }
-
     private boolean isBetween(int key, int n,int tmp){
         return key > n && key < tmp;
+    }
+
+    public void setSuccessor(int key, Node successor){
+        this.map.put(key, successor);
     }
 }
