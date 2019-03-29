@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.Set;
 
 public class FingerTable {
     private int id;
@@ -12,7 +13,12 @@ public class FingerTable {
     }
 
     public Node getSuccessor(int key){
-        return map.get(key);
+        Set<Integer> keys = map.keySet();
+        for(Integer k: keys){
+            System.out.println(k);
+            return map.get(k);
+        }
+        return null;
     }
 
     public void setSuccessor(int key, Node successor){

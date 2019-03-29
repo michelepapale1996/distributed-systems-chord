@@ -9,6 +9,11 @@ public class Ip {
     }
 
     public String getIp() {
-        return ip;
+        return this.ip;
+    }
+
+    @Override
+    public String toString() {
+        return this.ip;
     }
 }

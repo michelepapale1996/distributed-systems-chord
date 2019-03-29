@@ -5,16 +5,16 @@ public class Node {
     private Ip ip;
     private int id;
     private Boolean finger;
-    private int num_bits_identifier;
+    private int max_number_of_nodes;
     private FingerTable fingerTable;
     private ArrayList<Item> items;
 
-    public Node(Ip ip, int num_bits_identifier,Boolean simpleKeyLocation) {
-        this.num_bits_identifier = num_bits_identifier;
+    public Node(Ip ip, int max_number_of_nodes,Boolean simpleKeyLocation) {
+        this.max_number_of_nodes = max_number_of_nodes;
         this.ip = ip;
         this.finger = simpleKeyLocation;
         try {
-            this.id = Sha1.getSha1(this.ip.getIp(),Integer.toString(this.num_bits_identifier));
+            this.id = Sha1.getSha1(this.ip.getIp(), Integer.toString(this.max_number_of_nodes));
         }
         catch (NoSuchAlgorithmException e){
             e.printStackTrace();
@@ -25,7 +25,7 @@ public class Node {
             this.fingerTable = new FingerTable(this.id,1);
         }
         else {
-            this.fingerTable = new FingerTable(this.id,this.num_bits_identifier);
+            this.fingerTable = new FingerTable(this.id,this.max_number_of_nodes);
         }
         // TODO: 28/03/2019 initialize id and handle size.
 
@@ -37,7 +37,7 @@ public class Node {
     }
 
     public int getId() {
-        return id;
+        return this.id;
     }
 
     private Ip getIp(){
@@ -79,9 +79,9 @@ public class Node {
     private boolean isBetweenMyIdAndMySuccessorId(int key, Node successor){
         int successorId = successor.getId();
         if(this.id > successorId){
-            successorId = (int) (successorId + Math.pow(2, this.num_bits_identifier));
+            successorId = (int) (successorId + this.max_number_of_nodes);
             if(this.id > key){
-                key = (int) (key + Math.pow(2, this.num_bits_identifier));
+                key = (int) (key + this.max_number_of_nodes);
             }
         }
         return (key > this.id && key <= successorId);
