@@ -46,6 +46,14 @@ public class Node {
         return this.id;
     }
 
+    public boolean isSimpleLookupAlgorithm() {
+        return simpleLookupAlgorithm;
+    }
+
+    public int getNum_bits_identifiers() {
+        return num_bits_identifiers;
+    }
+
     public Ip getIp(){
         return this.ip;
     }
@@ -68,7 +76,7 @@ public class Node {
     }
 
     //key must the hash of the key of the item, in module 2^N
-    private Node findSuccessor(int key) throws NoSuchElementException{
+    public Node findSuccessor(int key) throws NoSuchElementException{
         Node successor;
         if(this.simpleLookupAlgorithm){
             successor = this.successor;
@@ -135,6 +143,10 @@ public class Node {
         }
         //start tasks to stabilize node
         this.handler.start();
+    }
+
+    public void setEntryFingerTable (int key, Node node){
+        this.fingerTable.setSuccessor(key,node);
     }
 
     @Override
