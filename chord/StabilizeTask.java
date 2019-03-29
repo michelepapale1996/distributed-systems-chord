@@ -23,11 +23,28 @@ public class StabilizeTask extends TimerTask {
         }
     }
 
+    //it checks periodically the validity of entry of the finger table.
+    public void fixFingers(){
+        int m;
+        int n = this.owner.getId();
+        int size = (int) Math.pow(2,this.owner.getNum_bits_identifiers());
+        for (m = 0; m < this.owner.getNum_bits_identifiers(); m++){
+            n = n + (int) Math.pow(2,m);
+            n = n % size;
+            this.owner.setEntryFingerTable(n,this.owner.findSuccessor(n));
+        }
+    }
+
     public void run() {
         try {
             this.stabilize();
+            if (!this.owner.isSimpleLookupAlgorithm()){
+                this.fixFingers();
+            }
         } catch (Exception ex) {
             System.out.println(ex);
         }
     }
+
+
 }
