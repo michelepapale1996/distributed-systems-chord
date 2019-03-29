@@ -108,7 +108,10 @@ public class Node {
     }
 
     private boolean hasItem(int key) {
-        return this.items.contains(key);
+        for(Item i: this.items){
+            if(i.getKey() == key) return true;
+        }
+        return false;
     }
 
     public void setSuccessor(Node successor){
