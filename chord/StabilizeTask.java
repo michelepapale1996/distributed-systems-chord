@@ -38,12 +38,12 @@ public class StabilizeTask extends TimerTask {
 
     public void run() {
         try {
-            System.out.println("Begin stabilization protocol for " + this.owner);
+            System.out.println("-Begin stabilization protocol for " + this.owner);
 
             this.stabilize();
             if (!this.owner.isSimpleLookupAlgorithm()) this.fixFingers();
 
-            System.out.println("End stabilization protocol for " + this.owner);
+            System.out.println("-End stabilization protocol for " + this.owner);
         } catch (Exception ex) {
             System.out.println(ex);
         }

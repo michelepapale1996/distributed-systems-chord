@@ -17,9 +17,8 @@ public class Test {
         System.out.println("Id nodo3: " + node5.getId());
 
         node1.create();
-
         node3.join(node1);
-
+        node5.join(node3);
 
         Item item1 = new Item("nodo1", 8);
         item1.setKey(6);
@@ -27,6 +26,6 @@ public class Test {
         node1.addItem(item1);
 
         Node whoKeepsItem = node3.lookUp(item1.getKey());
-        System.out.println(whoKeepsItem);
+        System.out.println("Node found: " + whoKeepsItem + " keeps item1");
     }
 }

@@ -154,7 +154,7 @@ public class Node {
 
     @Override
     public String toString() {
-        return "Nodo con id: " + this.id + ", indirizzo ip: " + this.ip;
+        return "[Node with id: " + this.id + "]";
     }
 
     //TODO: poi verrà eliminato

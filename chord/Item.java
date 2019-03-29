@@ -25,7 +25,7 @@ public class Item {
 
     @Override
     public String toString() {
-        return "Item con chiave: " + key;
+        return "[Item with key: " + key + "]";
     }
 
     public void setKey(int key) {
