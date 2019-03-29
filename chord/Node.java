@@ -1,5 +1,6 @@
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 
 public class Node {
     private Ip ip;
@@ -7,6 +8,7 @@ public class Node {
     private int num_bits_identifiers;
     private Node successor;
     private Node predecessor;
+    private boolean simpleLookupAlgorithm;
     private FingerTable fingerTable;
     private ArrayList<Item> items;
 
@@ -15,23 +17,15 @@ public class Node {
         this.predecessor = null;
         this.num_bits_identifiers = num_bits_identifiers;
         this.ip = ip;
+        this.items = new ArrayList<>();
+        this.simpleLookupAlgorithm = simpleKeyLocation;
         try {
             this.id = Sha1.getSha1(this.ip.getIp(), Integer.toString(this.num_bits_identifiers));
         } catch (NoSuchAlgorithmException e){
-            e.printStackTrace();
             this.id = -1;
             //TODO: 29/03/2019 handle exception
         }
-        if (simpleKeyLocation){
-            this.fingerTable = new FingerTable(this.id,1);
-        }
-        else {
-            //todo: log of max_num_of_nodes
-            this.fingerTable = new FingerTable(this.id,this.num_bits_identifiers);
-        }
-        // TODO: 28/03/2019 initialize id and handle size.
-
-        this.items = new ArrayList<>();
+        if (!simpleKeyLocation) this.fingerTable = new FingerTable(this.id, this.num_bits_identifiers);
     }
 
     public void addItem (Item item){
@@ -50,29 +44,34 @@ public class Node {
     //if the right node has not the item, lookup will return null
     public Node lookUp(int key){
         System.out.println("Ricerco chiave " + key + " partendo da " + this);
-        if (this.hasItem(key)){
-            return this;
-        }
-        Node successor = null;
+        //check if the current node has the item
+        if (this.hasItem(key)) return this;
+
+        //otherwise find the successor that has the item
         try {
-            successor = this.findSuccessor(key);
-            return successor;
-        } catch (Exception e) {
-            // TODO: 28/03/2019 handle this exception of file not found
+            Node successorForKey = this.findSuccessor(key);
+            return successorForKey;
+        }catch (NoSuchElementException e){
+            System.out.println("Given item does not exists.");
             return null;
         }
     }
 
-    //key is the hash of the key of the item, in module 2^N
-    private Node findSuccessor(int key) throws Exception{
-        Node successor = this.fingerTable.getSuccessor(key);
+    //key must the hash of the key of the item, in module 2^N
+    private Node findSuccessor(int key) throws NoSuchElementException{
+        Node successor;
+        if(this.simpleLookupAlgorithm){
+            successor = this.successor;
+        }else{
+            successor = this.fingerTable.getSuccessor(key);
+        }
         System.out.println("Il successore per idKey " + key + " partendo da " + this + " è:\n" + successor);
 
         if (this.isBetweenMyIdAndMySuccessorId(key, successor)){
             if (successor.hasItem(key)){
                 return successor;
             }else{
-                throw new Exception("Item not found");
+                throw new NoSuchElementException();
             }
         }
         else {
@@ -82,10 +81,11 @@ public class Node {
 
     private boolean isBetweenMyIdAndMySuccessorId(int key, Node successor){
         int successorId = successor.getId();
+        int max_nodes = (int) Math.pow(2, this.num_bits_identifiers);
         if(this.id > successorId){
-            successorId = (int) (successorId + this.num_bits_identifiers);
+            successorId = (successorId + max_nodes);
             if(this.id > key){
-                key = (int) (key + this.num_bits_identifiers);
+                key = (key + max_nodes);
             }
         }
         return (key > this.id && key <= successorId);
@@ -100,12 +100,21 @@ public class Node {
         return false;
     }
 
-    public void setSuccessor(int key, Node successor){
-        this.fingerTable.setSuccessor(key, successor);
+    public void setSuccessor(Node successor){
+        this.successor = successor;
     }
 
+    //create a new Chord ring
     public void create(){
+        this.successor = this;
+        this.predecessor = null;
+    }
 
+    //join a Chord ring containing node
+    public void join(Node node){
+        this.predecessor = null;
+        int key = node.getId();
+        this.successor = node.findSuccessor(key);
     }
 
     @Override
