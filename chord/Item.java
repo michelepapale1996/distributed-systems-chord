@@ -1,8 +1,5 @@
 import java.security.NoSuchAlgorithmException;
 
-/**
- * Created by andrea on 28/03/2019.
- */
 public class Item {
     
     private String name;

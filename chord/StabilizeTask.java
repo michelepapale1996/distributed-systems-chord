@@ -8,11 +8,14 @@ public class StabilizeTask extends TimerTask {
     }
 
     //called periodically
-    // verifies n's immediate successor, and tells the successor about n
+    //Verifies n's immediate successor, and tells the successor about n
     private void stabilize(){
         Node node = this.owner.getSuccessor().getPredecessor();
         //if the node is between me and my successor -> he becomes my successor
-        if(node != null && node.isBetween(this.owner.getId(), this.owner.getSuccessor().getId())) this.owner.setSuccessor(node);
+        if(node != null && node.isBetween(this.owner.getId(), this.owner.getSuccessor().getId())){
+            System.out.println("-Stabilization: " + this.owner + "'s successor is " + node);
+            this.owner.setSuccessor(node);
+        }
 
         this.notify(this.owner.getSuccessor(), this.owner);
     }
@@ -20,11 +23,13 @@ public class StabilizeTask extends TimerTask {
     //predecessor thinks it might be predecessor of successor
     private void notify(Node successor, Node predecessor) {
         if(successor.getPredecessor() == null || predecessor.isBetween(successor.getPredecessor().getId(), successor.getId())){
+            System.out.println("-Stabilization: " + successor + "'s predecessor is " + predecessor);
             successor.setPredecessor(predecessor);
         }
     }
 
-    //it checks periodically the validity of entry of the finger table.
+    //called periodically
+    //Checks the validity of entry of the finger table.
     public void fixFingers(){
         int m;
         int n = this.owner.getId();
@@ -38,12 +43,8 @@ public class StabilizeTask extends TimerTask {
 
     public void run() {
         try {
-            System.out.println("-Begin stabilization protocol for " + this.owner);
-
             this.stabilize();
             if (!this.owner.isSimpleLookupAlgorithm()) this.fixFingers();
-
-            System.out.println("-End stabilization protocol for " + this.owner);
         } catch (Exception ex) {
             System.out.println(ex);
         }

@@ -11,6 +11,6 @@ public class Handler {
     public void start(){
         Timer time = new Timer();
         TimerTask stabilizeTask = new StabilizeTask(this.owner);
-        time.scheduleAtFixedRate(stabilizeTask, 0, 2000);
+        time.scheduleAtFixedRate(stabilizeTask, 0, 200);
     }
 }

@@ -21,11 +21,17 @@ public class Test {
         node5.join(node3);
 
         Item item1 = new Item("nodo1", 8);
-        item1.setKey(6);
+        item1.setKey(2);
         System.out.println("Id item1: " + item1.getKey());
-        node1.addItem(item1);
+        node3.addItem(item1);
 
-        Node whoKeepsItem = node3.lookUp(item1.getKey());
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        Node whoKeepsItem = node5.lookUp(item1.getKey());
         System.out.println("Node found: " + whoKeepsItem + " keeps item1");
     }
 }

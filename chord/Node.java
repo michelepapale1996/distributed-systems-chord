@@ -61,15 +61,15 @@ public class Node {
     //to find the successor given the item's key
     //if the right node has not the item, lookup will return null
     public Node lookUp(int key){
-        System.out.println("Cerco chiave " + key + " partendo da " + this);
+        System.out.println("Finding key " + key + " starting from " + this);
         //check if the current node has the item
         if (this.hasItem(key)) return this;
 
         //otherwise find the successor that has the item
-        try {
-            Node successorForKey = this.findSuccessor(key);
+        Node successorForKey = this.findSuccessor(key);
+        if (successorForKey.hasItem(key)){
             return successorForKey;
-        }catch (NoSuchElementException e){
+        } else {
             System.out.println("Given item does not exists.");
             return null;
         }
@@ -83,14 +83,10 @@ public class Node {
         }else{
             successor = this.fingerTable.getSuccessor(key);
         }
-        System.out.println("Il successore per idKey " + key + " partendo da " + this + " è:\n" + successor);
+        System.out.println("Successor for idKey " + key + " starting from " + this + " is:\n" + successor);
 
         if (this.isBetween(key, successor.getId())){
-            if (successor.hasItem(key)){
-                return successor;
-            }else{
-                throw new NoSuchElementException();
-            }
+            return successor;
         }else{
             return successor.findSuccessor(key);
         }
@@ -141,9 +137,12 @@ public class Node {
         if(node == node.getSuccessor()){
             this.successor = node;
         }else{
-            int key = node.getId();
+            int key = this.getId();
             this.successor = node.findSuccessor(key);
         }
+
+        System.out.println(this + " joined and successor is: " + this.successor);
+
         //start tasks to stabilize node
         this.handler.start();
     }
