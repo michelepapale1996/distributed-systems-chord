@@ -1,8 +1,9 @@
 public class Ip {
     private String ip;
 
-    Ip(String prova){
-        this.ip = prova;
+    //todo
+    Ip(){
+        this.ip = "192.168.1.1";
     }
 
     public String getIp() {
