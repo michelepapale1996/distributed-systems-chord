@@ -37,7 +37,7 @@ public class Node {
         if (this.hasItem(key)) return this;
 
         //otherwise find the successor that has the item
-        Node successorForKey = this.findSuccessor(key);
+        Node successorForKey = this.findSuccessor(key, this.simpleLookupAlgorithm);
         if (successorForKey.hasItem(key)){
             return successorForKey;
         } else {
@@ -47,9 +47,10 @@ public class Node {
     }
 
     //key must the hash of the key of the item, in module 2^N
-    public Node findSuccessor(int key){
+    //boolean linear define if the findSuccessor is made in linear or logarithmic time
+    public Node findSuccessor(int key, Boolean linear){
         Node successor;
-        if(this.simpleLookupAlgorithm){
+        if(linear){
             successor = this.successor;
         }else{
             successor = this.fingerTable.getSuccessor(key);
@@ -57,7 +58,7 @@ public class Node {
         if (this.isBetween(key, successor.getId()) || this.getId() == successor.getId()){
             return successor;
         }else{
-            return successor.findSuccessor(key);
+            return successor.findSuccessor(key, linear);
         }
     }
 
@@ -104,8 +105,8 @@ public class Node {
         }
         else{
             int key = this.getId();
-            System.out.println(this + " joined and successor is: " + node.findSuccessor(key));
-            this.successor = node.findSuccessor(key);
+            System.out.println(this + " joined and successor is: " + node.findSuccessor(key, this.simpleLookupAlgorithm));
+            this.successor = node.findSuccessor(key, this.simpleLookupAlgorithm);
         }
         if (!this.isSimpleLookupAlgorithm()) {
             this.fingerTable.initialize(successor);
@@ -177,21 +178,5 @@ public class Node {
 
     public Node getNode(int key){
         return this.fingerTable.getNode(key);
-    }
-
-    // TODO: 02/04/2019 sistemare le funzioni di findSuccessor
-    public Node findSuccessorLinear(int key) {
-        Node successor;
-        successor = this.successor;
-        if (this.isBetween(key, successor.getId()) || key == successor.getId()){
-            return successor;
-        }else{
-            if (successor.findSuccessor(key) == null){
-                return successor;
-            }
-            else {
-                return successor.findSuccessor(key);
-            }
-        }
     }
 }
