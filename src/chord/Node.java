@@ -4,7 +4,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
-public class Node {
+public class Node extends ArrayList<Node> {
     private Ip ip;
     private int id;
     private int num_bits_identifiers;
@@ -123,6 +123,10 @@ public class Node {
         this.items.add(item);
     }
 
+    public ArrayList<Node> getSuccessorList() {
+        return successorList;
+    }
+
     public Node getSuccessor() {
         return successor;
     }
@@ -173,6 +177,10 @@ public class Node {
     @Override
     public String toString() {
         return "[Node with id: " + this.id + "]";
+    }
+
+    public void setSuccessorList(ArrayList<Node> successorList) {
+        this.successorList = successorList;
     }
 
     //TODO: poi verrà eliminato

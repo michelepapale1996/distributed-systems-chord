@@ -1,6 +1,7 @@
 package chord;
 
 import java.sql.SQLOutput;
+import java.util.ArrayList;
 import java.util.TimerTask;
 
 public class StabilizeTask extends TimerTask {
@@ -58,6 +59,28 @@ public class StabilizeTask extends TimerTask {
                 this.owner.setEntryFingerTable(position,successor);
             }
             System.out.println("update finger table for " + this.owner.toString() + " with couple < " + position + ", " + successor.toString() + " >");
+        }
+    }
+
+    public void fixSuccessorList(){
+        int size = this.owner.getNum_bits_identifiers();
+        boolean findLivingSuccessor = false;
+        int counter = 0;
+        while(!findLivingSuccessor && counter < size){
+            try{
+                Node successor = this.owner.getSuccessorList().get(counter);
+
+                ArrayList<Node> newSuccessorList = successor.getSuccessorList();
+                newSuccessorList.remove(size-1);
+                newSuccessorList.add(0, successor);
+                this.owner.setSuccessorList(newSuccessorList);
+                this.owner.setSuccessor(newSuccessorList.get(0));
+
+                findLivingSuccessor = true;
+            }catch (Exception e){
+                System.out.println("Error: " + e);
+            }
+            counter ++;
         }
     }
 
