@@ -1,3 +1,4 @@
+import java.sql.SQLOutput;
 import java.util.TimerTask;
 
 public class StabilizeTask extends TimerTask {
@@ -13,10 +14,10 @@ public class StabilizeTask extends TimerTask {
         Node node = this.owner.getSuccessor().getPredecessor();
         //if the node is between me and my successor -> he becomes my successor
         if(node != null && node.isBetween(this.owner.getId(), this.owner.getSuccessor().getId())){
+
             System.out.println("-Stabilization: " + this.owner + "'s successor is " + node);
             this.owner.setSuccessor(node);
         }
-
         this.notify(this.owner.getSuccessor(), this.owner);
     }
 
@@ -31,13 +32,28 @@ public class StabilizeTask extends TimerTask {
     //called periodically
     //Checks the validity of entry of the finger table.
     public void fixFingers(){
-        int m;
-        int n = this.owner.getId();
+        int bit;
+        int new_value;
+        int old_value;
         int size = (int) Math.pow(2,this.owner.getNum_bits_identifiers());
-        for (m = 0; m < this.owner.getNum_bits_identifiers(); m++){
-            n = n + (int) Math.pow(2,m);
-            n = n % size;
-            this.owner.setEntryFingerTable(n,this.owner.findSuccessor(n));
+        for (bit = 0; bit < this.owner.getNum_bits_identifiers(); bit++){
+            int position = this.owner.getId();
+            position = position + (int) Math.pow(2,bit);
+            position = position % size;
+            Node successor = this.owner.findSuccessorLinear(position);
+            Node old_successor = this.owner.getNode(position);
+            old_value = old_successor.getId();
+            if (old_successor.getId() < this.owner.getId()){
+                old_value = old_value + size;
+            }
+            new_value = successor.getId();
+            if (successor.getId() < this.owner.getId()){
+                new_value = new_value + size;
+            }
+            if (new_value < old_value){
+                this.owner.setEntryFingerTable(position,successor);
+            }
+            System.out.println("update finger table for " + this.owner.toString() + " with couple < " + position + ", " + successor.toString() + " >");
         }
     }
 
@@ -49,6 +65,4 @@ public class StabilizeTask extends TimerTask {
             System.out.println(ex);
         }
     }
-
-
 }
