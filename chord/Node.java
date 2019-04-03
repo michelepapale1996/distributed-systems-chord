@@ -12,6 +12,7 @@ public class Node {
     private FingerTable fingerTable;
     private ArrayList<Item> items;
     private Handler handler;
+    private ArrayList<Node> successorList;
 
     public Node(int num_bits_identifiers, Boolean simpleKeyLocation) {
         this.handler = new Handler(this);
@@ -21,6 +22,7 @@ public class Node {
         this.ip = new Ip();
         this.items = new ArrayList<>();
         this.simpleLookupAlgorithm = simpleKeyLocation;
+        this.successorList = new ArrayList<>(num_bits_identifiers); //at the creatz2qion of the node is initialized an immediate successor list
         try {
             this.id = Sha1.getSha1(this.ip.getIp(), Integer.toString(this.num_bits_identifiers));
         } catch (NoSuchAlgorithmException e){
@@ -50,7 +52,7 @@ public class Node {
     public Node findSuccessor(int key){
         Node successor;
         if(this.simpleLookupAlgorithm){
-            successor = this.successor;
+            successor = this.successorList.get(0);
         }else{
             successor = this.fingerTable.getSuccessor(key);
         }
