@@ -11,21 +11,23 @@ public class StabilizeTask extends TimerTask {
     //called periodically
     //Verifies n's immediate successor, and tells the successor about n
     private void stabilize(){
-        Node node = this.owner.getSuccessor().getPredecessor();
-        //if the node is between me and my successor -> he becomes my successor
-        if(node != null && node.isBetween(this.owner.getId(), this.owner.getSuccessor().getId())){
-
-            System.out.println("-Stabilization: " + this.owner + "'s successor is " + node);
-            this.owner.setSuccessor(node);
+        Node new_successor = this.owner.getSuccessor().getPredecessor();
+        Node old_successor = this.owner.getSuccessor();
+        //if the new_successor is between me and my successor -> he becomes my successor
+        if(new_successor != null){
+            if ((this.owner.isBetween(new_successor.getId(), old_successor.getId())) || this.owner.getId() == old_successor.getId()) {
+                System.out.println("-Stabilization: " + this.owner + "'s successor is " + new_successor);
+                this.owner.setSuccessor(new_successor);
+            }
         }
         this.notify(this.owner.getSuccessor(), this.owner);
     }
 
-    //predecessor thinks it might be predecessor of successor
-    private void notify(Node successor, Node predecessor) {
-        if(successor.getPredecessor() == null || predecessor.isBetween(successor.getPredecessor().getId(), successor.getId())){
-            System.out.println("-Stabilization: " + successor + "'s predecessor is " + predecessor);
-            successor.setPredecessor(predecessor);
+    //predecessor thinks it might be predecessor of node
+    private void notify(Node node, Node predecessor) {
+        if(node.getPredecessor() == null || node.getPredecessor().isBetween(predecessor.getId(), node.getId()) || node.getId() == node.getPredecessor().getId()){
+            System.out.println("-Notify: " + node + "'s predecessor is " + predecessor);
+            node.setPredecessor(predecessor);
         }
     }
 

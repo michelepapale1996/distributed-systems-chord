@@ -83,6 +83,8 @@ public class Node {
     public void create(){
         this.successor = this;
         this.predecessor = null;
+        System.out.println(this + "'s successor is " + this);
+        System.out.println(this + "'s predecessor is null");
         if (!this.isSimpleLookupAlgorithm()) {
             this.fingerTable.initialize(this);
         }
@@ -91,6 +93,7 @@ public class Node {
 
     //join a Chord ring containing node
     public void join(Node node){
+        System.out.println(this + " join ring");
         System.out.println(this + "'s predecessor is null");
         this.predecessor = null;
 
