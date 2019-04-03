@@ -1,3 +1,5 @@
+package chord;
+
 import java.sql.SQLOutput;
 import java.util.TimerTask;
 
@@ -42,7 +44,7 @@ public class StabilizeTask extends TimerTask {
             int position = this.owner.getId();
             position = position + (int) Math.pow(2,bit);
             position = position % size;
-            Node successor = this.owner.findSuccessorLinear(position);
+            Node successor = this.owner.findSuccessor(position,true);
             Node old_successor = this.owner.getNode(position);
             old_value = old_successor.getId();
             if (old_successor.getId() < this.owner.getId()){
