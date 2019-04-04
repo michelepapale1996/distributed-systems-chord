@@ -1,5 +1,8 @@
 package chord;
 
+import middleware.NodeInterface;
+
+import java.rmi.RemoteException;
 import java.sql.SQLOutput;
 import java.util.TimerTask;
 
@@ -12,30 +15,34 @@ public class StabilizeTask extends TimerTask {
 
     //called periodically
     //Verifies n's immediate successor, and tells the successor about n
-    private void stabilize(){
-        Node new_successor = this.owner.getSuccessor().getPredecessor();
-        Node old_successor = this.owner.getSuccessor();
+    private void stabilize() throws RemoteException{
+        NodeInterface new_successor = this.owner.getSuccessor().getPredecessor();
+        NodeInterface old_successor = this.owner.getSuccessor();
         //if the new_successor is between me and my successor -> he becomes my successor
         if(new_successor != null){
-            if ((this.owner.isBetween(new_successor.getId(), old_successor.getId())) || this.owner.getId() == old_successor.getId()) {
-                System.out.println("-Stabilization: " + this.owner + "'s successor is " + new_successor);
+            if(this.owner.isBetween(new_successor.getId(), old_successor.getId())) {
+                System.out.println("-Stabilization: " + this.owner.print() + "'s successor is " + new_successor.print());
                 this.owner.setSuccessor(new_successor);
             }
+
+            if(this.owner.getId() == old_successor.getId()) this.owner.setSuccessor(new_successor);
         }
         this.notify(this.owner.getSuccessor(), this.owner);
     }
 
     //predecessor thinks it might be predecessor of node
-    private void notify(Node node, Node predecessor) {
-        if(node.getPredecessor() == null || node.getPredecessor().isBetween(predecessor.getId(), node.getId()) || node.getId() == node.getPredecessor().getId()){
-            System.out.println("-Notify: " + node + "'s predecessor is " + predecessor);
+    private void notify(NodeInterface node, NodeInterface predecessor) throws RemoteException {
+        if(node.getPredecessor() == null || node.getPredecessor().isBetween(predecessor.getId(), node.getId())){
+            System.out.println("-Notify: " + node.print() + "'s predecessor is " + predecessor.print());
             node.setPredecessor(predecessor);
         }
+
+        if(node.getId() == node.getPredecessor().getId()) node.setPredecessor(predecessor);
     }
 
     //called periodically
     //Checks the validity of entry of the finger table.
-    public void fixFingers(){
+    public void fixFingers() throws RemoteException{
         int bit;
         int new_value;
         int old_value;
@@ -44,8 +51,8 @@ public class StabilizeTask extends TimerTask {
             int position = this.owner.getId();
             position = position + (int) Math.pow(2,bit);
             position = position % size;
-            Node successor = this.owner.findSuccessor(position,true);
-            Node old_successor = this.owner.getNode(position);
+            NodeInterface successor = this.owner.findSuccessor(position,true);
+            NodeInterface old_successor = this.owner.getNode(position);
             old_value = old_successor.getId();
             if (old_successor.getId() < this.owner.getId()){
                 old_value = old_value + size;

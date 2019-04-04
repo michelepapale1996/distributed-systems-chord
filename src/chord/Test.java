@@ -4,16 +4,12 @@ public class Test {
     private Node whoKeepsItem;
 
     public static void main(String args[]){
-        Node node0 = new Node(3, true);
+        /*Node node0 = new Node(3, true);
         Node node2 = new Node(3, true);
         Node node6 = new Node(3, true);
         node0.setId(0);
         node2.setId(2);
         node6.setId(6);
-        node0.setHandler();
-        node2.setHandler();
-        node6.setHandler();
-
 
         node0.create();
         try {
@@ -21,13 +17,14 @@ public class Test {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        node2.join(node0);
+
+        //node2.join(node0);
         try {
             Thread.sleep(2800);
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
-        node6.join(node2);
+        }*/
+        //node6.join(node2);
 
         /*Item item1 = new Item("nodo1", 8);
         item1.setKey(5);

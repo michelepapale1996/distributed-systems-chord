@@ -1,11 +1,20 @@
 package chord;
 
-public class Ip {
+import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+public class Ip implements Serializable{
     private String ip;
 
     //todo
     Ip(){
-        this.ip = "192.168.1.1";
+        try{
+            InetAddress address = InetAddress.getLocalHost();
+            this.ip = address.getHostAddress() ;
+        }catch(UnknownHostException e ){
+            e.printStackTrace();
+        }
     }
 
     public String getIp() {
