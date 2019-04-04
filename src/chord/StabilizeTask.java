@@ -68,7 +68,7 @@ public class StabilizeTask extends TimerTask {
         int counter = 0;
         while(!findLivingSuccessor && counter < size){
             try{
-                Node successor = this.owner.getSuccessorList().get(counter);
+                Node successor = this.owner.getSuccessorList().get(0);
 
                 ArrayList<Node> newSuccessorList = successor.getSuccessorList();
                 newSuccessorList.remove(size-1);
@@ -79,8 +79,15 @@ public class StabilizeTask extends TimerTask {
                 findLivingSuccessor = true;
             }catch (Exception e){
                 System.out.println("Error: " + e);
+
+                //remove the failed nodes from successorList
+                this.owner.getSuccessorList().remove(0); //remove shifts automatically any subsequent list
+
+                counter++;
             }
-            counter ++;
+        }
+        if (counter > size){
+            System.out.println("all nodes in successor list are failed");
         }
     }
 
