@@ -1,7 +1,5 @@
 package middleware;
 
-import chord.Node;
-
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
