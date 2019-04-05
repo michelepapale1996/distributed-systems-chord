@@ -1,15 +1,18 @@
 package chord;
 
+import middleware.NodeInterface;
+
+import java.rmi.RemoteException;
+
 public class Test {
     private Node whoKeepsItem;
 
-    public static void main(String args[]){
-        /*Node node0 = new Node(3, true);
+    public static void main(String args[]) throws RemoteException {
+        Node node0 = new Node(3, true);
         Node node2 = new Node(3, true);
-        Node node6 = new Node(3, true);
+
         node0.setId(0);
         node2.setId(2);
-        node6.setId(6);
 
         node0.create();
         try {
@@ -18,18 +21,18 @@ public class Test {
             e.printStackTrace();
         }
 
-        //node2.join(node0);
+        node2.join(node0);
         try {
             Thread.sleep(2800);
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }*/
+        }
         //node6.join(node2);
 
-        /*Item item1 = new Item("nodo1", 8);
-        item1.setKey(5);
+        Item item1 = new Item("nodo1", 8);
+        item1.setKey(1);
         System.out.println("Id item1: " + item1.getKey());
-        node6.addItem(item1);
+        node0.storeItem(item1);
 
         try {
             Thread.sleep(3000);
@@ -37,8 +40,8 @@ public class Test {
             e.printStackTrace();
         }
 
-        Node whoKeepsItem = node2.lookUp(item1.getKey());
-        System.out.println("Node found: " + whoKeepsItem + " keeps item5");*/
+        //NodeInterface whoKeepsItem = node0.lookUp(item1.getKey());
+        //System.out.println("Node found: " + whoKeepsItem + " keeps item5");
 
     }
 }

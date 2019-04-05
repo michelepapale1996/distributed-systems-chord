@@ -29,7 +29,7 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         this.items = new ArrayList<>();
         this.simpleLookupAlgorithm = simpleKeyLocation;
         try {
-            this.id = Sha1.getSha1(this.ip.getIp(), Integer.toString(this.num_bits_identifiers));
+            this.id = Sha1.getSha1(this.ip.getAddress(), Integer.toString(this.num_bits_identifiers));
         } catch (NoSuchAlgorithmException e){
             e.printStackTrace();
         }
@@ -68,6 +68,13 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         }else{
             return successor.findSuccessor(key, linear);
         }
+    }
+
+    //search for successor of item and store the item there
+    public void storeItem(Item item) throws RemoteException{
+        NodeInterface node = findSuccessor(item.getKey(), true);
+        node.addItem(item);
+        System.out.println(node.print() + " now has the item " + item);
     }
 
     public boolean isBetween(int item_searched, int end_of_interval){
@@ -113,8 +120,8 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         }
         else{
             int key = this.getId();
-            System.out.println(this + " joined and successor is: " + node.findSuccessor(key, this.simpleLookupAlgorithm));
             this.successor = node.findSuccessor(key, this.simpleLookupAlgorithm);
+            System.out.println(this + " joined and successor is: " + this.successor.print());
         }
         if (!this.isSimpleLookupAlgorithm()) {
             this.fingerTable.initialize(successor);
@@ -123,7 +130,12 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         this.handler.start();
     }
 
+    public ArrayList<Item> getItems() {
+        return items;
+    }
+
     public void addItem(Item item){
+        System.out.println(this.print() + "now has the item" + item);
         this.items.add(item);
     }
 

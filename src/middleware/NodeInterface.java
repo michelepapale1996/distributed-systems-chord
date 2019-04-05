@@ -1,7 +1,10 @@
 package middleware;
 
+import chord.Item;
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 public interface NodeInterface extends Remote{
     NodeInterface findSuccessor(int key, Boolean isLinear) throws RemoteException;
@@ -14,5 +17,7 @@ public interface NodeInterface extends Remote{
 
     String print() throws RemoteException;
     int getId() throws RemoteException;
+    void addItem(Item item) throws RemoteException;
+    ArrayList<Item> getItems() throws RemoteException;
 }
 

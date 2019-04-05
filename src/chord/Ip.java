@@ -17,7 +17,7 @@ public class Ip implements Serializable{
         }
     }
 
-    public String getIp() {
+    public String getAddress() {
         return this.ip;
     }
 

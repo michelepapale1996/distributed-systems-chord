@@ -1,5 +1,6 @@
 package middleware;
 
+import chord.Item;
 import chord.Node;
 
 import java.net.InetAddress;
@@ -30,7 +31,7 @@ public class Client {
         System.out.println("0 - Exit from the application");
         String command = scanner.nextLine();
 
-        Node myNode = null;
+        Node myNode;
         switch (command) {
             case "1":
                 myNode = this.createNewRing();
@@ -62,7 +63,6 @@ public class Client {
             Registry registry = LocateRegistry.createRegistry(1099);
             //bind the node on the registry
             registry.bind(String.valueOf(myNode.getId()), myNode);
-
             InetAddress IpAddress = InetAddress.getLocalHost();
             System.out.println("IpAddress of current node: " + IpAddress);
         } catch (UnknownHostException e) {
@@ -106,7 +106,7 @@ public class Client {
         int flag = 0;
         do{
             System.out.println("What do you want to do?");
-            System.out.println("1 - find an item");
+            System.out.println("1 - lookup item");
             System.out.println("2 - store an item");
             System.out.println("3 - Show node's info");
             System.out.println("4 - exit");
@@ -114,16 +114,13 @@ public class Client {
 
             switch (choice) {
                 case "1":
-                    System.out.println("Find an item");
+                    this.lookupItem(myNode);
                     break;
                 case "2" :
-                    System.out.println("Store an item");
+                    this.storeItem(myNode);
                     break;
                 case "3":
-                    System.out.println("Info current node:");
-                    System.out.println("- Node id:" + myNode.print());
-                    System.out.println("- Successor:" + myNode.getSuccessor().print());
-                    System.out.println("- Predecessor:" + myNode.getPredecessor().print());
+                    this.infoCurrentNode(myNode);
                     break;
                 case "4":
                     flag=1;
@@ -133,5 +130,29 @@ public class Client {
                     break;
             }
         }while(flag==0);
+    }
+
+    private void lookupItem(Node myNode) throws RemoteException {
+        System.out.println("Insert the id of the item you want to find: ");
+        String itemId = scanner.nextLine();
+        NodeInterface owner = myNode.lookUp(Integer.parseInt(itemId));
+        System.out.println(owner.print() + " has the item with id: " + itemId);
+    }
+
+
+    private void storeItem(Node myNode) throws RemoteException {
+        System.out.println("What is the id of the item?");
+        String itemId = scanner.nextLine();
+        Item item = new Item("prova", 8);
+        item.setKey(Integer.parseInt(itemId));
+        myNode.storeItem(item);
+    }
+
+    private void infoCurrentNode(Node myNode) throws RemoteException {
+        System.out.println("Info current node:");
+        System.out.println("- Node id: " + myNode.print());
+        System.out.println("- Successor: " + myNode.getSuccessor().print());
+        System.out.println("- Predecessor: " + myNode.getPredecessor().print());
+        System.out.println("- Items of the node: " + myNode.getItems() );
     }
 }
