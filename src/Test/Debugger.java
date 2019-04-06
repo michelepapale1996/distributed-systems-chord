@@ -1,4 +1,4 @@
-package chord;
+package Test;
 
 public class Debugger {
     private static boolean debug;

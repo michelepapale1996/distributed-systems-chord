@@ -1,4 +1,7 @@
-package chord;
+package Test;
+
+import chord.Item;
+import chord.Node;
 
 import java.rmi.RemoteException;
 import java.util.NoSuchElementException;

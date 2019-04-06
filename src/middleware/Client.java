@@ -1,6 +1,6 @@
 package middleware;
 
-import chord.Debugger;
+import Test.Debugger;
 import chord.Item;
 import chord.Node;
 import chord.NodeInterface;
