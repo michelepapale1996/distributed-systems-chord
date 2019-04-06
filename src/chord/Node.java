@@ -1,7 +1,6 @@
 package chord;
 
 import middleware.NodeInterface;
-
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -38,8 +37,8 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
 
     //find the successor given the item's key
     //if the right node hasn't the item, lookup will return null
-    public NodeInterface lookUp(int key) throws RemoteException{
-        System.out.println("Finding key " + key + " starting from " + this);
+    public NodeInterface lookUp(int key) throws RemoteException, NoSuchElementException{
+        Debugger.print("Finding key " + key + " starting from " + this);
         //check if the current node has the item
         if (this.hasItem(key)) return this;
 
@@ -48,7 +47,6 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         if (successorForKey.hasItem(key)){
             return successorForKey;
         } else {
-            System.out.println("Given item does not exists.");
             throw new NoSuchElementException();
         }
     }
@@ -71,10 +69,10 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
     }
 
     //search for successor of item and store the item there
-    public void storeItem(Item item) throws RemoteException{
+    public void storeItem(Item item) throws RemoteException, IllegalArgumentException{
         NodeInterface node = findSuccessor(item.getKey(), true);
+        if(node.hasItem(item.getKey())) throw new IllegalArgumentException("It already exists an item with the given id");
         node.addItem(item);
-        System.out.println(node.print() + " now has the item " + item);
     }
 
     public boolean isBetween(int item_searched, int end_of_interval){
@@ -99,8 +97,8 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
     public void create(){
         this.successor = this;
         this.predecessor = null;
-        System.out.println(this + "'s successor is " + this);
-        System.out.println(this + "'s predecessor is null");
+        Debugger.print(this + "'s successor is " + this);
+        Debugger.print(this + "'s predecessor is null");
         if (!this.isSimpleLookupAlgorithm()) {
             this.fingerTable.initialize(this);
         }
@@ -108,21 +106,28 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
     }
 
     //join a Chord ring containing node
-    public void join(NodeInterface node) throws RemoteException{
-        System.out.println(this + " join ring");
-        System.out.println(this + "'s predecessor is null");
-        this.predecessor = null;
-
+    //throw exception if the ring of node already contains a node with the id of who wants to join
+    public void join(NodeInterface node) throws RemoteException, IllegalArgumentException{
         //if node has as successor himself, he is the only one in the ring -> he becomes my successor
         if(node == node.getSuccessor()){
-            System.out.println(this.print() + " joined and successor is: " + node.print());
-            this.successor = node;
+            if(this.id != node.getId()){
+                Debugger.print(this.print() + " joined and successor is: " + node.print());
+                this.successor = node;
+            }else{
+                throw new IllegalArgumentException("node cannot join the ring because there is already a node with his id.");
+            }
+        } else {
+            NodeInterface successor = node.findSuccessor(this.id, this.simpleLookupAlgorithm);
+            if(this.id != successor.getId()){
+                this.successor = successor;
+                Debugger.print(this.print() + " joined and successor is: " + this.successor.print());
+            }else{
+                throw new IllegalArgumentException("node cannot join the ring because there is already a node with his id.");
+            }
         }
-        else{
-            int key = this.getId();
-            this.successor = node.findSuccessor(key, this.simpleLookupAlgorithm);
-            System.out.println(this + " joined and successor is: " + this.successor.print());
-        }
+        Debugger.print(this + " join the ring");
+        Debugger.print(this + "'s predecessor is null");
+        this.predecessor = null;
         if (!this.isSimpleLookupAlgorithm()) {
             this.fingerTable.initialize(successor);
         }
@@ -135,7 +140,7 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
     }
 
     public void addItem(Item item){
-        System.out.println(this.print() + "now has the item" + item);
+        Debugger.print(this.print() + " now has the item" + item);
         this.items.add(item);
     }
 

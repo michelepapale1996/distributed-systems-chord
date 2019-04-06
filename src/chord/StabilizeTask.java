@@ -21,7 +21,7 @@ public class StabilizeTask extends TimerTask {
         //if the new_successor is between me and my successor -> he becomes my successor
         if(new_successor != null){
             if(this.owner.isBetween(new_successor.getId(), old_successor.getId())) {
-                System.out.println("-Stabilization: " + this.owner.print() + "'s successor is " + new_successor.print());
+                Debugger.print("-Stabilization: " + this.owner.print() + "'s successor is " + new_successor.print());
                 this.owner.setSuccessor(new_successor);
             }
 
@@ -33,7 +33,7 @@ public class StabilizeTask extends TimerTask {
     //predecessor thinks it might be predecessor of node
     private void notify(NodeInterface node, NodeInterface predecessor) throws RemoteException {
         if(node.getPredecessor() == null || node.getPredecessor().isBetween(predecessor.getId(), node.getId())){
-            System.out.println("-Notify: " + node.print() + "'s predecessor is " + predecessor.print());
+            Debugger.print("-Notify: " + node.print() + "'s predecessor is " + predecessor.print());
             node.setPredecessor(predecessor);
         }
 
@@ -64,7 +64,7 @@ public class StabilizeTask extends TimerTask {
             if (new_value < old_value){
                 this.owner.setEntryFingerTable(position,successor);
             }
-            System.out.println("update finger table for " + this.owner.toString() + " with couple < " + position + ", " + successor.toString() + " >");
+            Debugger.print("update finger table for " + this.owner.toString() + " with couple < " + position + ", " + successor.toString() + " >");
         }
     }
 

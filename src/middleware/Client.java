@@ -1,5 +1,6 @@
 package middleware;
 
+import chord.Debugger;
 import chord.Item;
 import chord.Node;
 
@@ -9,12 +10,14 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class Client {
     Scanner scanner = new Scanner(System.in);
 
     public static void main(String args[]) {
+        Debugger.setDebug(false);
         Client client = new Client();
         try {
             client.run();
@@ -48,15 +51,14 @@ public class Client {
 
     private Node createNewRing(){
         System.out.println("What is the max num of bits of the identifiers of the ring?");
-        String max_size = scanner.nextLine();
+        int max_size = getInt();
         System.out.println("What is the id of the node?");
-        String nodeId = scanner.nextLine();
-        //todo: control that strings are integers.
+        int nodeId = getInt();
 
         Node myNode = null;
         try {
-            myNode = new Node(Integer.parseInt(max_size), true);
-            myNode.setId(Integer.parseInt(nodeId));
+            myNode = new Node(max_size, true);
+            myNode.setId(nodeId);
             myNode.create();
 
             //create the registry
@@ -75,20 +77,22 @@ public class Client {
 
     //todo
     private Node connectToRing(){
-        System.out.println("Insert the IP address of a node contained in the ring: ");
-        String IpAddressKnownNode = scanner.nextLine();
+        //System.out.println("Insert the IP address of a node contained in the ring: ");
+        //String IpAddressKnownNode = scanner.nextLine();
+        String IpAddressKnownNode = "127.0.0.1";
+
+        System.out.println("Insert the id of the node contained in the ring: ");
+        int knownNodeId = getInt();
 
         System.out.println("Insert the id of the node: ");
-        String nodeId = scanner.nextLine();
+        int nodeId = getInt();
 
         Node myNode = null;
         try {
             Registry registry = LocateRegistry.getRegistry(IpAddressKnownNode, 1099);
             myNode = new Node(3, true);
-            myNode.setId(Integer.parseInt(nodeId));
+            myNode.setId(nodeId);
 
-            //todo: replace with sha1
-            int knownNodeId = 2;
             NodeInterface knownNode = (NodeInterface) registry.lookup(String.valueOf(knownNodeId));
             System.out.println("Connected to ring containing node " + IpAddressKnownNode + " and nodeId " + knownNodeId);
 
@@ -122,11 +126,9 @@ public class Client {
                 case "3":
                     this.infoCurrentNode(myNode);
                     break;
-                case "4":
+                default:
                     flag=1;
                     System.out.println("Exiting from the application...");
-                    break;
-                default:
                     break;
             }
         }while(flag==0);
@@ -134,17 +136,21 @@ public class Client {
 
     private void lookupItem(Node myNode) throws RemoteException {
         System.out.println("Insert the id of the item you want to find: ");
-        String itemId = scanner.nextLine();
-        NodeInterface owner = myNode.lookUp(Integer.parseInt(itemId));
-        System.out.println(owner.print() + " has the item with id: " + itemId);
+        int itemId = getInt();
+        try{
+            NodeInterface owner = myNode.lookUp(itemId);
+            System.out.println(owner.print() + " has the item with id: " + itemId);
+        }catch (NoSuchElementException e){
+            System.out.println("Given item does not exists.");
+        }
     }
 
 
     private void storeItem(Node myNode) throws RemoteException {
         System.out.println("What is the id of the item?");
-        String itemId = scanner.nextLine();
+        int itemId = getInt();
         Item item = new Item("prova", 8);
-        item.setKey(Integer.parseInt(itemId));
+        item.setKey(itemId);
         myNode.storeItem(item);
     }
 
@@ -154,5 +160,20 @@ public class Client {
         System.out.println("- Successor: " + myNode.getSuccessor().print());
         System.out.println("- Predecessor: " + myNode.getPredecessor().print());
         System.out.println("- Items of the node: " + myNode.getItems() );
+    }
+
+    private int getInt(){
+        boolean isInt = false;
+        int inputToInt = -1;
+        while(!isInt){
+            String input = scanner.nextLine();
+            try{
+                inputToInt = Integer.parseInt(input);
+                isInt = true;
+            }catch (NumberFormatException e){
+                System.out.println("Given input is not an integer. Try again:");
+            }
+        }
+        return inputToInt;
     }
 }
