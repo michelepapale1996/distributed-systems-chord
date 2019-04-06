@@ -42,8 +42,9 @@ public class FingerTable {
     //initialize the finger table entry when a node create or join in a ring.
     public void initialize(Node node) {
         int bit;
-        for (bit = 0; bit < this.size; bit++){
-            this.map.put(getPosition(bit), node);
+        this.map.put(getPosition(0),node);
+        for (bit = 1; bit < this.size; bit++){
+            this.map.put(getPosition(bit), this.owner);
         }
     }
 
@@ -59,5 +60,18 @@ public class FingerTable {
     //given the key it returns the node of that position.
     public Node getNode(int key){
         return this.map.get(key);
+    }
+
+    @Override
+    public String toString(){
+        StringBuilder builder = new StringBuilder();
+        builder.append("==================== node " + this.owner.getId() + " ==================== \n"); //40
+        int i;
+        for (i = 0; i < this.size; i++){
+            int index = this.getPosition(i);
+            Node node = this.map.get(index);
+            builder.append("          " + index + "                  " + node + "\n");
+        }
+        return builder.toString();
     }
 }
