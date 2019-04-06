@@ -152,7 +152,12 @@ public class Client {
         int itemId = getInt();
         Item item = new Item("prova", 8);
         item.setKey(itemId);
-        myNode.storeItem(item);
+        try{
+            myNode.storeItem(item);
+        }catch (IllegalArgumentException e){
+            System.out.println(e);
+        }
+
     }
 
     private void infoCurrentNode(Node myNode) throws RemoteException {
