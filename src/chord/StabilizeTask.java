@@ -1,9 +1,6 @@
 package chord;
 
-import middleware.NodeInterface;
-
 import java.rmi.RemoteException;
-import java.sql.SQLOutput;
 import java.util.TimerTask;
 
 public class StabilizeTask extends TimerTask {
@@ -20,7 +17,7 @@ public class StabilizeTask extends TimerTask {
         NodeInterface old_successor = this.owner.getSuccessor();
         //if the new_successor is between me and my successor -> he becomes my successor
         if(new_successor != null){
-            if(this.owner.isBetween(new_successor.getId(), old_successor.getId())) {
+            if(NodeLogic.isBetween(this.owner.getId(), new_successor.getId(), old_successor.getId(), this.owner.getNum_bits_identifiers())) {
                 Debugger.print("-Stabilization: " + this.owner.print() + "'s successor is " + new_successor.print());
                 this.owner.setSuccessor(new_successor);
             }
@@ -32,7 +29,7 @@ public class StabilizeTask extends TimerTask {
 
     //predecessor thinks it might be predecessor of node
     private void notify(NodeInterface node, NodeInterface predecessor) throws RemoteException {
-        if(node.getPredecessor() == null || node.getPredecessor().isBetween(predecessor.getId(), node.getId())){
+        if(node.getPredecessor() == null || NodeLogic.isBetween(node.getPredecessor().getId(), predecessor.getId(), node.getId(), node.getNum_bits_identifiers())){
             Debugger.print("-Notify: " + node.print() + "'s predecessor is " + predecessor.print());
             node.setPredecessor(predecessor);
         }

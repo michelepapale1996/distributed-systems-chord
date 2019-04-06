@@ -1,7 +1,5 @@
 package chord;
 
-import middleware.NodeInterface;
-
 import java.util.HashMap;
 
 public class FingerTable {

@@ -3,6 +3,7 @@ package middleware;
 import chord.Debugger;
 import chord.Item;
 import chord.Node;
+import chord.NodeInterface;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

@@ -1,6 +1,5 @@
 package chord;
 
-import middleware.NodeInterface;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -10,11 +9,12 @@ import java.util.NoSuchElementException;
 
 public class Node extends UnicastRemoteObject implements NodeInterface, Serializable {
     private Ip ip;
-    private int id;
+    private boolean simpleLookupAlgorithm;
     private int num_bits_identifiers;
+
+    private int id;
     private NodeInterface successor;
     private NodeInterface predecessor;
-    private boolean simpleLookupAlgorithm;
     private FingerTable fingerTable;
     private ArrayList<Item> items;
     private Handler handler;
@@ -38,101 +38,30 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
     //find the successor given the item's key
     //if the right node hasn't the item, lookup will return null
     public NodeInterface lookUp(int key) throws RemoteException, NoSuchElementException{
-        Debugger.print("Finding key " + key + " starting from " + this);
-        //check if the current node has the item
-        if (this.hasItem(key)) return this;
-
-        //otherwise find the successor that has the item
-        NodeInterface successorForKey = this.findSuccessor(key, this.simpleLookupAlgorithm);
-        if (successorForKey.hasItem(key)){
-            return successorForKey;
-        } else {
-            throw new NoSuchElementException();
-        }
+        return NodeLogic.lookUp(key, this);
     }
 
     //key must the hash of the key of the item, in module 2^N
     //boolean linear define if the findSuccessor is made in linear or logarithmic time
     @Override
     public NodeInterface findSuccessor(int key, Boolean linear) throws RemoteException{
-        NodeInterface successor;
-        if(linear){
-            successor = this.successor;
-        }else{
-            successor = this.fingerTable.getSuccessor(key);
-        }
-        if (this.isBetween(key, successor.getId()) || this.getId() == successor.getId()){
-            return successor;
-        }else{
-            return successor.findSuccessor(key, linear);
-        }
+        return NodeLogic.findSuccessor(key, linear, this);
     }
 
     //search for successor of item and store the item there
     public void storeItem(Item item) throws RemoteException, IllegalArgumentException{
-        NodeInterface node = findSuccessor(item.getKey(), true);
-        if(node.hasItem(item.getKey())) throw new IllegalArgumentException("It already exists an item with the given id");
-        node.addItem(item);
-    }
-
-    public boolean isBetween(int item_searched, int end_of_interval){
-        int start_interval = this.id;
-        int max_nodes = (int) Math.pow(2, this.num_bits_identifiers);
-        /*if(this.id > end_of_interval){
-            end_of_interval = end_of_interval + max_nodes;
-            if(this.id > item_searched){
-                item_searched = item_searched + max_nodes;
-            }
-        }*/
-        if (start_interval > end_of_interval) {
-            if (item_searched <= end_of_interval){
-                item_searched = item_searched + max_nodes;
-            }
-            end_of_interval = end_of_interval + max_nodes;
-        }
-        return (item_searched > start_interval && item_searched <= end_of_interval);
+        NodeLogic.storeItem(item, this);
     }
 
     //create a new Chord ring
-    public void create(){
-        this.successor = this;
-        this.predecessor = null;
-        Debugger.print(this + "'s successor is " + this);
-        Debugger.print(this + "'s predecessor is null");
-        if (!this.isSimpleLookupAlgorithm()) {
-            this.fingerTable.initialize(this);
-        }
-        this.handler.start();
+    public void create() throws RemoteException {
+        NodeLogic.create(this);
     }
 
     //join a Chord ring containing node
     //throw exception if the ring of node already contains a node with the id of who wants to join
     public void join(NodeInterface node) throws RemoteException, IllegalArgumentException{
-        //if node has as successor himself, he is the only one in the ring -> he becomes my successor
-        if(node == node.getSuccessor()){
-            if(this.id != node.getId()){
-                Debugger.print(this.print() + " joined and successor is: " + node.print());
-                this.successor = node;
-            }else{
-                throw new IllegalArgumentException("node cannot join the ring because there is already a node with his id.");
-            }
-        } else {
-            NodeInterface successor = node.findSuccessor(this.id, this.simpleLookupAlgorithm);
-            if(this.id != successor.getId()){
-                this.successor = successor;
-                Debugger.print(this.print() + " joined and successor is: " + this.successor.print());
-            }else{
-                throw new IllegalArgumentException("node cannot join the ring because there is already a node with his id.");
-            }
-        }
-        Debugger.print(this + " join the ring");
-        Debugger.print(this + "'s predecessor is null");
-        this.predecessor = null;
-        if (!this.isSimpleLookupAlgorithm()) {
-            this.fingerTable.initialize(successor);
-        }
-        //start tasks to stabilize node
-        this.handler.start();
+        NodeLogic.join(node, this);
     }
 
     public ArrayList<Item> getItems() {
@@ -152,7 +81,6 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         return predecessor;
     }
 
-    @Override
     public int getId() {
         return this.id;
     }
@@ -180,6 +108,10 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         this.successor = successor;
     }
 
+    public FingerTable getFingerTable() {
+        return fingerTable;
+    }
+
     @Override
     public void setPredecessor(NodeInterface predecessor) {
         this.predecessor = predecessor;
@@ -187,6 +119,10 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
 
     public void setEntryFingerTable (int key, NodeInterface node){
         this.fingerTable.setSuccessor(key,node);
+    }
+
+    public Handler getHandler() {
+        return handler;
     }
 
     @Override

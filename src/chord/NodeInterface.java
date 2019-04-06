@@ -1,6 +1,4 @@
-package middleware;
-
-import chord.Item;
+package chord;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -11,13 +9,16 @@ public interface NodeInterface extends Remote{
     NodeInterface getSuccessor() throws RemoteException;
     NodeInterface getPredecessor() throws RemoteException;
     void setPredecessor(NodeInterface predecessor) throws RemoteException;
-
-    boolean isBetween(int item_searched, int end_of_interval) throws RemoteException;
     boolean hasItem(int key) throws RemoteException;
-
     String print() throws RemoteException;
     int getId() throws RemoteException;
     void addItem(Item item) throws RemoteException;
     ArrayList<Item> getItems() throws RemoteException;
+
+    void setSuccessor(NodeInterface successor) throws RemoteException;
+    int getNum_bits_identifiers() throws RemoteException;
+    Handler getHandler() throws RemoteException;
+    boolean isSimpleLookupAlgorithm() throws RemoteException;
+    FingerTable getFingerTable() throws RemoteException;
 }
 
