@@ -5,7 +5,7 @@ import java.util.HashMap;
 public class FingerTable {
     private Node owner;
     private int size;
-    private HashMap<Integer,Node> map;
+    private HashMap<Integer,NodeInterface> map;
 
     public FingerTable(Node node, int size) {
         this.owner = node;
@@ -14,7 +14,7 @@ public class FingerTable {
     }
 
     //given a key retrieve the successor
-    public Node getSuccessor(int key){
+    public NodeInterface getSuccessor(int key){
         int i;
         for (i = 0; i < this.size; i++){
             int tmp = this.getPosition(i);
@@ -35,12 +35,12 @@ public class FingerTable {
         return key >= n && key <= tmp;
     }
 
-    public void setSuccessor(int key, Node successor){
+    public void setSuccessor(int key, NodeInterface successor){
         this.map.put(key, successor);
     }
 
     //initialize the finger table entry when a node create or join in a ring.
-    public void initialize(Node node) {
+    public void initialize(NodeInterface node) {
         int bit;
         for (bit = 0; bit < this.size; bit++){
             this.map.put(getPosition(bit), node);
@@ -48,7 +48,7 @@ public class FingerTable {
     }
 
     //calculate id + 2^i
-    private int getPosition(int i){
+    public int getPosition(int i){
         int m = (int) Math.pow(2,this.size);
         i = (int) Math.pow(2,i);
         i = i + this.owner.getId();
@@ -57,7 +57,11 @@ public class FingerTable {
     }
 
     //given the key it returns the node of that position.
-    public Node getNode(int key){
+    public NodeInterface getNode(int key){
         return this.map.get(key);
+    }
+
+    public NodeInterface getOwner(){
+        return this.owner;
     }
 }

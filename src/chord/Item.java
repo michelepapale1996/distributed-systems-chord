@@ -1,8 +1,9 @@
 package chord;
 
+import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 
-public class Item {
+public class Item implements Serializable {
     
     private String name;
     private int key;
@@ -18,7 +19,7 @@ public class Item {
 
     }
 
-    public int getKey() {
+    public int getKey(){
         return key;
     }
 

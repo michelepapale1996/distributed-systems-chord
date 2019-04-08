@@ -1,22 +1,28 @@
 package chord;
 
+import Test.Debugger;
+import java.io.Serializable;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
-public class Node extends ArrayList<Node> {
+
+public class Node extends UnicastRemoteObject implements NodeInterface, Serializable {
     private Ip ip;
-    private int id;
-    private int num_bits_identifiers;
-    private Node successor;
-    private Node predecessor;
     private boolean simpleLookupAlgorithm;
+    private int num_bits_identifiers;
+
+    private int id;
+    private NodeInterface successor;
+    private NodeInterface predecessor;
     private FingerTable fingerTable;
     private ArrayList<Item> items;
     private Handler handler;
-    private ArrayList<Node> successorList;
+    private ArrayList<NodeInterface> successorList;
     private LinkedHashMap<Integer, ArrayList<Item>> successoreItems;
 
-    public Node(int num_bits_identifiers, Boolean simpleKeyLocation) {
+    public Node(int num_bits_identifiers, Boolean simpleKeyLocation) throws RemoteException{
         this.handler = new Handler(this);
         this.successor = null;
         this.predecessor = null;
@@ -27,7 +33,7 @@ public class Node extends ArrayList<Node> {
         this.successorList = new ArrayList<>(); //at the creatz2qion of the node is initialized an immediate successor list
         this.successoreItems = new LinkedHashMap<>();
         try {
-            this.id = Sha1.getSha1(this.ip.getIp(), Integer.toString(this.num_bits_identifiers));
+            this.id = Sha1.getSha1(this.ip.getAddress(), Integer.toString(this.num_bits_identifiers));
         } catch (NoSuchAlgorithmException e){
             e.printStackTrace();
         }
@@ -36,93 +42,40 @@ public class Node extends ArrayList<Node> {
 
     //find the successor given the item's key
     //if the right node hasn't the item, lookup will return null
-    public Node lookUp(int key){
-        System.out.println("Finding key " + key + " starting from " + this);
-        //check if the current node has the item
-        if (this.hasItem(key)) return this;
-
-        //otherwise find the successor that has the item
-        Node successorForKey = this.findSuccessor(key, this.simpleLookupAlgorithm);
-        if (successorForKey.hasItem(key)){
-            return successorForKey;
-        } else {
-            System.out.println("Given item does not exists.");
-            throw new NoSuchElementException();
-        }
+    public NodeInterface lookUp(int key) throws RemoteException, NoSuchElementException{
+        return NodeLogic.lookUp(key, this);
     }
 
     //key must the hash of the key of the item, in module 2^N
     //boolean linear define if the findSuccessor is made in linear or logarithmic time
-    public Node findSuccessor(int key, Boolean linear){
-        Node successor;
-        if(linear){
-            successor = this.successor;
-        }else{
-            successor = this.fingerTable.getSuccessor(key);
-        }
-        if (this.isBetween(key, successor.getId()) || this.getId() == successor.getId()){
-            return successor;
-        }else{
-            return successor.findSuccessor(key, linear);
-        }
+    @Override
+    public NodeInterface findSuccessor(int key, Boolean linear) throws RemoteException{
+        return NodeLogic.findSuccessor(key, linear, this);
     }
 
-    public boolean isBetween(int item_searched, int end_of_interval){
-        int start_interval = this.id;
-        int max_nodes = (int) Math.pow(2, this.num_bits_identifiers);
-        /*if(this.id > end_of_interval){
-            end_of_interval = end_of_interval + max_nodes;
-            if(this.id > item_searched){
-                item_searched = item_searched + max_nodes;
-            }
-        }*/
-        if (start_interval > end_of_interval) {
-            if (item_searched <= end_of_interval){
-                item_searched = item_searched + max_nodes;
-            }
-            end_of_interval = end_of_interval + max_nodes;
-        }
-        return (item_searched > start_interval && item_searched <= end_of_interval);
+    //search for successor of item and store the item there
+    public void storeItem(Item item) throws RemoteException, IllegalArgumentException{
+        NodeLogic.storeItem(item, this);
     }
 
     //create a new Chord ring
-    public void create(){
-        this.successor = this;
-        this.predecessor = null;
-        System.out.println(this + "'s successor is " + this);
-        System.out.println(this + "'s predecessor is null");
-        if (!this.isSimpleLookupAlgorithm()) {
-            this.fingerTable.initialize(this);
-        }
-        this.handler.start();
+    public void create() throws RemoteException {
+        NodeLogic.create(this);
     }
 
     //join a Chord ring containing node
-    public void join(Node node){
-        System.out.println(this + " join ring");
-        System.out.println(this + "'s predecessor is null");
-        this.predecessor = null;
+    //throw exception if the ring of node already contains a node with the id of who wants to join
+    public void join(NodeInterface node) throws RemoteException, IllegalArgumentException{
+        NodeLogic.join(node, this);
+    }
 
-        //if node has as successor himself, he is the only one in the ring -> he becomes my successor
-        if(node == node.getSuccessor()){
-            System.out.println(this + " joined and successor is: " + node);
-            this.successor = node;
-            this.getSuccessorList().add(node);
-            node.getSuccessorList().add(this);
-        }
-        else{
-            int key = this.getId();
-            System.out.println(this + " joined and successor is: " + node.findSuccessor(key, this.simpleLookupAlgorithm));
-            Node successor = node.findSuccessor(key, this.simpleLookupAlgorithm);
-            this.successor = successor;
-            this.getSuccessorList().add(successor);
-            System.out.println("Added " + successor + " to successor list of " + this);
-        }
-        if (!this.isSimpleLookupAlgorithm()) {
-            this.fingerTable.initialize(successor);
-        }
-        //start tasks to stabilize node
-        this.handler.start();
+    public void addItem(Item item){
+        Debugger.print(this.print() + " now has the item" + item);
+        this.items.add(item);
+    }
+
+    public NodeInterface getSuccessor() {
+        return this.successor;
     }
 
     public void leave(){
@@ -136,18 +89,8 @@ public class Node extends ArrayList<Node> {
         this.successorList = null;
         this.successoreItems = null;
     }
-    //search for successor of item and store the item there
-    public void storeItem(Item item){
-        Node node = findSuccessor(item.getKey(), true);
-        node.getItems().add(item);
-        System.out.println("Stored Item at node " + node);
-    }
 
-    public void addItem (Item item){
-        this.items.add(item);
-    }
-
-    public ArrayList<Node> getSuccessorList() {
+    public ArrayList<NodeInterface> getSuccessorList() {
         return successorList;
     }
 
@@ -155,11 +98,7 @@ public class Node extends ArrayList<Node> {
         return successoreItems;
     }
 
-    public Node getSuccessor() {
-        return successor;
-    }
-
-    public Node getPredecessor() {
+    public NodeInterface getPredecessor() {
         return predecessor;
     }
 
@@ -179,31 +118,37 @@ public class Node extends ArrayList<Node> {
         return this.ip;
     }
 
+
     public ArrayList<Item> getItems() {
         return items;
     }
 
-    private boolean hasItem(int key) {
+    public boolean hasItem(int key) {
         for(Item i: this.items){
             if(i.getKey() == key) return true;
         }
         return false;
     }
 
-    public void setSuccessor(Node successor){
+    public void setSuccessor(NodeInterface successor){
         this.successor = successor;
     }
 
-    public void setPredecessor(Node predecessor) {
+    public FingerTable getFingerTable() {
+        return fingerTable;
+    }
+
+    @Override
+    public void setPredecessor(NodeInterface predecessor) {
         this.predecessor = predecessor;
     }
 
-    public void setHandler() {
-        this.handler = new Handler(this);
+    public void setEntryFingerTable (int key, NodeInterface node){
+        this.fingerTable.setSuccessor(key,node);
     }
 
-    public void setEntryFingerTable (int key, Node node){
-        this.fingerTable.setSuccessor(key,node);
+    public Handler getHandler() {
+        return handler;
     }
 
     @Override
@@ -211,7 +156,10 @@ public class Node extends ArrayList<Node> {
         return "[Node with id: " + this.id + "]";
     }
 
-    public void setSuccessorList(ArrayList<Node> successorList) {
+    @Override
+    public String print(){return "[Node with id: " + this.id + "]";}
+
+    public void setSuccessorList(ArrayList<NodeInterface> successorList) {
         this.successorList = successorList;
     }
 
@@ -224,11 +172,7 @@ public class Node extends ArrayList<Node> {
         this.id = id;
     }
 
-    public Node getNode(int key){
+    public NodeInterface getNode(int key){
         return this.fingerTable.getNode(key);
-    }
-
-    public FingerTable getFingerTable() {
-        return fingerTable;
     }
 }

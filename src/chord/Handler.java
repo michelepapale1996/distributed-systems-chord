@@ -1,9 +1,10 @@
 package chord;
 
+import java.io.Serializable;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Handler {
+public class Handler implements Serializable {
     private Node owner;
     private Timer timer;
 
@@ -14,6 +15,7 @@ public class Handler {
     public void start(){
         this.timer = new Timer();
         TimerTask stabilizeTask = new StabilizeTask(this.owner);
+
         timer.scheduleAtFixedRate(stabilizeTask, 0, 1000);
     }
 
