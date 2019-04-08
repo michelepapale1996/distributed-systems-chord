@@ -70,7 +70,7 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
     }
 
     public void addItem(Item item){
-        Debugger.print(this.print() + " now has the item" + item);
+        Debugger.print(this.print() + " now has the item " + item);
         this.items.add(item);
     }
 

@@ -26,8 +26,8 @@ public class StabilizeTask extends TimerTask {
             }
 
             if(this.owner.getId() == old_successor.getId()) this.owner.setSuccessor(new_successor);
-            this.notify(this.owner.getSuccessor(), this.owner);
         }
+        this.notify(this.owner.getSuccessor(), this.owner);
     }
     //predecessor thinks it might be predecessor of node
     private void notify(NodeInterface node, NodeInterface predecessor) throws RemoteException {
@@ -63,9 +63,9 @@ public class StabilizeTask extends TimerTask {
             if (new_value < old_value || old_value == this.owner.getId()){
                 this.owner.setEntryFingerTable(position,successor);
             }
-            Debugger.print("update finger table for " + this.owner.toString() + " with couple < " + position + ", " + successor.toString() + " >");
+            Debugger.print("-FixFingers: update finger table for " + this.owner.toString() + " with couple < " + position + ", " + successor.toString() + " >");
         }
-        System.out.println(this.owner.getFingerTable());
+        Debugger.print(this.owner.getFingerTable().toString());
     }
 
     private void fixSuccessorList() throws RemoteException{
@@ -101,8 +101,8 @@ public class StabilizeTask extends TimerTask {
 
                 this.owner.setSuccessorList(newSuccessorList);
                 this.owner.setSuccessoreItems(newSuccesorItems);
-                Debugger.print("La successor list di " + this.owner + " è: " + newSuccessorList);
-                Debugger.print("La successor Items di " + this.owner + " è: " + newSuccesorItems);
+                Debugger.print("-SuccessorList: successorList di " + this.owner + " è: " + newSuccessorList);
+                Debugger.print("-SuccessorList: successorItems di " + this.owner + " è: " + newSuccesorItems);
                 newSuccessor = newSuccessorList.get(0);
                 this.owner.setSuccessor(newSuccessor);
                 foundLivingSuccessor = true;
@@ -120,13 +120,22 @@ public class StabilizeTask extends TimerTask {
     }
 
     private void fixSuccessorItems(ArrayList<Item> items) throws RemoteException {
-        Debugger.print("A node has failed\nItems of the failed node were : " + items);
+        Debugger.print("-SuccessorItems: A node has failed\nItems of the failed node were : " + items);
 
         //store the pending items
         //store Items in first alive node
         for (Item item : items) {
-            //System.out.println("------ i'm storing " + item.getKey() + " in " + this.owner.findSuccessor(item.getKey(), true));
             this.owner.storeItem(item);
+        }
+    }
+
+    public void fixItems() throws RemoteException{
+        for (Item item : this.owner.getItems()) {
+            if (this.owner.findSuccessor(item.getKey(),true).getId() != this.owner.getId()){
+                this.owner.getItems().remove(item);
+                this.owner.storeItem(item);
+                Debugger.print("-FixItems: " + item + " moved FROM " + this.owner + " TO " + this.owner.findSuccessor(item.getKey(), true));
+            }
         }
     }
 
@@ -134,6 +143,7 @@ public class StabilizeTask extends TimerTask {
         try {
             this.stabilize();
             this.fixSuccessorList();
+            this.fixItems();
             if (!this.owner.isSimpleLookupAlgorithm()) this.fixFingers();
         } catch (Exception ex) {
             System.out.println("Error : " + ex);
