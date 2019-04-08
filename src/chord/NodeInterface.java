@@ -14,7 +14,9 @@ public interface NodeInterface extends Remote{
     int getId() throws RemoteException;
     void addItem(Item item) throws RemoteException;
     ArrayList<Item> getItems() throws RemoteException;
+    ArrayList<NodeInterface> getSuccessorList() throws RemoteException;
 
+    Ip getIp() throws RemoteException;
     void setSuccessor(NodeInterface successor) throws RemoteException;
     int getNum_bits_identifiers() throws RemoteException;
     Handler getHandler() throws RemoteException;
