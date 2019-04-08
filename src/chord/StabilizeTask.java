@@ -105,7 +105,7 @@ public class StabilizeTask extends TimerTask {
                 LinkedHashMap<Integer, ArrayList<Item>> newSuccesorItems = new LinkedHashMap<>();
                 newSuccessorList.add(0, successor);
                 for (NodeInterface n: successor.getSuccessorList()) {
-                    if (n.getId() != this.owner.getId() && n.getIp() != null) {
+                    if (n.getId() != this.owner.getId()) {
                         newSuccessorList.add(n);
                     }
                 }

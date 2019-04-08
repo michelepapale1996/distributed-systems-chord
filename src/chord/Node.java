@@ -2,6 +2,8 @@ package chord;
 
 import Test.Debugger;
 import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.security.NoSuchAlgorithmException;
@@ -9,7 +11,7 @@ import java.util.*;
 
 
 public class Node extends UnicastRemoteObject implements NodeInterface, Serializable {
-    private Ip ip;
+    private Object instance;
     private boolean simpleLookupAlgorithm;
     private int num_bits_identifiers;
 
@@ -27,14 +29,18 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         this.successor = null;
         this.predecessor = null;
         this.num_bits_identifiers = num_bits_identifiers;
-        this.ip = new Ip();
+        this.instance = new Object();
         this.items = new ArrayList<>();
         this.simpleLookupAlgorithm = simpleKeyLocation;
         this.successorList = new ArrayList<>(); //at the creatz2qion of the node is initialized an immediate successor list
         this.successorItems = new LinkedHashMap<>();
         try {
-            this.id = Sha1.getSha1(this.ip.getAddress(), Integer.toString(this.num_bits_identifiers));
+            InetAddress address = InetAddress.getLocalHost();
+            String ipAddress = address.getHostAddress();
+            this.id = Sha1.getSha1(ipAddress, Integer.toString(this.num_bits_identifiers));
         } catch (NoSuchAlgorithmException e){
+            e.printStackTrace();
+        } catch (UnknownHostException e) {
             e.printStackTrace();
         }
         if (!simpleKeyLocation) this.fingerTable = new FingerTable(this , this.num_bits_identifiers);
@@ -81,13 +87,7 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
     public void leave(){
         Debugger.print(this + "crashed");
         this.handler.stopTimer();
-        this.handler = null;
-        this.successor = null;
-        this.predecessor = null;
-        this.ip = null;
-        this.items = null;
-        this.successorList = null;
-        this.successorItems = null;
+        this.instance = null;
     }
 
     public ArrayList<NodeInterface> getSuccessorList() {
@@ -114,8 +114,8 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         return num_bits_identifiers;
     }
 
-    public Ip getIp(){
-        return this.ip;
+    public Object getInstance(){
+        return this.instance;
     }
 
 
