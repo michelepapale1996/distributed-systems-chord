@@ -63,14 +63,14 @@ public class StabilizeTask extends TimerTask {
             if (new_value < old_value || old_value == this.owner.getId()){
                 this.owner.setEntryFingerTable(position,successor);
             }
-            Debugger.print("-FixFingers: update finger table for " + this.owner.toString() + " with couple < " + position + ", " + successor.toString() + " >");
+            Debugger.print("-FixFingers: update finger table for " + this.owner.print() + " with couple < " + position + ", " + successor.print() + " >");
         }
         Debugger.print(this.owner.getFingerTable().toString());
     }
 
     private void fixSuccessorList() throws RemoteException{
         if (this.owner.getSuccessor() == this.owner) {
-            Debugger.print("-SuccessorList : Network contains only " + this.owner);
+            Debugger.print("-SuccessorList : Network contains only " + this.owner.print());
             return;
         }
         int size = this.owner.getNum_bits_identifiers();
@@ -101,8 +101,8 @@ public class StabilizeTask extends TimerTask {
 
                 this.owner.setSuccessorList(newSuccessorList);
                 this.owner.setSuccessoreItems(newSuccesorItems);
-                Debugger.print("-SuccessorList: successorList di " + this.owner + " è: " + newSuccessorList);
-                Debugger.print("-SuccessorList: successorItems di " + this.owner + " è: " + newSuccesorItems);
+                Debugger.print("-SuccessorList: successorList di " + this.owner.print() + " è: " + newSuccessorList.toString());
+                Debugger.print("-SuccessorList: successorItems di " + this.owner.print() + " è: " + newSuccesorItems.toString());
                 newSuccessor = newSuccessorList.get(0);
                 this.owner.setSuccessor(newSuccessor);
                 foundLivingSuccessor = true;
@@ -134,7 +134,7 @@ public class StabilizeTask extends TimerTask {
             if (this.owner.findSuccessor(item.getKey(),true).getId() != this.owner.getId()){
                 this.owner.getItems().remove(item);
                 this.owner.storeItem(item);
-                Debugger.print("-FixItems: " + item + " moved FROM " + this.owner + " TO " + this.owner.findSuccessor(item.getKey(), true));
+                Debugger.print("-FixItems: " + item + " moved FROM " + this.owner.print() + " TO " + this.owner.findSuccessor(item.getKey(), true).print());
             }
         }
     }

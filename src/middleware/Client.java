@@ -18,7 +18,7 @@ public class Client {
     Scanner scanner = new Scanner(System.in);
 
     public static void main(String args[]) {
-        Debugger.setDebug(false);
+        Debugger.setDebug(true);
         Client client = new Client();
         try {
             client.run();
@@ -80,7 +80,8 @@ public class Client {
     private Node connectToRing(){
         //System.out.println("Insert the IP address of a node contained in the ring: ");
         //String IpAddressKnownNode = scanner.nextLine();
-        String IpAddressKnownNode = "127.0.0.1";
+        //String IpAddressKnownNode = "127.0.0.1";
+        String IpAddressKnownNode = "192.168.1.109";
 
         System.out.println("Insert the id of the node contained in the ring: ");
         int knownNodeId = getInt();
@@ -164,7 +165,11 @@ public class Client {
         System.out.println("Info current node:");
         System.out.println("- Node id: " + myNode.print());
         System.out.println("- Successor: " + myNode.getSuccessor().print());
-        System.out.println("- Predecessor: " + myNode.getPredecessor().print());
+        try{
+            System.out.println("- Predecessor: " + myNode.getPredecessor().print());
+        }catch (NullPointerException e){
+            System.out.println("- Predecessor: null");
+        }
         System.out.println("- Items of the node: " + myNode.getItems() );
     }
 
