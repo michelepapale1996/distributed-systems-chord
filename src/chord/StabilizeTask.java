@@ -1,8 +1,6 @@
 package chord;
 
-import java.sql.SQLOutput;
-import java.util.ArrayList;
-import java.util.TimerTask;
+import java.util.*;
 
 public class StabilizeTask extends TimerTask {
     private Node owner;
@@ -13,19 +11,22 @@ public class StabilizeTask extends TimerTask {
 
     //called periodically
     //Verifies n's immediate successor, and tells the successor about n
-    private void stabilize(){
-        Node new_successor = this.owner.getSuccessor().getPredecessor();
-        Node old_successor = this.owner.getSuccessor();
-        //if the new_successor is between me and my successor -> he becomes my successor
-        if(new_successor != null){
-            if ((this.owner.isBetween(new_successor.getId(), old_successor.getId())) || this.owner.getId() == old_successor.getId()) {
-                System.out.println("-Stabilization: " + this.owner + "'s successor is " + new_successor);
-                this.owner.setSuccessor(new_successor);
+    private void stabilize() {
+        try {
+            System.out.println(this.owner);
+            Node new_successor = this.owner.getSuccessor().getPredecessor();
+            Node old_successor = this.owner.getSuccessor();
+            //if the new_successor is between me and my successor -> he becomes my successor
+            if (new_successor != null && new_successor.getIp() != null) {
+                if ((this.owner.isBetween(new_successor.getId(), old_successor.getId())) || this.owner.getId() == old_successor.getId()) {
+                    System.out.println("-Stabilization: " + this.owner + "'s successor is " + new_successor);
+                    this.owner.setSuccessor(new_successor);
+                }
             }
+            this.notify(this.owner.getSuccessor(), this.owner);
+        } catch (NullPointerException e) {
         }
-        this.notify(this.owner.getSuccessor(), this.owner);
     }
-
     //predecessor thinks it might be predecessor of node
     private void notify(Node node, Node predecessor) {
         if(node.getPredecessor() == null || node.getPredecessor().isBetween(predecessor.getId(), node.getId()) || node.getId() == node.getPredecessor().getId()){
@@ -62,41 +63,78 @@ public class StabilizeTask extends TimerTask {
         }
     }
 
-    public void fixSuccessorList(){
+    private void fixSuccessorList(){
+        if (this.owner.getSuccessor() == this.owner) {
+            System.out.println("-Successor List : Network contains only " + this.owner);
+            return;
+        }
         int size = this.owner.getNum_bits_identifiers();
-        boolean findLivingSuccessor = false;
-        int counter = 0;
-        while(!findLivingSuccessor && counter < size){
-            try{
-                Node successor = this.owner.getSuccessorList().get(0);
+        Node newSuccessor = null;
+        boolean foundLivingSuccessor = false;
+        int i = 0;
+        Node successor = this.owner.getSuccessor();
+        ArrayList<Item> itemsToFix = new ArrayList<>();
+        while(!foundLivingSuccessor){
+            if(successor.getIp() != null){
+                ArrayList<Node> newSuccessorList = new ArrayList<>();
+                LinkedHashMap<Integer, ArrayList<Item>> newSuccesorItems = new LinkedHashMap<>();
 
-                ArrayList<Node> newSuccessorList = successor.getSuccessorList();
-                newSuccessorList.remove(size-1);
                 newSuccessorList.add(0, successor);
+
+                for (Node n :successor.getSuccessorList()) {
+                    if (n.getId() != this.owner.getId() && n.getIp() != null) {
+                        newSuccessorList.add(n);
+                    }
+                }
+                if (newSuccessorList.size() > size){
+                    newSuccessorList.remove(size);
+                }
+
+                for (Node node :newSuccessorList ) {
+                    newSuccesorItems.put(node.getId(), node.getItems());
+                }
+
                 this.owner.setSuccessorList(newSuccessorList);
-                this.owner.setSuccessor(newSuccessorList.get(0));
-
-                findLivingSuccessor = true;
-            }catch (Exception e){
-                System.out.println("Error: " + e);
-
-                //remove the failed nodes from successorList
-                this.owner.getSuccessorList().remove(0); //remove shifts automatically any subsequent list
-
-                counter++;
+                this.owner.setSuccessoreItems(newSuccesorItems);
+                System.out.println("La successor list di " + this.owner + " è: " + newSuccessorList);
+                System.out.println("La successor Items di " + this.owner + " è: " + newSuccesorItems);
+                newSuccessor = newSuccessorList.get(0);
+                this.owner.setSuccessor(newSuccessor);
+                foundLivingSuccessor = true;
+            }else{
+                for (Item item: (ArrayList<Item>) this.owner.getSuccessoreItems().values().toArray()[i]) {
+                    itemsToFix.add(item);
+                }
+                i++;
+                successor = this.owner.getSuccessorList().get(i);
             }
         }
-        if (counter > size){
-            System.out.println("all nodes in successor list are failed");
+        if (itemsToFix.size() != 0) {
+            this.fixSuccessorItems(itemsToFix);
         }
+    }
+
+    private void fixSuccessorItems(ArrayList<Item> items) {
+        System.out.println("-----------fixSuccessorItems");
+        System.out.println("items of the failed node were : " + items);
+
+        //store the pending items
+        System.out.println("-------------- " + items);
+        //store Items in first alive node
+        for (Item item : items) {
+            //System.out.println("------ i'm storing " + item.getKey() + " in " + this.owner.findSuccessor(item.getKey(), true));
+            this.owner.storeItem(item);
+        }
+        System.out.println("-----------fine fixSuccessorItems");
     }
 
     public void run() {
         try {
             this.stabilize();
+            this.fixSuccessorList();
             if (!this.owner.isSimpleLookupAlgorithm()) this.fixFingers();
         } catch (Exception ex) {
-            System.out.println(ex);
+            System.out.println("Error : " + ex);
         }
     }
 }

@@ -1,8 +1,7 @@
 package chord;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 public class Node extends ArrayList<Node> {
     private Ip ip;
@@ -15,6 +14,7 @@ public class Node extends ArrayList<Node> {
     private ArrayList<Item> items;
     private Handler handler;
     private ArrayList<Node> successorList;
+    private LinkedHashMap<Integer, ArrayList<Item>> successoreItems;
 
     public Node(int num_bits_identifiers, Boolean simpleKeyLocation) {
         this.handler = new Handler(this);
@@ -24,7 +24,8 @@ public class Node extends ArrayList<Node> {
         this.ip = new Ip();
         this.items = new ArrayList<>();
         this.simpleLookupAlgorithm = simpleKeyLocation;
-        this.successorList = new ArrayList<>(num_bits_identifiers); //at the creatz2qion of the node is initialized an immediate successor list
+        this.successorList = new ArrayList<>(); //at the creatz2qion of the node is initialized an immediate successor list
+        this.successoreItems = new LinkedHashMap<>();
         try {
             this.id = Sha1.getSha1(this.ip.getIp(), Integer.toString(this.num_bits_identifiers));
         } catch (NoSuchAlgorithmException e){
@@ -106,11 +107,16 @@ public class Node extends ArrayList<Node> {
         if(node == node.getSuccessor()){
             System.out.println(this + " joined and successor is: " + node);
             this.successor = node;
+            this.getSuccessorList().add(node);
+            node.getSuccessorList().add(this);
         }
         else{
             int key = this.getId();
             System.out.println(this + " joined and successor is: " + node.findSuccessor(key, this.simpleLookupAlgorithm));
-            this.successor = node.findSuccessor(key, this.simpleLookupAlgorithm);
+            Node successor = node.findSuccessor(key, this.simpleLookupAlgorithm);
+            this.successor = successor;
+            this.getSuccessorList().add(successor);
+            System.out.println("Added " + successor + " to successor list of " + this);
         }
         if (!this.isSimpleLookupAlgorithm()) {
             this.fingerTable.initialize(successor);
@@ -119,12 +125,34 @@ public class Node extends ArrayList<Node> {
         this.handler.start();
     }
 
+    public void leave(){
+        System.out.println(this + "crashed");
+        this.handler.stopTimer();
+        this.handler = null;
+        this.successor = null;
+        this.predecessor = null;
+        this.ip = null;
+        this.items = null;
+        this.successorList = null;
+        this.successoreItems = null;
+    }
+    //search for successor of item and store the item there
+    public void storeItem(Item item){
+        Node node = findSuccessor(item.getKey(), true);
+        node.getItems().add(item);
+        System.out.println("Stored Item at node " + node);
+    }
+
     public void addItem (Item item){
         this.items.add(item);
     }
 
     public ArrayList<Node> getSuccessorList() {
         return successorList;
+    }
+
+    public LinkedHashMap<Integer, ArrayList<Item>> getSuccessoreItems() {
+        return successoreItems;
     }
 
     public Node getSuccessor() {
@@ -149,6 +177,10 @@ public class Node extends ArrayList<Node> {
 
     public Ip getIp(){
         return this.ip;
+    }
+
+    public ArrayList<Item> getItems() {
+        return items;
     }
 
     private boolean hasItem(int key) {
@@ -181,6 +213,10 @@ public class Node extends ArrayList<Node> {
 
     public void setSuccessorList(ArrayList<Node> successorList) {
         this.successorList = successorList;
+    }
+
+    public void setSuccessoreItems(LinkedHashMap<Integer, ArrayList<Item>> successoreItems) {
+        this.successoreItems = successoreItems;
     }
 
     //TODO: poi verrà eliminato
