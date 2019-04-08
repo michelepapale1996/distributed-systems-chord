@@ -56,11 +56,12 @@ public class StabilizeTask extends TimerTask {
             if (successor.getId() < this.owner.getId()){
                 new_value = new_value + size;
             }
-            if (new_value < old_value){
+            if (new_value < old_value || old_value == this.owner.getId()){
                 this.owner.setEntryFingerTable(position,successor);
             }
-            System.out.println("update finger table for " + this.owner.toString() + " with couple < " + position + ", " + successor.toString() + " >");
+            //System.out.println("update finger table for " + this.owner.toString() + " with couple < " + position + ", " + successor.toString() + " >");
         }
+        System.out.println(this.owner.getFingerTable());
     }
 
     private void fixSuccessorList(){

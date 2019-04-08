@@ -1,6 +1,7 @@
 package middleware;
 
 import java.net.*;
+
 public class Client {
     public static void main(String[] args) throws Exception {
         DatagramSocket ds = new DatagramSocket(3000);

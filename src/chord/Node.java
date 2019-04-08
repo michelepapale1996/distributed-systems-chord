@@ -227,4 +227,8 @@ public class Node extends ArrayList<Node> {
     public Node getNode(int key){
         return this.fingerTable.getNode(key);
     }
+
+    public FingerTable getFingerTable() {
+        return fingerTable;
+    }
 }
