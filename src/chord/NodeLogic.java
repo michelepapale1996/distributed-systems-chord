@@ -26,6 +26,7 @@ public class NodeLogic {
         }else{
             successor = initialNode.getFingerTable().getSuccessor(key);
         }
+
         if (NodeLogic.isBetween(initialNode.getId(), key, successor.getId(), initialNode.getNum_bits_identifiers()) || initialNode.getId() == successor.getId()){
             return successor;
         }else{
@@ -84,9 +85,8 @@ public class NodeLogic {
     public static boolean isBetween(int startInterval, int item_searched, int endInterval, int num_bits_identifiers){
         int max_nodes = (int) Math.pow(2, num_bits_identifiers);
         if (startInterval > endInterval) {
-            if (item_searched <= endInterval){
-                item_searched = item_searched + max_nodes;
-            }
+
+            if (item_searched <= endInterval) item_searched = item_searched + max_nodes;
             endInterval = endInterval + max_nodes;
         }
         return (item_searched > startInterval && item_searched <= endInterval);

@@ -20,7 +20,7 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
     private ArrayList<Item> items;
     private Handler handler;
     private ArrayList<NodeInterface> successorList;
-    private LinkedHashMap<Integer, ArrayList<Item>> successoreItems;
+    private LinkedHashMap<Integer, ArrayList<Item>> successorItems;
 
     public Node(int num_bits_identifiers, Boolean simpleKeyLocation) throws RemoteException{
         this.handler = new Handler(this);
@@ -31,7 +31,7 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         this.items = new ArrayList<>();
         this.simpleLookupAlgorithm = simpleKeyLocation;
         this.successorList = new ArrayList<>(); //at the creatz2qion of the node is initialized an immediate successor list
-        this.successoreItems = new LinkedHashMap<>();
+        this.successorItems = new LinkedHashMap<>();
         try {
             this.id = Sha1.getSha1(this.ip.getAddress(), Integer.toString(this.num_bits_identifiers));
         } catch (NoSuchAlgorithmException e){
@@ -70,7 +70,7 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
     }
 
     public void addItem(Item item){
-        Debugger.print(this.print() + " now has the item " + item);
+        Debugger.print("[Added item] -> " + this.print() + " now has the item " + item);
         this.items.add(item);
     }
 
@@ -87,15 +87,15 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         this.ip = null;
         this.items = null;
         this.successorList = null;
-        this.successoreItems = null;
+        this.successorItems = null;
     }
 
     public ArrayList<NodeInterface> getSuccessorList() {
         return successorList;
     }
 
-    public LinkedHashMap<Integer, ArrayList<Item>> getSuccessoreItems() {
-        return successoreItems;
+    public LinkedHashMap<Integer, ArrayList<Item>> getSuccessorItems() {
+        return successorItems;
     }
 
     public NodeInterface getPredecessor() {
@@ -163,8 +163,8 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         this.successorList = successorList;
     }
 
-    public void setSuccessoreItems(LinkedHashMap<Integer, ArrayList<Item>> successoreItems) {
-        this.successoreItems = successoreItems;
+    public void setSuccessorItems(LinkedHashMap<Integer, ArrayList<Item>> successorItems) {
+        this.successorItems = successorItems;
     }
 
     //TODO: poi verrà eliminato
