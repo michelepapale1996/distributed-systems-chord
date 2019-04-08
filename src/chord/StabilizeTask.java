@@ -145,6 +145,9 @@ public class StabilizeTask extends TimerTask {
             this.fixSuccessorList();
             this.fixItems();
             if (!this.owner.isSimpleLookupAlgorithm()) this.fixFingers();
+
+        } catch(RemoteException e){
+
         } catch (Exception ex) {
             System.out.println("Error : " + ex);
         }
