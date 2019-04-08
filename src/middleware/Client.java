@@ -18,7 +18,7 @@ public class Client {
     Scanner scanner = new Scanner(System.in);
 
     public static void main(String args[]) {
-        Debugger.setDebug(true);
+        Debugger.setDebug(false);
         Client client = new Client();
         try {
             client.run();
@@ -76,12 +76,10 @@ public class Client {
         return myNode;
     }
 
-    //todo
     private Node connectToRing(){
         //System.out.println("Insert the IP address of a node contained in the ring: ");
         //String IpAddressKnownNode = scanner.nextLine();
-        //String IpAddressKnownNode = "127.0.0.1";
-        String IpAddressKnownNode = "192.168.1.109";
+        String IpAddressKnownNode = "127.0.0.1";
 
         System.out.println("Insert the id of the node contained in the ring: ");
         int knownNodeId = getInt();
@@ -116,16 +114,16 @@ public class Client {
             System.out.println("2 - store an item");
             System.out.println("3 - Show node's info");
             System.out.println("4 - exit");
-            String choice = scanner.nextLine();
+            int choice = getInt();
 
             switch (choice) {
-                case "1":
+                case 1:
                     this.lookupItem(myNode);
                     break;
-                case "2" :
+                case 2 :
                     this.storeItem(myNode);
                     break;
-                case "3":
+                case 3:
                     this.infoCurrentNode(myNode);
                     break;
                 default:
@@ -143,7 +141,7 @@ public class Client {
             NodeInterface owner = myNode.lookUp(itemId);
             System.out.println(owner.print() + " has the item with id: " + itemId);
         }catch (NoSuchElementException e){
-            System.out.println("Given item does not exists.");
+            System.out.println("Given item does not exist.");
         }
     }
 
