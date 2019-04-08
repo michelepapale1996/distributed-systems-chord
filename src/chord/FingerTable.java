@@ -48,7 +48,7 @@ public class FingerTable {
     }
 
     //calculate id + 2^i
-    private int getPosition(int i){
+    public int getPosition(int i){
         int m = (int) Math.pow(2,this.size);
         i = (int) Math.pow(2,i);
         i = i + this.owner.getId();
@@ -59,5 +59,9 @@ public class FingerTable {
     //given the key it returns the node of that position.
     public NodeInterface getNode(int key){
         return this.map.get(key);
+    }
+
+    public NodeInterface getOwner(){
+        return this.owner;
     }
 }
