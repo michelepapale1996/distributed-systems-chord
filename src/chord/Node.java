@@ -79,7 +79,7 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
     }
 
     public void leave(){
-        System.out.println(this + "crashed");
+        Debugger.print(this + "crashed");
         this.handler.stopTimer();
         this.handler = null;
         this.successor = null;

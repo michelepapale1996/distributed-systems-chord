@@ -70,7 +70,7 @@ public class StabilizeTask extends TimerTask {
 
     private void fixSuccessorList() throws RemoteException{
         if (this.owner.getSuccessor() == this.owner) {
-            System.out.println("-Successor List : Network contains only " + this.owner);
+            Debugger.print("-SuccessorList : Network contains only " + this.owner);
             return;
         }
         int size = this.owner.getNum_bits_identifiers();
@@ -101,8 +101,8 @@ public class StabilizeTask extends TimerTask {
 
                 this.owner.setSuccessorList(newSuccessorList);
                 this.owner.setSuccessoreItems(newSuccesorItems);
-                System.out.println("La successor list di " + this.owner + " è: " + newSuccessorList);
-                System.out.println("La successor Items di " + this.owner + " è: " + newSuccesorItems);
+                Debugger.print("La successor list di " + this.owner + " è: " + newSuccessorList);
+                Debugger.print("La successor Items di " + this.owner + " è: " + newSuccesorItems);
                 newSuccessor = newSuccessorList.get(0);
                 this.owner.setSuccessor(newSuccessor);
                 foundLivingSuccessor = true;
@@ -120,17 +120,14 @@ public class StabilizeTask extends TimerTask {
     }
 
     private void fixSuccessorItems(ArrayList<Item> items) throws RemoteException {
-        System.out.println("-----------fixSuccessorItems");
-        System.out.println("items of the failed node were : " + items);
+        Debugger.print("A node has failed\nItems of the failed node were : " + items);
 
         //store the pending items
-        System.out.println("-------------- " + items);
         //store Items in first alive node
         for (Item item : items) {
             //System.out.println("------ i'm storing " + item.getKey() + " in " + this.owner.findSuccessor(item.getKey(), true));
             this.owner.storeItem(item);
         }
-        System.out.println("-----------fine fixSuccessorItems");
     }
 
     public void run() {
