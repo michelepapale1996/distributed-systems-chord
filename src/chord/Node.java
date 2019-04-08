@@ -5,8 +5,8 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.NoSuchElementException;
+import java.util.*;
+
 
 public class Node extends UnicastRemoteObject implements NodeInterface, Serializable {
     private Ip ip;
@@ -19,6 +19,8 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
     private FingerTable fingerTable;
     private ArrayList<Item> items;
     private Handler handler;
+    private ArrayList<NodeInterface> successorList;
+    private LinkedHashMap<Integer, ArrayList<Item>> successoreItems;
 
     public Node(int num_bits_identifiers, Boolean simpleKeyLocation) throws RemoteException{
         this.handler = new Handler(this);
@@ -28,6 +30,8 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         this.ip = new Ip();
         this.items = new ArrayList<>();
         this.simpleLookupAlgorithm = simpleKeyLocation;
+        this.successorList = new ArrayList<>(); //at the creatz2qion of the node is initialized an immediate successor list
+        this.successoreItems = new LinkedHashMap<>();
         try {
             this.id = Sha1.getSha1(this.ip.getAddress(), Integer.toString(this.num_bits_identifiers));
         } catch (NoSuchAlgorithmException e){
@@ -65,17 +69,33 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         NodeLogic.join(node, this);
     }
 
-    public ArrayList<Item> getItems() {
-        return items;
-    }
-
     public void addItem(Item item){
         Debugger.print(this.print() + " now has the item" + item);
         this.items.add(item);
     }
 
     public NodeInterface getSuccessor() {
-        return successor;
+        return this.successor;
+    }
+
+    public void leave(){
+        System.out.println(this + "crashed");
+        this.handler.stopTimer();
+        this.handler = null;
+        this.successor = null;
+        this.predecessor = null;
+        this.ip = null;
+        this.items = null;
+        this.successorList = null;
+        this.successoreItems = null;
+    }
+
+    public ArrayList<NodeInterface> getSuccessorList() {
+        return successorList;
+    }
+
+    public LinkedHashMap<Integer, ArrayList<Item>> getSuccessoreItems() {
+        return successoreItems;
     }
 
     public NodeInterface getPredecessor() {
@@ -96,6 +116,11 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
 
     public Ip getIp(){
         return this.ip;
+    }
+
+
+    public ArrayList<Item> getItems() {
+        return items;
     }
 
     public boolean hasItem(int key) {
@@ -133,6 +158,14 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
 
     @Override
     public String print(){return "[Node with id: " + this.id + "]";}
+
+    public void setSuccessorList(ArrayList<NodeInterface> successorList) {
+        this.successorList = successorList;
+    }
+
+    public void setSuccessoreItems(LinkedHashMap<Integer, ArrayList<Item>> successoreItems) {
+        this.successoreItems = successoreItems;
+    }
 
     //TODO: poi verrà eliminato
     public void setId(int id) {

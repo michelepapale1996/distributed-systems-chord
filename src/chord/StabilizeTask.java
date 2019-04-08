@@ -4,6 +4,7 @@ import Test.Debugger;
 
 import java.rmi.RemoteException;
 import java.util.TimerTask;
+import java.util.*;
 
 public class StabilizeTask extends TimerTask {
     private Node owner;
@@ -18,17 +19,16 @@ public class StabilizeTask extends TimerTask {
         NodeInterface new_successor = this.owner.getSuccessor().getPredecessor();
         NodeInterface old_successor = this.owner.getSuccessor();
         //if the new_successor is between me and my successor -> he becomes my successor
-        if(new_successor != null){
+        if(new_successor != null && new_successor.getIp() != null){
             if(NodeLogic.isBetween(this.owner.getId(), new_successor.getId(), old_successor.getId(), this.owner.getNum_bits_identifiers())) {
                 Debugger.print("-Stabilization: " + this.owner.print() + "'s successor is " + new_successor.print());
                 this.owner.setSuccessor(new_successor);
             }
 
             if(this.owner.getId() == old_successor.getId()) this.owner.setSuccessor(new_successor);
+            this.notify(this.owner.getSuccessor(), this.owner);
         }
-        this.notify(this.owner.getSuccessor(), this.owner);
     }
-
     //predecessor thinks it might be predecessor of node
     private void notify(NodeInterface node, NodeInterface predecessor) throws RemoteException {
         if(node.getPredecessor() == null || NodeLogic.isBetween(node.getPredecessor().getId(), predecessor.getId(), node.getId(), node.getNum_bits_identifiers())){
@@ -60,19 +60,86 @@ public class StabilizeTask extends TimerTask {
             if (successor.getId() < this.owner.getId()){
                 new_value = new_value + size;
             }
-            if (new_value < old_value){
+            if (new_value < old_value || old_value == this.owner.getId()){
                 this.owner.setEntryFingerTable(position,successor);
             }
             Debugger.print("update finger table for " + this.owner.toString() + " with couple < " + position + ", " + successor.toString() + " >");
         }
+        System.out.println(this.owner.getFingerTable());
+    }
+
+    private void fixSuccessorList() throws RemoteException{
+        if (this.owner.getSuccessor() == this.owner) {
+            System.out.println("-Successor List : Network contains only " + this.owner);
+            return;
+        }
+        int size = this.owner.getNum_bits_identifiers();
+        NodeInterface newSuccessor = null;
+        boolean foundLivingSuccessor = false;
+        int i = 0;
+        NodeInterface successor = this.owner.getSuccessor();
+        ArrayList<Item> itemsToFix = new ArrayList<>();
+        while(!foundLivingSuccessor){
+            if(successor.getIp() != null){
+                ArrayList<NodeInterface> newSuccessorList = new ArrayList<>();
+                LinkedHashMap<Integer, ArrayList<Item>> newSuccesorItems = new LinkedHashMap<>();
+
+                newSuccessorList.add(0, successor);
+
+                for (NodeInterface n :successor.getSuccessorList()) {
+                    if (n.getId() != this.owner.getId() && n.getIp() != null) {
+                        newSuccessorList.add(n);
+                    }
+                }
+                if (newSuccessorList.size() > size){
+                    newSuccessorList.remove(size);
+                }
+
+                for (NodeInterface node :newSuccessorList ) {
+                    newSuccesorItems.put(node.getId(), node.getItems());
+                }
+
+                this.owner.setSuccessorList(newSuccessorList);
+                this.owner.setSuccessoreItems(newSuccesorItems);
+                System.out.println("La successor list di " + this.owner + " è: " + newSuccessorList);
+                System.out.println("La successor Items di " + this.owner + " è: " + newSuccesorItems);
+                newSuccessor = newSuccessorList.get(0);
+                this.owner.setSuccessor(newSuccessor);
+                foundLivingSuccessor = true;
+            }else{
+                for (Item item: (ArrayList<Item>) this.owner.getSuccessoreItems().values().toArray()[i]) {
+                    itemsToFix.add(item);
+                }
+                i++;
+                successor = this.owner.getSuccessorList().get(i);
+            }
+        }
+        if (itemsToFix.size() != 0) {
+            this.fixSuccessorItems(itemsToFix);
+        }
+    }
+
+    private void fixSuccessorItems(ArrayList<Item> items) throws RemoteException {
+        System.out.println("-----------fixSuccessorItems");
+        System.out.println("items of the failed node were : " + items);
+
+        //store the pending items
+        System.out.println("-------------- " + items);
+        //store Items in first alive node
+        for (Item item : items) {
+            //System.out.println("------ i'm storing " + item.getKey() + " in " + this.owner.findSuccessor(item.getKey(), true));
+            this.owner.storeItem(item);
+        }
+        System.out.println("-----------fine fixSuccessorItems");
     }
 
     public void run() {
         try {
             this.stabilize();
+            this.fixSuccessorList();
             if (!this.owner.isSimpleLookupAlgorithm()) this.fixFingers();
         } catch (Exception ex) {
-            System.out.println(ex);
+            System.out.println("Error : " + ex);
         }
     }
 }
