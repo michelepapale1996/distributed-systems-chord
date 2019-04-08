@@ -80,7 +80,7 @@ public class Client {
     private Node connectToRing(){
         //System.out.println("Insert the IP address of a node contained in the ring: ");
         //String IpAddressKnownNode = scanner.nextLine();
-        String IpAddressKnownNode = "127.0.0.1";
+        String IpAddressKnownNode = "192.168.1.109";
 
         System.out.println("Insert the id of the node contained in the ring: ");
         int knownNodeId = getInt();
