@@ -7,6 +7,7 @@ import chord.NodeInterface;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -77,9 +78,9 @@ public class Client {
     }
 
     private Node connectToRing(){
-        //System.out.println("Insert the IP address of a node contained in the ring: ");
-        //String IpAddressKnownNode = scanner.nextLine();
-        String IpAddressKnownNode = "127.0.0.1";
+        System.out.println("Insert the IP address of a node contained in the ring: ");
+        String IpAddressKnownNode = scanner.nextLine();
+        //String IpAddressKnownNode = "127.0.0.1";
 
         System.out.println("Insert the id of the node contained in the ring: ");
         int knownNodeId = getInt();
@@ -96,6 +97,13 @@ public class Client {
             NodeInterface knownNode = (NodeInterface) registry.lookup(String.valueOf(knownNodeId));
             System.out.println("Connected to ring containing node " + IpAddressKnownNode + " and nodeId " + knownNodeId);
 
+            //create the registry
+            Registry registry1 = LocateRegistry.createRegistry(1099);
+            //bind the node on the registry
+            registry1.bind(String.valueOf(myNode.getId()), myNode);
+            InetAddress IpAddress = InetAddress.getLocalHost();
+            System.out.println("IpAddress of current node: " + IpAddress);
+
             myNode.join(knownNode);
             return myNode;
         } catch (NotBoundException e) {
@@ -105,6 +113,10 @@ public class Client {
         } catch (IllegalArgumentException e){
             //Node cannot join the ring because there is already a node with his id.
             System.out.println(e);
+        } catch (AlreadyBoundException e) {
+            e.printStackTrace();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
         }
         return myNode;
     }
