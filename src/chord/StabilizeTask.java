@@ -26,7 +26,10 @@ public class StabilizeTask extends TimerTask {
                     this.owner.setSuccessor(new_successor);
                 }
 
-                if (this.owner.getId() == old_successor.getId()) this.owner.setSuccessor(new_successor);
+                if (this.owner.getId() == old_successor.getId()){
+                    Debugger.print("-Stabilization: " + this.owner.print() + "'s successor is " + new_successor.print());
+                    this.owner.setSuccessor(new_successor);
+                }
             }
         }catch(RemoteException | NullPointerException e){
 
@@ -99,7 +102,7 @@ public class StabilizeTask extends TimerTask {
         while(!foundLivingSuccessor){
             try{
                 //used only to spawn the NullPointerException
-                successor.getInstance().toString();
+                successor.getInstance().getClass();
 
                 ArrayList<NodeInterface> newSuccessorList = new ArrayList<>();
                 LinkedHashMap<Integer, ArrayList<Item>> newSuccesorItems = new LinkedHashMap<>();
@@ -125,8 +128,11 @@ public class StabilizeTask extends TimerTask {
                 this.owner.setSuccessor(newSuccessor);
                 foundLivingSuccessor = true;
             }catch (NullPointerException | RemoteException e){
-                for (Item item: (ArrayList<Item>) this.owner.getSuccessorItems().values().toArray()[i]) {
-                    itemsToFix.add(item);
+                System.out.println(e);
+                if(i < this.owner.getSuccessorItems().values().toArray().length){
+                    for (Item item: (ArrayList<Item>) this.owner.getSuccessorItems().values().toArray()[i]) {
+                        itemsToFix.add(item);
+                    }
                 }
                 i++;
                 //check if there is another successor

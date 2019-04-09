@@ -11,7 +11,7 @@ import java.util.*;
 
 
 public class Node extends UnicastRemoteObject implements NodeInterface, Serializable {
-    private Object instance;
+    private Item instance;
     private boolean simpleLookupAlgorithm;
     private int num_bits_identifiers;
 
@@ -29,7 +29,7 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         this.successor = null;
         this.predecessor = null;
         this.num_bits_identifiers = num_bits_identifiers;
-        this.instance = new Object();
+        this.instance = new Item("",1);
         this.items = new ArrayList<>();
         this.simpleLookupAlgorithm = simpleKeyLocation;
         this.successorList = new ArrayList<>(); //at the creatz2qion of the node is initialized an immediate successor list
