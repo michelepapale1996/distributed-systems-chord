@@ -51,7 +51,7 @@ public class NodeLogic {
                 incomingNode.setSuccessor(successor);
                 Debugger.print(incomingNode.print() + " joined and successor is: " + incomingNode.getSuccessor().print());
             }else{
-                throw new IllegalArgumentException("node cannot join the ring because there is already a node with his id.");
+                throw new IllegalArgumentException("Node cannot join the ring because there is already a node with his id.");
             }
         }
 

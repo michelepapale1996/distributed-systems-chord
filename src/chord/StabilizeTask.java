@@ -99,7 +99,7 @@ public class StabilizeTask extends TimerTask {
         while(!foundLivingSuccessor){
             try{
                 //used only to spawn the NullPointerException
-                successor.getIp().toString();
+                successor.getInstance().toString();
 
                 ArrayList<NodeInterface> newSuccessorList = new ArrayList<>();
                 LinkedHashMap<Integer, ArrayList<Item>> newSuccesorItems = new LinkedHashMap<>();

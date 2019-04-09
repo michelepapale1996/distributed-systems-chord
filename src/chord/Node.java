@@ -70,7 +70,7 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
     }
 
     //join a Chord ring containing node
-    //throw exception if the ring of node already contains a node with the id of who wants to join
+    //throw IllegalArgumentException if the ring of node already contains a node with the id of who wants to join
     public void join(NodeInterface node) throws RemoteException, IllegalArgumentException{
         NodeLogic.join(node, this);
     }

@@ -99,9 +99,12 @@ public class Client {
             myNode.join(knownNode);
             return myNode;
         } catch (NotBoundException e) {
-            e.printStackTrace();
+            System.out.println("There no exist a Chord ring containing the node you typed.");
         } catch (RemoteException e) {
             e.printStackTrace();
+        } catch (IllegalArgumentException e){
+            //Node cannot join the ring because there is already a node with his id.
+            System.out.println(e);
         }
         return myNode;
     }
