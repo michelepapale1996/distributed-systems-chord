@@ -30,24 +30,27 @@ public class Client {
     }
 
     void run() throws RemoteException{
-        System.out.println("Welcome to Chord protocol.\nWhat do you want to do?");
-        System.out.println("1 - Create a new Chord ring");
-        System.out.println("2 - Connect to a Chord ring");
-        System.out.println("0 - Exit from the application");
-        String command = scanner.nextLine();
+        boolean flag = true;
+        while(flag){
+            System.out.println("Welcome to Chord protocol.\nWhat do you want to do?");
+            System.out.println("1 - Create a new Chord ring");
+            System.out.println("2 - Connect to a Chord ring");
+            System.out.println("0 - Exit from the application");
+            String command = scanner.nextLine();
 
-        Node myNode;
-        switch (command) {
-            case "1":
-                myNode = this.createNewRing();
-                this.mainMenu(myNode);
-                break;
-            case "2" :
-                myNode = this.connectToRing();
-                this.mainMenu(myNode);
-                break;
-            default:
-                break;
+            Node myNode;
+            switch (command) {
+                case "1":
+                    myNode = this.createNewRing();
+                    this.mainMenu(myNode);
+                    break;
+                case "2" :
+                    myNode = this.connectToRing();
+                    this.mainMenu(myNode);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -78,9 +81,9 @@ public class Client {
     }
 
     private Node connectToRing(){
-        System.out.println("Insert the IP address of a node contained in the ring: ");
-        String IpAddressKnownNode = scanner.nextLine();
-        //String IpAddressKnownNode = "127.0.0.1";
+        //System.out.println("Insert the IP address of a node contained in the ring: ");
+        //String IpAddressKnownNode = scanner.nextLine();
+        String IpAddressKnownNode = "127.0.0.1";
 
         System.out.println("Insert the id of the node contained in the ring: ");
         int knownNodeId = getInt();
@@ -98,9 +101,9 @@ public class Client {
             System.out.println("Connected to ring containing node " + IpAddressKnownNode + " and nodeId " + knownNodeId);
 
             //create the registry
-            Registry registry1 = LocateRegistry.createRegistry(1099);
+            //Registry registry1 = LocateRegistry.createRegistry(1099);
             //bind the node on the registry
-            registry1.bind(String.valueOf(myNode.getId()), myNode);
+            //registry1.bind(String.valueOf(myNode.getId()), myNode);
             InetAddress IpAddress = InetAddress.getLocalHost();
             System.out.println("IpAddress of current node: " + IpAddress);
 
@@ -113,16 +116,16 @@ public class Client {
         } catch (IllegalArgumentException e){
             //Node cannot join the ring because there is already a node with his id.
             System.out.println(e);
-        } catch (AlreadyBoundException e) {
+        }/* catch (AlreadyBoundException e) {
             e.printStackTrace();
-        } catch (UnknownHostException e) {
+        }*/ catch (UnknownHostException e) {
             e.printStackTrace();
         }
         return myNode;
     }
 
     private void mainMenu(Node myNode) throws RemoteException{
-        int flag = 0;
+        boolean flag = true;
         do{
             System.out.println("What do you want to do?");
             System.out.println("1 - lookup item");
@@ -142,11 +145,11 @@ public class Client {
                     this.infoCurrentNode(myNode);
                     break;
                 default:
-                    flag=1;
+                    flag = false;
                     System.out.println("Exiting from the application...");
                     break;
             }
-        }while(flag==0);
+        }while(flag);
     }
 
     private void lookupItem(Node myNode) throws RemoteException {
