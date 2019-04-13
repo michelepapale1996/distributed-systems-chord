@@ -40,15 +40,19 @@ public class Client {
 
             Node myNode;
             switch (command) {
+                case 0:
+                    System.exit(0);
                 case 1:
                     myNode = this.createNewRing();
                     this.mainMenu(myNode);
                     break;
                 case 2:
-                    myNode = this.connectToRing();
-                    this.mainMenu(myNode);
-                    break;
-                default:
+                    try{
+                        myNode = this.connectToRing();
+                        this.mainMenu(myNode);
+                    }catch (NullPointerException e){
+
+                    }
                     break;
             }
         }
@@ -57,7 +61,7 @@ public class Client {
     private Node createNewRing(){
         System.out.println("What is the max num of bits of the identifiers of the ring?");
         int max_size = getInt();
-        System.out.println("What is the id of the node?");
+        System.out.println("What is the id of your node?");
         int nodeId = checkRange(0, (int) Math.pow(2, max_size) - 1);
 
         Node myNode = null;
@@ -66,8 +70,8 @@ public class Client {
             myNode.setId(nodeId);
             myNode.create();
 
-            //create the registry
-            Registry registry = LocateRegistry.createRegistry(1099);
+            //create the registry at port "nodeId"
+            Registry registry = LocateRegistry.createRegistry(nodeId);
             //bind the node on the registry
             registry.bind(String.valueOf(myNode.getId()), myNode);
             InetAddress IpAddress = InetAddress.getLocalHost();
@@ -85,25 +89,26 @@ public class Client {
         //String IpAddressKnownNode = scanner.nextLine();
         String IpAddressKnownNode = "127.0.0.1";
 
-        System.out.println("Insert the id of the node contained in the ring: ");
+        System.out.println("Insert the id of the known node contained in the ring: ");
         int knownNodeId = getInt();
 
-        System.out.println("Insert the id of the node: ");
+        System.out.println("Insert the id of your node: ");
         int nodeId = getInt();
 
         Node myNode = null;
         try {
-            Registry registry = LocateRegistry.getRegistry(IpAddressKnownNode, 1099);
+            //registry is at port "knownNodeId"
+            Registry registry = LocateRegistry.getRegistry(IpAddressKnownNode, knownNodeId);
             myNode = new Node(3, true);
             myNode.setId(nodeId);
 
             NodeInterface knownNode = (NodeInterface) registry.lookup(String.valueOf(knownNodeId));
             System.out.println("Connected to ring containing node " + IpAddressKnownNode + " and nodeId " + knownNodeId);
 
-            //create the registry
-            //Registry registry1 = LocateRegistry.createRegistry(1099);
+            //create the registry at port "nodeId"
+            Registry registry1 = LocateRegistry.createRegistry(nodeId);
             //bind the node on the registry
-            //registry1.bind(String.valueOf(myNode.getId()), myNode);
+            registry1.bind(String.valueOf(myNode.getId()), myNode);
             InetAddress IpAddress = InetAddress.getLocalHost();
             System.out.println("IpAddress of current node: " + IpAddress);
 
@@ -111,14 +116,15 @@ public class Client {
             return myNode;
         } catch (NotBoundException e) {
             System.out.println("There no exist a Chord ring containing the node you typed.");
+            throw new NullPointerException();
         } catch (RemoteException e) {
             e.printStackTrace();
         } catch (IllegalArgumentException e){
             //Node cannot join the ring because there is already a node with his id.
             System.out.println(e);
-        }/* catch (AlreadyBoundException e) {
+        } catch (AlreadyBoundException e) {
             e.printStackTrace();
-        }*/ catch (UnknownHostException e) {
+        } catch (UnknownHostException e) {
             e.printStackTrace();
         }
         return myNode;
