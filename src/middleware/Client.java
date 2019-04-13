@@ -36,15 +36,15 @@ public class Client {
             System.out.println("1 - Create a new Chord ring");
             System.out.println("2 - Connect to a Chord ring");
             System.out.println("0 - Exit from the application");
-            String command = scanner.nextLine();
+            int command = checkRange(0,2);
 
             Node myNode;
             switch (command) {
-                case "1":
+                case 1:
                     myNode = this.createNewRing();
                     this.mainMenu(myNode);
                     break;
-                case "2" :
+                case 2:
                     myNode = this.connectToRing();
                     this.mainMenu(myNode);
                     break;
@@ -58,7 +58,7 @@ public class Client {
         System.out.println("What is the max num of bits of the identifiers of the ring?");
         int max_size = getInt();
         System.out.println("What is the id of the node?");
-        int nodeId = getInt();
+        int nodeId = checkRange(0, (int) Math.pow(2, max_size) - 1);
 
         Node myNode = null;
         try {
@@ -132,7 +132,7 @@ public class Client {
             System.out.println("2 - store an item");
             System.out.println("3 - Show node's info");
             System.out.println("4 - exit");
-            int choice = getInt();
+            int choice = checkRange(1,4);
 
             switch (choice) {
                 case 1:
@@ -147,6 +147,7 @@ public class Client {
                 default:
                     flag = false;
                     System.out.println("Exiting from the application...");
+                    System.exit(0);
                     break;
             }
         }while(flag);
@@ -187,6 +188,25 @@ public class Client {
             System.out.println("- Predecessor: null");
         }
         System.out.println("- Items of the node: " + myNode.getItems() );
+    }
+
+    private int checkRange(int lower, int upper){
+        boolean isInt = false;
+        int inputToInt = -1;
+        while(!isInt){
+            String input = scanner.nextLine();
+            try{
+                inputToInt = Integer.parseInt(input);
+                if(inputToInt >= lower && inputToInt <= upper){
+                    isInt = true;
+                }else{
+                    System.out.println("The input must be between " + lower + " and " + upper + ". Try again:");
+                }
+            }catch (NumberFormatException e){
+                System.out.println("Given input is not an integer. Try again:");
+            }
+        }
+        return inputToInt;
     }
 
     private int getInt(){
