@@ -71,7 +71,7 @@ public class Client {
             myNode.create();
 
             //create the registry at port "nodeId"
-            Registry registry = LocateRegistry.createRegistry(nodeId);
+            Registry registry = LocateRegistry.createRegistry(nodeId + 2000);
             //bind the node on the registry
             registry.bind(String.valueOf(myNode.getId()), myNode);
             InetAddress IpAddress = InetAddress.getLocalHost();
@@ -98,7 +98,7 @@ public class Client {
         Node myNode = null;
         try {
             //registry is at port "knownNodeId"
-            Registry registry = LocateRegistry.getRegistry(IpAddressKnownNode, knownNodeId);
+            Registry registry = LocateRegistry.getRegistry(IpAddressKnownNode, knownNodeId + 2000);
             myNode = new Node(3, true);
             myNode.setId(nodeId);
 
@@ -106,7 +106,7 @@ public class Client {
             System.out.println("Connected to ring containing node " + IpAddressKnownNode + " and nodeId " + knownNodeId);
 
             //create the registry at port "nodeId"
-            Registry registry1 = LocateRegistry.createRegistry(nodeId);
+            Registry registry1 = LocateRegistry.createRegistry(nodeId + 2000);
             //bind the node on the registry
             registry1.bind(String.valueOf(myNode.getId()), myNode);
             InetAddress IpAddress = InetAddress.getLocalHost();
