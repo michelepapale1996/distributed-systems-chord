@@ -32,25 +32,28 @@ public class Test {
             Item item1 = new Item("nodo1", 8);
             item1.setKey(1);
             node0.storeItem(item1);
+
             Thread.sleep(3000);
 
-            Item item3 = new Item("nodo1", 8);
-            item3.setKey(3);
-            node0.storeItem(item3);
-            Thread.sleep(3000);
+//            Item item3 = new Item("nodo1", 8);
+//            item3.setKey(3);
+ //           node0.storeItem(item3);
+//            Thread.sleep(3000);
 
-            Item item4 = new Item("nodo1", 8);
-            item1.setKey(4);
-            node0.storeItem(item4);
-            Thread.sleep(3000);
+//            Item item4 = new Item("nodo1", 8);
+//            item1.setKey(4);
+//            node0.storeItem(item4);
+//            Thread.sleep(3000);
 
 
             node2.join(node0);
-            Thread.sleep(2800);
+            Thread.sleep(3000);
 
-            node3.join(node2);
-            Thread.sleep(2800);
+            node3.join(node0);
+            Thread.sleep(3000);
 
+            System.out.println("---------------Node 2 exit from the ring");
+            node2.exitFromRing();
 
 
 //            ArrayList<FingerTable> fingerTables = new ArrayList<>();

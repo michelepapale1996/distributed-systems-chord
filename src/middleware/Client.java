@@ -76,8 +76,6 @@ public class Client {
             registry.bind(String.valueOf(myNode.getId()), myNode);
             InetAddress IpAddress = InetAddress.getLocalHost();
             System.out.println("IpAddress of current node: " + IpAddress);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -87,7 +85,7 @@ public class Client {
     private Node connectToRing(){
         //System.out.println("Insert the IP address of a node contained in the ring: ");
         //String IpAddressKnownNode = scanner.nextLine();
-        String IpAddressKnownNode = "127.0.0.1";
+        String IpAddressKnownNode = "192.168.1.81";
 
         System.out.println("Insert the id of the known node contained in the ring: ");
         int knownNodeId = getInt();
@@ -152,6 +150,7 @@ public class Client {
                     break;
                 default:
                     flag = false;
+                    this.exit(myNode);
                     System.out.println("Exiting from the application...");
                     System.exit(0);
                     break;
@@ -228,5 +227,9 @@ public class Client {
             }
         }
         return inputToInt;
+    }
+
+    private void exit(Node mynode) throws RemoteException {
+        mynode.exitFromRing();
     }
 }

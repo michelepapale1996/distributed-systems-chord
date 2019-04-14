@@ -164,7 +164,7 @@ public class StabilizeTask extends TimerTask {
 
     public void fixItems(){
         try{
-            for (Item item : this.owner.getItems()) {
+            for (Item item : new ArrayList<>(this.owner.getItems())) {
                 if (this.owner.findSuccessor(item.getKey(),true).getId() != this.owner.getId()){
                     this.owner.getItems().remove(item);
                     this.owner.storeItem(item);

@@ -90,6 +90,10 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         this.instance = null;
     }
 
+    public void exitFromRing() throws RemoteException {
+        NodeLogic.exitFromRing(this);
+    }
+
     public ArrayList<NodeInterface> getSuccessorList() {
         return successorList;
     }
@@ -118,6 +122,9 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         return this.instance;
     }
 
+    public void setInstance(Item instance) {
+        this.instance = instance;
+    }
 
     public ArrayList<Item> getItems() {
         return items;
