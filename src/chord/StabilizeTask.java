@@ -22,12 +22,12 @@ public class StabilizeTask extends TimerTask {
             //if the new_successor is between me and my successor -> he becomes my successor
             if (new_successor != null && new_successor.getInstance() != null) {
                 if (NodeLogic.isBetween(this.owner.getId(), new_successor.getId(), old_successor.getId(), this.owner.getNum_bits_identifiers())) {
-                    Debugger.print("-Stabilization: " + this.owner.print() + "'s successor is " + new_successor.print());
+                    Debugger.print("-Stabilization for [" + this.owner.print() + "]: " + this.owner.print() + "'s successor is " + new_successor.print());
                     this.owner.setSuccessor(new_successor);
                 }
 
                 if (this.owner.getId() == old_successor.getId()){
-                    Debugger.print("-Stabilization: " + this.owner.print() + "'s successor is " + new_successor.print());
+                    Debugger.print("-Stabilization for [" + this.owner.print() + "]: " + this.owner.print() + "'s successor is " + new_successor.print());
                     this.owner.setSuccessor(new_successor);
                 }
             }
@@ -39,16 +39,20 @@ public class StabilizeTask extends TimerTask {
     //predecessor thinks it might be predecessor of node
     private void notify(NodeInterface node, NodeInterface predecessor){
         try{
-            predecessor.getInstance().getClass();
+            node.getPredecessor().getInstance().getClass();
             if(node.getPredecessor() == null || NodeLogic.isBetween(node.getPredecessor().getId(), predecessor.getId(), node.getId(), node.getNum_bits_identifiers())){
-                Debugger.print("-Notify: " + node.print() + "'s predecessor is " + predecessor.print());
+                Debugger.print("-Notify for [" + this.owner.print() + "]: " + node.print() + "'s predecessor is " + predecessor.print());
                 node.setPredecessor(predecessor);
             }
 
-            if(node.getId() == node.getPredecessor().getId()) node.setPredecessor(predecessor);
+            if(node.getId() == node.getPredecessor().getId()){
+                Debugger.print("-Notify for [" + this.owner.print() + "]: " + node.print() + "'s predecessor is " + predecessor.print());
+                node.setPredecessor(predecessor);
+            }
         }catch(RemoteException | NullPointerException e){
             //if there is a failure -> node.getPredecessor().getId() will throw an exception -> set the predecessor
             try {
+                Debugger.print("-Notify for [" + this.owner.print() + "]: " + node.print() + "'s predecessor is " + predecessor.print());
                 node.setPredecessor(predecessor);
             } catch (RemoteException e1) {
             }
@@ -89,9 +93,9 @@ public class StabilizeTask extends TimerTask {
         }
     }
 
-    private void fixSuccessorList() throws RemoteException {
+    private void fixSuccessorList(){
         if (this.owner.getSuccessor() == this.owner) {
-            Debugger.print("-SuccessorList: Network contains only " + this.owner);
+            Debugger.print("-SuccessorList for [" + this.owner.print() + "]: Network contains only " + this.owner);
             return;
         }
         int size = this.owner.getNum_bits_identifiers();
@@ -125,8 +129,8 @@ public class StabilizeTask extends TimerTask {
 
                 this.owner.setSuccessorList(newSuccessorList);
                 this.owner.setSuccessorItems(newSuccessorItems);
-                Debugger.print("-SuccessorList: successorList di " + this.owner + " è: " + newSuccessorList);
-                Debugger.print("-SuccessorList: successorItems di " + this.owner + " è: " + newSuccessorItems);
+                Debugger.print("-SuccessorList for [" + this.owner.print() + "]: successorList of " + this.owner + " is: " + newSuccessorList);
+                Debugger.print("-SuccessorList for [" + this.owner.print() + "]: successorItems of " + this.owner + " is: " + newSuccessorItems);
                 newSuccessor = newSuccessorList.get(0);
                 this.owner.setSuccessor(newSuccessor);
                 foundLivingSuccessor = true;
@@ -137,11 +141,9 @@ public class StabilizeTask extends TimerTask {
                     }
                 }
                 i++;
-                //System.out.println("--------------------" + i + " (" + this.owner.print() + ")");
                 //check if there is another successor
                 if(i < this.owner.getSuccessorList().size()){
                     successor = this.owner.getSuccessorList().get(i);
-                    if (this.owner.getSuccessorList().get(i).getInstance() != null)foundLivingSuccessor = true;
                 }else{
                     this.owner.setSuccessor(this.owner);
                     foundLivingSuccessor = true;
@@ -155,7 +157,7 @@ public class StabilizeTask extends TimerTask {
 
     private void fixSuccessorItems(ArrayList<Item> items) {
         try {
-            Debugger.print("-SuccessorItems: A node has failed\nItems of the failed node were : " + items);
+            Debugger.print("-SuccessorItems for [" + this.owner.print() + "]: A node has failed\nItems of the failed node were : " + items);
             //store Items in first alive node
             for (Item item : items) {
                 this.owner.storeItem(item);
@@ -172,7 +174,7 @@ public class StabilizeTask extends TimerTask {
                 if (this.owner.findSuccessor(item.getKey(),true).getId() != this.owner.getId()){
                     this.owner.getItems().remove(item);
                     this.owner.storeItem(item);
-                    Debugger.print("-FixItems: " + item + " moved FROM " + this.owner + " TO " + this.owner.findSuccessor(item.getKey(), true));
+                    Debugger.print("-FixItems for [" + this.owner.print() + "]: " + item + " moved FROM " + this.owner + " TO " + this.owner.findSuccessor(item.getKey(), true));
                 }
             }
         }catch(RemoteException e){
@@ -182,11 +184,7 @@ public class StabilizeTask extends TimerTask {
 
     public void run() {
         this.stabilize();
-        try {
-            this.fixSuccessorList();
-        } catch (RemoteException e) {
-            //e.printStackTrace();
-        }
+        this.fixSuccessorList();
         this.fixItems();
         if (!this.owner.isSimpleLookupAlgorithm()) this.fixFingers();
     }
