@@ -10,7 +10,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 
-public class Node extends UnicastRemoteObject implements NodeInterface, Serializable {
+public class Node extends UnicastRemoteObject implements NodeInterface, Serializable{
     private Item instance;
     private boolean simpleLookupAlgorithm;
     private int num_bits_identifiers;
@@ -54,7 +54,6 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
 
     //key must the hash of the key of the item, in module 2^N
     //boolean linear define if the findSuccessor is made in linear or logarithmic time
-    @Override
     public NodeInterface findSuccessor(int key, Boolean linear) throws RemoteException{
         return NodeLogic.findSuccessor(key, linear, this);
     }
@@ -75,15 +74,6 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         NodeLogic.join(node, this);
     }
 
-    public void addItem(Item item){
-        Debugger.print("[Added item] -> " + this.print() + " now has the item " + item);
-        this.items.add(item);
-    }
-
-    public NodeInterface getSuccessor() {
-        return this.successor;
-    }
-
     public void leave(){
         Debugger.print(this + "crashed");
         this.handler.stopTimer();
@@ -92,6 +82,22 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
 
     public void exitFromRing() throws RemoteException {
         NodeLogic.exitFromRing(this);
+    }
+
+    public boolean hasItem(int key) {
+        for(Item i: this.items){
+            if(i.getKey() == key) return true;
+        }
+        return false;
+    }
+
+    public void addItem(Item item){
+        Debugger.print("[Added item] -> " + this.print() + " now has the item " + item);
+        this.items.add(item);
+    }
+
+    public NodeInterface getSuccessor() {
+        return this.successor;
     }
 
     public ArrayList<NodeInterface> getSuccessorList() {
@@ -130,13 +136,6 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         return items;
     }
 
-    public boolean hasItem(int key) {
-        for(Item i: this.items){
-            if(i.getKey() == key) return true;
-        }
-        return false;
-    }
-
     public void setSuccessor(NodeInterface successor){
         this.successor = successor;
     }
@@ -145,7 +144,6 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         return fingerTable;
     }
 
-    @Override
     public void setPredecessor(NodeInterface predecessor) {
         this.predecessor = predecessor;
     }
@@ -158,12 +156,10 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         return handler;
     }
 
-    @Override
     public String toString() {
         return "[Node with id: " + this.id + "]";
     }
 
-    @Override
     public String print(){return "[Node with id: " + this.id + "]";}
 
     public void setSuccessorList(ArrayList<NodeInterface> successorList) {
@@ -174,12 +170,11 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         this.successorItems = successorItems;
     }
 
-    //TODO: poi verrà eliminato
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public NodeInterface getNode(int key){
         return this.fingerTable.getNode(key);
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
