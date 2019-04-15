@@ -101,7 +101,6 @@ public class NodeLogic {
         for (Item i: items) {
             successor.addItem(i);
         }
-        System.out.println(successor.getItems());
         //set the successor's predecessor to leaving node predecessor
         //set the predecessor's successor to leaving node successor
         node.getSuccessor().getSuccessorList().remove(node);

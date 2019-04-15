@@ -27,33 +27,18 @@ public class Test {
             node6.setId(6);
 
             node0.create();
-            Thread.sleep(2900);
-
-            Item item1 = new Item("nodo1", 8);
-            item1.setKey(1);
-            node0.storeItem(item1);
-
-            Thread.sleep(3000);
-
-//            Item item3 = new Item("nodo1", 8);
-//            item3.setKey(3);
- //           node0.storeItem(item3);
-//            Thread.sleep(3000);
-
-//            Item item4 = new Item("nodo1", 8);
-//            item1.setKey(4);
-//            node0.storeItem(item4);
-//            Thread.sleep(3000);
-
-
             node2.join(node0);
-            Thread.sleep(3000);
-
             node3.join(node0);
-            Thread.sleep(3000);
 
+            Thread.sleep(6000);
+            info(node0);
+            info(node3);
             System.out.println("---------------Node 2 exit from the ring");
-            node2.exitFromRing();
+            //node0.exitFromRing();
+            node2.leave();
+            Thread.sleep(6000);
+            info(node0);
+            info(node3);
 
 
 //            ArrayList<FingerTable> fingerTables = new ArrayList<>();
@@ -76,5 +61,17 @@ public class Test {
         } catch(IllegalArgumentException e){
             System.out.println(e);
         }
+    }
+
+    private static void info(Node myNode) throws RemoteException {
+        System.out.println("[Info node]");
+        System.out.println("- Node id: " + myNode.print());
+        System.out.println("- Successor: " + myNode.getSuccessor().print());
+        try{
+            System.out.println("- Predecessor: " + myNode.getPredecessor().print());
+        }catch (NullPointerException e){
+            System.out.println("- Predecessor: null");
+        }
+        System.out.println("- Items of the node: " + myNode.getItems());
     }
 }

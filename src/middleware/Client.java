@@ -26,7 +26,6 @@ public class Client {
         }catch (RemoteException e){
             e.printStackTrace();
         }
-
     }
 
     void run() throws RemoteException{
@@ -85,7 +84,7 @@ public class Client {
     private Node connectToRing(){
         //System.out.println("Insert the IP address of a node contained in the ring: ");
         //String IpAddressKnownNode = scanner.nextLine();
-        String IpAddressKnownNode = "192.168.1.81";
+        String IpAddressKnownNode = "127.0.0.1";
 
         System.out.println("Insert the id of the known node contained in the ring: ");
         int knownNodeId = getInt();
@@ -192,7 +191,8 @@ public class Client {
         }catch (NullPointerException e){
             System.out.println("- Predecessor: null");
         }
-        System.out.println("- Items of the node: " + myNode.getItems() );
+        System.out.println("- SuccessorList: " + myNode.getSuccessorList().print());
+        System.out.println("- Items of the node: " + myNode.getItems());
     }
 
     private int checkRange(int lower, int upper){
