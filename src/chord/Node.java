@@ -9,7 +9,6 @@ import java.rmi.server.UnicastRemoteObject;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
-
 public class Node extends UnicastRemoteObject implements NodeInterface, Serializable{
     private Item instance;
     private boolean simpleLookupAlgorithm;
@@ -21,7 +20,7 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
     private FingerTable fingerTable;
     private ArrayList<Item> items;
     private Handler handler;
-    private ArrayList<NodeInterface> successorList;
+    private SuccessorList successorList;
     private LinkedHashMap<Integer, ArrayList<Item>> successorItems;
 
     public Node(int num_bits_identifiers, Boolean simpleKeyLocation) throws RemoteException{
@@ -32,7 +31,7 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         this.instance = new Item("",1);
         this.items = new ArrayList<>();
         this.simpleLookupAlgorithm = simpleKeyLocation;
-        this.successorList = new ArrayList<>(); //at the creatz2qion of the node is initialized an immediate successor list
+        this.successorList = new SuccessorList(); //at the creatz2qion of the node is initialized an immediate successor list
         this.successorItems = new LinkedHashMap<>();
         try {
             InetAddress address = InetAddress.getLocalHost();
@@ -100,7 +99,7 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         return this.successor;
     }
 
-    public ArrayList<NodeInterface> getSuccessorList() {
+    public SuccessorList getSuccessorList() {
         return successorList;
     }
 
@@ -124,7 +123,7 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         return num_bits_identifiers;
     }
 
-    public Object getInstance(){
+    public Item getInstance(){
         return this.instance;
     }
 
@@ -161,10 +160,6 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
     }
 
     public String print(){return "[Node with id: " + this.id + "]";}
-
-    public void setSuccessorList(ArrayList<NodeInterface> successorList) {
-        this.successorList = successorList;
-    }
 
     public void setSuccessorItems(LinkedHashMap<Integer, ArrayList<Item>> successorItems) {
         this.successorItems = successorItems;
