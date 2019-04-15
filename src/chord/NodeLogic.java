@@ -95,10 +95,13 @@ public class NodeLogic {
 
     public static void exitFromRing(Node node) throws  RemoteException{
         //add the leaving node items to its successor
-        for (Item i: new ArrayList<>(node.getItems())) {
-            node.getSuccessor().getItems().add(i);
-            node.getItems().remove(i);
+        ArrayList<Item> items = new ArrayList<>(node.getItems());
+        NodeInterface successor = node.getSuccessor();
+
+        for (Item i: items) {
+            successor.addItem(i);
         }
+        System.out.println(successor.getItems());
         //set the successor's predecessor to leaving node predecessor
         //set the predecessor's successor to leaving node successor
         node.getSuccessor().getSuccessorList().remove(node);

@@ -32,7 +32,7 @@ public class StabilizeTask extends TimerTask {
                 }
             }
         }catch(RemoteException | NullPointerException e){
-
+            System.out.println(e);
         }
         this.notify(this.owner.getSuccessor(), this.owner);
     }
@@ -55,6 +55,7 @@ public class StabilizeTask extends TimerTask {
                 Debugger.print("-Notify for [" + this.owner.print() + "]: " + node.print() + "'s predecessor is " + predecessor.print());
                 node.setPredecessor(predecessor);
             } catch (RemoteException e1) {
+                System.out.println(e1);
             }
         }
     }
@@ -89,11 +90,11 @@ public class StabilizeTask extends TimerTask {
 
             Debugger.print(this.owner.getFingerTable().toString());
         }catch(RemoteException e){
-
+            System.out.println(e);
         }
     }
 
-    private void fixSuccessorList(){
+    private void fixSuccessorList() {
         if (this.owner.getSuccessor() == this.owner) {
             Debugger.print("-SuccessorList for [" + this.owner.print() + "]: Network contains only " + this.owner);
             return;
@@ -113,9 +114,13 @@ public class StabilizeTask extends TimerTask {
                 LinkedHashMap<Integer, ArrayList<Item>> newSuccessorItems = new LinkedHashMap<>();
                 newSuccessorList.add(0, successor);
 
-                for (NodeInterface n: successor.getSuccessorList()) {
-                    if (n.getId() != this.owner.getId() && n.getInstance()!=null) {
-                        newSuccessorList.add(n);
+                for (NodeInterface n: successor.getSuccessorList().getSuccessors()) {
+                    try {
+                        n.getInstance().getClass();
+                        if (n.getId() != this.owner.getId()) {
+                            newSuccessorList.add(n);
+                        }
+                    }catch (RemoteException | NullPointerException e){
                     }
                 }
 
@@ -127,10 +132,10 @@ public class StabilizeTask extends TimerTask {
                     newSuccessorItems.put(node.getId(), node.getItems());
                 }
 
-                this.owner.setSuccessorList(newSuccessorList);
+                this.owner.getSuccessorList().setSuccessors(newSuccessorList);
                 this.owner.setSuccessorItems(newSuccessorItems);
-                Debugger.print("-SuccessorList for [" + this.owner.print() + "]: successorList of " + this.owner + " is: " + newSuccessorList);
-                Debugger.print("-SuccessorList for [" + this.owner.print() + "]: successorItems of " + this.owner + " is: " + newSuccessorItems);
+                Debugger.print("-SuccessorList for [" + this.owner.print() + "]: successorList of " + this.owner + " is: " + this.owner.getSuccessorList().print());
+                //Debugger.print("-SuccessorList for [" + this.owner.print() + "]: successorItems of " + this.owner + " is: " + newSuccessorItems);
                 newSuccessor = newSuccessorList.get(0);
                 this.owner.setSuccessor(newSuccessor);
                 foundLivingSuccessor = true;
@@ -143,7 +148,11 @@ public class StabilizeTask extends TimerTask {
                 i++;
                 //check if there is another successor
                 if(i < this.owner.getSuccessorList().size()){
-                    successor = this.owner.getSuccessorList().get(i);
+                    try {
+                        System.out.println(this.owner.getSuccessorList().print());
+                    } catch (RemoteException e1) {
+                    }
+                    successor = this.owner.getSuccessorList().getNode(i);
                 }else{
                     this.owner.setSuccessor(this.owner);
                     foundLivingSuccessor = true;
@@ -163,7 +172,7 @@ public class StabilizeTask extends TimerTask {
                 this.owner.storeItem(item);
             }
         }catch(RemoteException e){
-
+            System.out.println(e);
         }
     }
 
@@ -178,7 +187,7 @@ public class StabilizeTask extends TimerTask {
                 }
             }
         }catch(RemoteException e){
-
+            System.out.println(e);
         }
     }
 
