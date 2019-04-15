@@ -89,7 +89,7 @@ public class StabilizeTask extends TimerTask {
         }
     }
 
-    private void fixSuccessorList(){
+    private void fixSuccessorList() throws RemoteException {
         if (this.owner.getSuccessor() == this.owner) {
             Debugger.print("-SuccessorList: Network contains only " + this.owner);
             return;
@@ -137,10 +137,11 @@ public class StabilizeTask extends TimerTask {
                     }
                 }
                 i++;
-                System.out.println("--------------------" + i + " (" + this.owner.print() + ")");
+                //System.out.println("--------------------" + i + " (" + this.owner.print() + ")");
                 //check if there is another successor
                 if(i < this.owner.getSuccessorList().size()){
                     successor = this.owner.getSuccessorList().get(i);
+                    if (this.owner.getSuccessorList().get(i).getInstance() != null)foundLivingSuccessor = true;
                 }else{
                     this.owner.setSuccessor(this.owner);
                     foundLivingSuccessor = true;
@@ -181,7 +182,11 @@ public class StabilizeTask extends TimerTask {
 
     public void run() {
         this.stabilize();
-        this.fixSuccessorList();
+        try {
+            this.fixSuccessorList();
+        } catch (RemoteException e) {
+            //e.printStackTrace();
+        }
         this.fixItems();
         if (!this.owner.isSimpleLookupAlgorithm()) this.fixFingers();
     }
