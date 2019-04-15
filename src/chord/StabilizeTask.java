@@ -20,7 +20,7 @@ public class StabilizeTask extends TimerTask {
             NodeInterface new_successor = this.owner.getSuccessor().getPredecessor();
             NodeInterface old_successor = this.owner.getSuccessor();
             //if the new_successor is between me and my successor -> he becomes my successor
-            if (new_successor != null) {
+            if (new_successor != null && new_successor.getInstance() != null) {
                 if (NodeLogic.isBetween(this.owner.getId(), new_successor.getId(), old_successor.getId(), this.owner.getNum_bits_identifiers())) {
                     Debugger.print("-Stabilization: " + this.owner.print() + "'s successor is " + new_successor.print());
                     this.owner.setSuccessor(new_successor);
@@ -39,6 +39,7 @@ public class StabilizeTask extends TimerTask {
     //predecessor thinks it might be predecessor of node
     private void notify(NodeInterface node, NodeInterface predecessor){
         try{
+            predecessor.getInstance().getClass();
             if(node.getPredecessor() == null || NodeLogic.isBetween(node.getPredecessor().getId(), predecessor.getId(), node.getId(), node.getNum_bits_identifiers())){
                 Debugger.print("-Notify: " + node.print() + "'s predecessor is " + predecessor.print());
                 node.setPredecessor(predecessor);
@@ -90,11 +91,11 @@ public class StabilizeTask extends TimerTask {
 
     private void fixSuccessorList(){
         if (this.owner.getSuccessor() == this.owner) {
-            Debugger.print("-SuccessorList : Network contains only " + this.owner);
+            Debugger.print("-SuccessorList: Network contains only " + this.owner);
             return;
         }
         int size = this.owner.getNum_bits_identifiers();
-        NodeInterface newSuccessor = null;
+        NodeInterface newSuccessor;
         boolean foundLivingSuccessor = false;
         int i = 0;
         NodeInterface successor = this.owner.getSuccessor();
@@ -105,36 +106,38 @@ public class StabilizeTask extends TimerTask {
                 successor.getInstance().getClass();
 
                 ArrayList<NodeInterface> newSuccessorList = new ArrayList<>();
-                LinkedHashMap<Integer, ArrayList<Item>> newSuccesorItems = new LinkedHashMap<>();
+                LinkedHashMap<Integer, ArrayList<Item>> newSuccessorItems = new LinkedHashMap<>();
                 newSuccessorList.add(0, successor);
+
                 for (NodeInterface n: successor.getSuccessorList()) {
-                    if (n.getId() != this.owner.getId()) {
+                    if (n.getId() != this.owner.getId() && n.getInstance()!=null) {
                         newSuccessorList.add(n);
                     }
                 }
+
                 if (newSuccessorList.size() > size){
                     newSuccessorList.remove(size);
                 }
 
-                for (NodeInterface node :newSuccessorList ) {
-                    newSuccesorItems.put(node.getId(), node.getItems());
+                for (NodeInterface node: newSuccessorList) {
+                    newSuccessorItems.put(node.getId(), node.getItems());
                 }
 
                 this.owner.setSuccessorList(newSuccessorList);
-                this.owner.setSuccessorItems(newSuccesorItems);
+                this.owner.setSuccessorItems(newSuccessorItems);
                 Debugger.print("-SuccessorList: successorList di " + this.owner + " è: " + newSuccessorList);
-                Debugger.print("-SuccessorList: successorItems di " + this.owner + " è: " + newSuccesorItems);
+                Debugger.print("-SuccessorList: successorItems di " + this.owner + " è: " + newSuccessorItems);
                 newSuccessor = newSuccessorList.get(0);
                 this.owner.setSuccessor(newSuccessor);
                 foundLivingSuccessor = true;
             }catch (NullPointerException | RemoteException e){
-                System.out.println(e);
                 if(i < this.owner.getSuccessorItems().values().toArray().length){
                     for (Item item: (ArrayList<Item>) this.owner.getSuccessorItems().values().toArray()[i]) {
                         itemsToFix.add(item);
                     }
                 }
                 i++;
+                System.out.println("--------------------" + i + " (" + this.owner.print() + ")");
                 //check if there is another successor
                 if(i < this.owner.getSuccessorList().size()){
                     successor = this.owner.getSuccessorList().get(i);
