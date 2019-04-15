@@ -12,8 +12,7 @@ import java.util.*;
 
 public class Node extends UnicastRemoteObject implements NodeInterface, Serializable {
     private Object instance;
-    private boolean simpleLookupAlgorithm;
-    private int num_bits_identifiers;
+    private Ring ring;
 
     private int id;
     private NodeInterface successor;
@@ -28,22 +27,20 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         this.handler = new Handler(this);
         this.successor = null;
         this.predecessor = null;
-        this.num_bits_identifiers = num_bits_identifiers;
         this.instance = new Object();
         this.items = new ArrayList<>();
-        this.simpleLookupAlgorithm = simpleKeyLocation;
-        this.successorList = new ArrayList<>(); //at the creatz2qion of the node is initialized an immediate successor list
+        this.successorList = new ArrayList<>(); //at the creation of the node is initialized an immediate successor list
         this.successorItems = new LinkedHashMap<>();
         try {
             InetAddress address = InetAddress.getLocalHost();
             String ipAddress = address.getHostAddress();
-            this.id = Sha1.getSha1(ipAddress, Integer.toString(this.num_bits_identifiers));
+            this.id = Sha1.getSha1(ipAddress, Integer.toString(this.ring.getNum_bits_identifiers()));
         } catch (NoSuchAlgorithmException e){
             e.printStackTrace();
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        if (!simpleKeyLocation) this.fingerTable = new FingerTable(this , this.num_bits_identifiers);
+        if (!simpleKeyLocation) this.fingerTable = new FingerTable(this , this.ring.getNum_bits_identifiers());
     }
 
     //find the successor given the item's key
@@ -107,11 +104,11 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
     }
 
     public boolean isSimpleLookupAlgorithm() {
-        return simpleLookupAlgorithm;
+        return ring.isSimpleLookupAlgorithm();
     }
 
     public int getNum_bits_identifiers() {
-        return num_bits_identifiers;
+        return ring.getNum_bits_identifiers();
     }
 
     public Object getInstance(){

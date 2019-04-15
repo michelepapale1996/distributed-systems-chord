@@ -64,4 +64,17 @@ public class FingerTable {
     public NodeInterface getOwner(){
         return this.owner;
     }
+
+    @Override
+    public String toString(){
+        StringBuilder builder = new StringBuilder();
+        builder.append("==================== node " + this.owner.getId() + " ==================== \n"); //40
+        int i;
+        for (i = 0; i < this.size; i++){
+            int index = this.getPosition(i);
+            NodeInterface node = this.map.get(index);
+            builder.append("          " + index + "                  " + node + "\n");
+        }
+        return builder.toString();
+    }
 }

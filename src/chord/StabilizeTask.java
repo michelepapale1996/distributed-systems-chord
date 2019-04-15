@@ -8,9 +8,11 @@ import java.util.*;
 
 public class StabilizeTask extends TimerTask {
     private Node owner;
+    private int bit;
 
     public StabilizeTask(Node node){
         this.owner = node;
+        this.bit = 0;
     }
 
     //called periodically
@@ -55,33 +57,29 @@ public class StabilizeTask extends TimerTask {
     //Checks the validity of entry of the finger table.
     public void fixFingers(){
         try{
-            int bit;
-            int new_value;
-            int old_value;
-            int size = (int) Math.pow(2,this.owner.getNum_bits_identifiers());
-            for (bit = 0; bit < this.owner.getNum_bits_identifiers(); bit++){
-                int position = this.owner.getId();
-                position = position + (int) Math.pow(2,bit);
-                position = position % size;
-                NodeInterface successor = this.owner.findSuccessor(position,true);
-                NodeInterface old_successor = this.owner.getNode(position);
-                old_value = old_successor.getId();
-                if (old_successor.getId() < this.owner.getId()){
-                    old_value = old_value + size;
-                }
-                new_value = successor.getId();
-                if (successor.getId() < this.owner.getId()){
-                    new_value = new_value + size;
-                }
-                if (new_value < old_value || old_value == this.owner.getId()){
-                    this.owner.setEntryFingerTable(position,successor);
-                }
-                Debugger.print("-FixFingers: update finger table for " + this.owner.toString() + " with couple < " + position + ", " + successor.toString() + " >");
+            //int new_value;
+            //int old_value;
+            //int size = (int) Math.pow(2,this.owner.getNum_bits_identifiers());
+            int position = getPosition(this.bit);
+            NodeInterface successor = this.owner.findSuccessor(position,true);
+            //NodeInterface old_successor = this.owner.getNode(position);
+            //old_value = old_successor.getId();
+            /*if (old_successor.getId() < this.owner.getId()){
+                old_value = old_value + size;
             }
-
+            new_value = successor.getId();
+            if (successor.getId() < this.owner.getId()){
+                new_value = new_value + size;
+            }
+            if (new_value < old_value || old_value == this.owner.getId()){
+                this.owner.setEntryFingerTable(position,successor);
+            }*/
+            this.owner.setEntryFingerTable(position,successor);
+            Debugger.print("-FixFingers: update finger table for " + this.owner.toString() + " with couple < " + position + ", " + successor.toString() + " >");
             Debugger.print(this.owner.getFingerTable().toString());
+            bit = bit +1;
+            bit = bit % this.owner.getNum_bits_identifiers();
         }catch(RemoteException e){
-
         }
     }
 
@@ -168,6 +166,15 @@ public class StabilizeTask extends TimerTask {
         }catch(RemoteException e){
 
         }
+    }
+
+    //calculate id + 2^i
+    public int getPosition(int i){
+        int m = (int) Math.pow(2,this.owner.getNum_bits_identifiers());
+        i = (int) Math.pow(2,i);
+        i = i + this.owner.getId();
+        i = i % m;
+        return i;
     }
 
     public void run() {

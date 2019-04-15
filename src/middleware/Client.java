@@ -56,10 +56,13 @@ public class Client {
         int max_size = getInt();
         System.out.println("What is the id of the node?");
         int nodeId = getInt();
+        System.out.println("Do you want a simple lookup algorithm? y/n");
+        Boolean simpleLookUpAlgorithm = getBoolean();
+
 
         Node myNode = null;
         try {
-            myNode = new Node(max_size, true);
+            myNode = new Node(max_size,true);
             myNode.setId(nodeId);
             myNode.create();
 
@@ -199,5 +202,25 @@ public class Client {
             }
         }
         return inputToInt;
+    }
+
+    private Boolean getBoolean(){
+        Boolean isBoolean = false;
+        Boolean simple = true;
+        while (!isBoolean){
+            String input = scanner.nextLine();
+            if (input.equals("y")){
+                isBoolean = true;
+            }else {
+                if (input.equals("n")){
+                    simple = false;
+                    isBoolean =true;
+                }
+                else {
+                    System.out.println("Given input is neither y or n. Try again: ");
+                }
+            }
+        }
+        return simple;
     }
 }
