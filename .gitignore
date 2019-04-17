@@ -2,3 +2,16 @@
 *.xml
 *.iml
 *.class
+*.png
+*.jar
+out/production/distributed-systems-chord/Graphic/flyingsaucer-R8/LICENSE
+*.txt
+out/production/distributed-systems-chord/Graphic/flyingsaucer-R8/LICENSE-W3C-TEST
+*.asc
+*.pom
+out/production/distributed-systems-chord/Graphic/flyingsaucer-R8/README
+*.png
+*.png
+*.png
+*.png
+src/Graphic/FinalImage.png

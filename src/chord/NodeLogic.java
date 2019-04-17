@@ -2,6 +2,7 @@ package chord;
 
 import Test.Debugger;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
 public class NodeLogic {
@@ -90,5 +91,23 @@ public class NodeLogic {
             endInterval = endInterval + max_nodes;
         }
         return (item_searched > startInterval && item_searched <= endInterval);
+    }
+
+    public static void exitFromRing(Node node) throws  RemoteException{
+        //add the leaving node items to its successor
+        ArrayList<Item> items = new ArrayList<>(node.getItems());
+        NodeInterface successor = node.getSuccessor();
+
+        for (Item i: items) {
+            successor.addItem(i);
+        }
+        //set the successor's predecessor to leaving node predecessor
+        //set the predecessor's successor to leaving node successor
+        node.getSuccessor().getSuccessorList().remove(node);
+        node.getPredecessor().getSuccessorList().remove(node);
+        node.getPredecessor().setSuccessor(node.getSuccessor());
+        node.getSuccessor().setPredecessor(node.getPredecessor());
+        node.getHandler().stopTimer();
+        node.setInstance(null);
     }
 }

@@ -26,28 +26,34 @@ public class Client {
         }catch (RemoteException e){
             e.printStackTrace();
         }
-
     }
 
     void run() throws RemoteException{
-        System.out.println("Welcome to Chord protocol.\nWhat do you want to do?");
-        System.out.println("1 - Create a new Chord ring");
-        System.out.println("2 - Connect to a Chord ring");
-        System.out.println("0 - Exit from the application");
-        String command = scanner.nextLine();
+        boolean flag = true;
+        while(flag){
+            System.out.println("Welcome to Chord protocol.\nWhat do you want to do?");
+            System.out.println("1 - Create a new Chord ring");
+            System.out.println("2 - Connect to a Chord ring");
+            System.out.println("0 - Exit from the application");
+            int command = checkRange(0,2);
 
-        Node myNode;
-        switch (command) {
-            case "1":
-                myNode = this.createNewRing();
-                this.mainMenu(myNode);
-                break;
-            case "2" :
-                myNode = this.connectToRing();
-                this.mainMenu(myNode);
-                break;
-            default:
-                break;
+            Node myNode;
+            switch (command) {
+                case 0:
+                    System.exit(0);
+                case 1:
+                    myNode = this.createNewRing();
+                    this.mainMenu(myNode);
+                    break;
+                case 2:
+                    try{
+                        myNode = this.connectToRing();
+                        this.mainMenu(myNode);
+                    }catch (NullPointerException e){
+
+                    }
+                    break;
+            }
         }
     }
 
@@ -59,6 +65,8 @@ public class Client {
         System.out.println("Do you want a simple lookup algorithm? y/n");
         Boolean simpleLookUpAlgorithm = getBoolean();
 
+        System.out.println("What is the id of your node?");
+        int nodeId = checkRange(0, (int) Math.pow(2, max_size) - 1);
 
         Node myNode = null;
         try {
@@ -66,14 +74,12 @@ public class Client {
             myNode.setId(nodeId);
             myNode.create();
 
-            //create the registry
-            Registry registry = LocateRegistry.createRegistry(1099);
+            //create the registry at port "nodeId"
+            Registry registry = LocateRegistry.createRegistry(nodeId + 2000);
             //bind the node on the registry
             registry.bind(String.valueOf(myNode.getId()), myNode);
             InetAddress IpAddress = InetAddress.getLocalHost();
             System.out.println("IpAddress of current node: " + IpAddress);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -81,27 +87,28 @@ public class Client {
     }
 
     private Node connectToRing(){
-        System.out.println("Insert the IP address of a node contained in the ring: ");
-        String IpAddressKnownNode = scanner.nextLine();
-        //String IpAddressKnownNode = "127.0.0.1";
+        //System.out.println("Insert the IP address of a node contained in the ring: ");
+        //String IpAddressKnownNode = scanner.nextLine();
+        String IpAddressKnownNode = "127.0.0.1";
 
-        System.out.println("Insert the id of the node contained in the ring: ");
+        System.out.println("Insert the id of the known node contained in the ring: ");
         int knownNodeId = getInt();
 
-        System.out.println("Insert the id of the node: ");
+        System.out.println("Insert the id of your node: ");
         int nodeId = getInt();
 
         Node myNode = null;
         try {
-            Registry registry = LocateRegistry.getRegistry(IpAddressKnownNode, 1099);
+            //registry is at port "knownNodeId"
+            Registry registry = LocateRegistry.getRegistry(IpAddressKnownNode, knownNodeId + 2000);
             myNode = new Node(3, true);
             myNode.setId(nodeId);
 
             NodeInterface knownNode = (NodeInterface) registry.lookup(String.valueOf(knownNodeId));
             System.out.println("Connected to ring containing node " + IpAddressKnownNode + " and nodeId " + knownNodeId);
 
-            //create the registry
-            Registry registry1 = LocateRegistry.createRegistry(1099);
+            //create the registry at port "nodeId"
+            Registry registry1 = LocateRegistry.createRegistry(nodeId + 2000);
             //bind the node on the registry
             registry1.bind(String.valueOf(myNode.getId()), myNode);
             InetAddress IpAddress = InetAddress.getLocalHost();
@@ -111,6 +118,7 @@ public class Client {
             return myNode;
         } catch (NotBoundException e) {
             System.out.println("There no exist a Chord ring containing the node you typed.");
+            throw new NullPointerException();
         } catch (RemoteException e) {
             e.printStackTrace();
         } catch (IllegalArgumentException e){
@@ -125,14 +133,14 @@ public class Client {
     }
 
     private void mainMenu(Node myNode) throws RemoteException{
-        int flag = 0;
+        boolean flag = true;
         do{
             System.out.println("What do you want to do?");
             System.out.println("1 - lookup item");
             System.out.println("2 - store an item");
             System.out.println("3 - Show node's info");
             System.out.println("4 - exit");
-            int choice = getInt();
+            int choice = checkRange(1,4);
 
             switch (choice) {
                 case 1:
@@ -145,11 +153,13 @@ public class Client {
                     this.infoCurrentNode(myNode);
                     break;
                 default:
-                    flag=1;
+                    flag = false;
+                    this.exit(myNode);
                     System.out.println("Exiting from the application...");
+                    System.exit(0);
                     break;
             }
-        }while(flag==0);
+        }while(flag);
     }
 
     private void lookupItem(Node myNode) throws RemoteException {
@@ -186,7 +196,27 @@ public class Client {
         }catch (NullPointerException e){
             System.out.println("- Predecessor: null");
         }
-        System.out.println("- Items of the node: " + myNode.getItems() );
+        System.out.println("- SuccessorList: " + myNode.getSuccessorList().print());
+        System.out.println("- Items of the node: " + myNode.getItems());
+    }
+
+    private int checkRange(int lower, int upper){
+        boolean isInt = false;
+        int inputToInt = -1;
+        while(!isInt){
+            String input = scanner.nextLine();
+            try{
+                inputToInt = Integer.parseInt(input);
+                if(inputToInt >= lower && inputToInt <= upper){
+                    isInt = true;
+                }else{
+                    System.out.println("The input must be between " + lower + " and " + upper + ". Try again:");
+                }
+            }catch (NumberFormatException e){
+                System.out.println("Given input is not an integer. Try again:");
+            }
+        }
+        return inputToInt;
     }
 
     private int getInt(){
@@ -222,5 +252,9 @@ public class Client {
             }
         }
         return simple;
+    }
+
+    private void exit(Node mynode) throws RemoteException {
+        mynode.exitFromRing();
     }
 }
