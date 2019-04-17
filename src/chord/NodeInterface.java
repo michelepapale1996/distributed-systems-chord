@@ -22,5 +22,7 @@ public interface NodeInterface extends Remote{
     Handler getHandler() throws RemoteException;
     boolean isSimpleLookupAlgorithm() throws RemoteException;
     FingerTable getFingerTable() throws RemoteException;
+    void setRing(Boolean simpleKeyLocation, int num_bits_identifiers) throws RemoteException;
+    void initializeId() throws RemoteException;
 }
 

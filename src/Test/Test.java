@@ -14,31 +14,22 @@ public class Test {
     public static void main(String args[]) throws RemoteException {
         try {
             Debugger.setDebug(true);
-            Node node0 = new Node(3, true);
-            Node node2 = new Node(3, true);
-            Node node6 = new Node(3, true);
-            Node node1 = new Node(3, true);
-            Node node3 = new Node(3, true);
+            Node node0 = new Node();
+            Node node2 = new Node();
+
 
             node0.setId(0);
             node2.setId(2);
-            node3.setId(3);
-            node1.setId(1);
-            node6.setId(6);
 
-            node0.create();
+            node0.create(3, true);
             node2.join(node0);
-            node3.join(node0);
 
             Thread.sleep(6000);
             info(node0);
-            info(node3);
             System.out.println("---------------Node 2 exit from the ring");
             //node0.exitFromRing();
-            node2.leave();
             Thread.sleep(6000);
             info(node0);
-            info(node3);
 
 
 //            ArrayList<FingerTable> fingerTables = new ArrayList<>();

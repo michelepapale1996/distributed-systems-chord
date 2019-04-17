@@ -13,6 +13,7 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
     private Item instance;
     private Ring ring;
 
+    private InetAddress address;
     private int id;
     private NodeInterface successor;
     private NodeInterface predecessor;
@@ -22,26 +23,20 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
     private SuccessorList successorList;
     private LinkedHashMap<Integer, ArrayList<Item>> successorItems;
 
-    public Node(int num_bits_identifiers, Boolean simpleKeyLocation) throws RemoteException{
+    public Node() throws RemoteException{
         this.handler = new Handler(this);
         this.successor = null;
         this.predecessor = null;
         this.instance = new Item("",1);
-        this.ring = new Ring(simpleKeyLocation,num_bits_identifiers);
         this.items = new ArrayList<>();
 
-        this.successorList = new SuccessorList(); //at the creatz2qion of the node is initialized an immediate successor list
+        this.successorList = new SuccessorList(); //at the creation of the node an immediate successor list is initialized
         this.successorItems = new LinkedHashMap<>();
         try {
-            InetAddress address = InetAddress.getLocalHost();
-            String ipAddress = address.getHostAddress();
-            this.id = Sha1.getSha1(ipAddress, Integer.toString(this.ring.getNum_bits_identifiers()));
-        } catch (NoSuchAlgorithmException e){
-            e.printStackTrace();
+            this.address = InetAddress.getLocalHost();
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        if (!simpleKeyLocation) this.fingerTable = new FingerTable(this , this.ring.getNum_bits_identifiers());
     }
 
     //find the successor given the item's key
@@ -62,13 +57,15 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
     }
 
     //create a new Chord ring
-    public void create() throws RemoteException {
-        NodeLogic.create(this);
+    public void create(int numBitsIdentifier, Boolean simpleLookUpAlgorithm) throws RemoteException {
+        if (!simpleLookUpAlgorithm) this.fingerTable = new FingerTable(this , numBitsIdentifier);
+        NodeLogic.create(this, numBitsIdentifier, simpleLookUpAlgorithm);
     }
 
     //join a Chord ring containing node
     //throw IllegalArgumentException if the ring of node already contains a node with the id of who wants to join
     public void join(NodeInterface node) throws RemoteException, IllegalArgumentException{
+        if (!node.isSimpleLookupAlgorithm()) this.fingerTable = new FingerTable(this , node.getNum_bits_identifiers());
         NodeLogic.join(node, this);
     }
 
@@ -154,6 +151,10 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         return handler;
     }
 
+    public void setRing(Boolean simpleKeyLocation, int num_bits_identifiers){
+        this.ring = new Ring(simpleKeyLocation,num_bits_identifiers);
+    }
+
     public String toString() {
         return "[Node with id: " + this.id + "]";
     }
@@ -170,5 +171,14 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void initializeId(){
+        try {
+            String ipAddress = this.address.getHostAddress();
+            this.id = Sha1.getSha1(ipAddress, Integer.toString(this.ring.getNum_bits_identifiers()));
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
     }
 }

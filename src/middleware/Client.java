@@ -60,8 +60,6 @@ public class Client {
     private Node createNewRing(){
         System.out.println("What is the max num of bits of the identifiers of the ring?");
         int max_size = getInt();
-        System.out.println("What is the id of the node?");
-        int nodeId = getInt();
         System.out.println("Do you want a simple lookup algorithm? y/n");
         Boolean simpleLookUpAlgorithm = getBoolean();
 
@@ -70,9 +68,9 @@ public class Client {
 
         Node myNode = null;
         try {
-            myNode = new Node(max_size,true);
+            myNode = new Node();
             myNode.setId(nodeId);
-            myNode.create();
+            myNode.create(max_size,simpleLookUpAlgorithm);
 
             //create the registry at port "nodeId"
             Registry registry = LocateRegistry.createRegistry(nodeId + 2000);
@@ -101,7 +99,7 @@ public class Client {
         try {
             //registry is at port "knownNodeId"
             Registry registry = LocateRegistry.getRegistry(IpAddressKnownNode, knownNodeId + 2000);
-            myNode = new Node(3, true);
+            myNode = new Node();
             myNode.setId(nodeId);
 
             NodeInterface knownNode = (NodeInterface) registry.lookup(String.valueOf(knownNodeId));

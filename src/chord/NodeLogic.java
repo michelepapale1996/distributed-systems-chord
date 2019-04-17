@@ -37,6 +37,9 @@ public class NodeLogic {
 
     public static void join(NodeInterface knownNode, NodeInterface incomingNode) throws RemoteException, IllegalArgumentException{
         NodeInterface successor;
+        incomingNode.setRing(knownNode.isSimpleLookupAlgorithm(),knownNode.getNum_bits_identifiers());
+        // TODO: 17/04/2019 this line is used to set the id
+        //incomingNode.initializeId();
         //if node has as successor himself, he is the only one in the ring -> he becomes my successor
         if(knownNode == knownNode.getSuccessor()){
             if(incomingNode.getId() != knownNode.getId()){
@@ -66,9 +69,12 @@ public class NodeLogic {
         incomingNode.getHandler().start();
     }
 
-    public static void create(NodeInterface initialNode) throws RemoteException{
+    public static void create(NodeInterface initialNode, int numBitsIdentifier, Boolean simpleLookUpAlgorithm) throws RemoteException{
         initialNode.setSuccessor(initialNode);
         initialNode.setPredecessor(null);
+        initialNode.setRing(simpleLookUpAlgorithm,numBitsIdentifier);
+        // TODO: 17/04/2019 this line is used to set the id
+        //initialNode.initializeId();
         Debugger.print(initialNode + "'s successor is " + initialNode);
         Debugger.print(initialNode + "'s predecessor is null");
         if (!initialNode.isSimpleLookupAlgorithm()) {
