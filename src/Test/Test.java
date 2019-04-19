@@ -17,7 +17,6 @@ public class Test {
             Node node0 = new Node();
             Node node2 = new Node();
 
-
             node0.setId(0);
             node2.setId(2);
 

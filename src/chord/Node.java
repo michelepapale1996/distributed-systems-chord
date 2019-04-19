@@ -12,7 +12,6 @@ import java.util.*;
 public class Node extends UnicastRemoteObject implements NodeInterface, Serializable{
     private Item instance;
     private Ring ring;
-
     private InetAddress address;
     private int id;
     private NodeInterface successor;
