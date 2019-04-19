@@ -1,6 +1,6 @@
 # Distributed Systems - Chord protocol
-Project work for the "Distributed Systems" course at Politecnico di Milano done by 
-Implementation of [this relative paper](https://pdos.csail.mit.edu/papers/ton:chord/paper-ton.pdf).
+Project work for the "Distributed Systems" course at Politecnico di Milano.
+Implementation of [this paper](https://pdos.csail.mit.edu/papers/ton:chord/paper-ton.pdf).
 
 This repository contains the code related to the implementation of the Chord protocol.
 Two versions of the protocol are implemented (as the paper says):
