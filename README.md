@@ -14,8 +14,8 @@ The library contains 4 different packages:
 - middleware: it contains the rmi logic to run the library in a **distributed** environment
 - Graphic: it contains the logic to create images of the infos of the nodes (finger tables)
 
-##Execution
-###Local
+## Execution
+### Local
 To run the Chord library in local you need to istantiate a Node. Its main methods are:
 - create
 - join
@@ -23,7 +23,7 @@ To run the Chord library in local you need to istantiate a Node. Its main method
 - storeItem
 - exitFromRing
 
-####How to use the library: example
+#### How to use the library: example
 
     Debugger.setDebug(true);
     Node node0 = new Node();
@@ -36,11 +36,11 @@ To run the Chord library in local you need to istantiate a Node. Its main method
     
 
 
-###Distributed
+### Distributed
 
-##Testing
+## Testing
 
-##Project Team
+## Project Team
 - [Papale Michele](https://github.com/michelepapale1996)
 - [Puce Gabriele](https://github.com/gabpuce)
 - [Tassi Andrea](https://github.com/andre19a)
