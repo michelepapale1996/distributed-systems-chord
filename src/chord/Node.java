@@ -20,7 +20,7 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
     private ArrayList<Item> items;
     private Handler handler;
     private SuccessorList successorList;
-    private LinkedHashMap<Integer, ArrayList<Item>> successorItems;
+    private SuccessorItems successorItems;
 
     public Node() throws RemoteException{
         this.handler = new Handler(this);
@@ -30,7 +30,7 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         this.items = new ArrayList<>();
 
         this.successorList = new SuccessorList(); //at the creation of the node an immediate successor list is initialized
-        this.successorItems = new LinkedHashMap<>();
+        this.successorItems = new SuccessorItems();
         try {
             this.address = InetAddress.getLocalHost();
         } catch (UnknownHostException e) {
@@ -98,7 +98,7 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         return successorList;
     }
 
-    public LinkedHashMap<Integer, ArrayList<Item>> getSuccessorItems() {
+    public SuccessorItems getSuccessorItems() {
         return successorItems;
     }
 
@@ -161,7 +161,7 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
     public String print(){return "[Node with id: " + this.id + "]";}
 
     public void setSuccessorItems(LinkedHashMap<Integer, ArrayList<Item>> successorItems) {
-        this.successorItems = successorItems;
+        this.successorItems.setItems(successorItems);
     }
 
     public NodeInterface getNode(int key){

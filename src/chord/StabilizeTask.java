@@ -139,8 +139,8 @@ public class StabilizeTask extends TimerTask {
                 this.owner.setSuccessor(newSuccessor);
                 foundLivingSuccessor = true;
             }catch (NullPointerException | RemoteException e){
-                if(i < this.owner.getSuccessorItems().values().toArray().length){
-                    for (Item item: (ArrayList<Item>) this.owner.getSuccessorItems().values().toArray()[i]) {
+                if(i < this.owner.getSuccessorItems().getItems().values().toArray().length){
+                    for (Item item: (ArrayList<Item>) this.owner.getSuccessorItems().getItems().values().toArray()[i]) {
                         itemsToFix.add(item);
                     }
                 }
