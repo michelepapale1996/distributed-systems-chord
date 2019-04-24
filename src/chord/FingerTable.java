@@ -1,6 +1,8 @@
 package chord;
 
+import java.rmi.RemoteException;
 import java.util.HashMap;
+import Test.Debugger;
 
 public class FingerTable {
     private Node owner;
@@ -14,25 +16,27 @@ public class FingerTable {
     }
 
     //given a key retrieve the successor
-    public NodeInterface getSuccessor(int key){
+    public NodeInterface getClosestPrecedingNode(int key) throws RemoteException {
         int i;
-        for (i = 0; i < this.size; i++){
-            int tmp = this.getPosition(i);
-            if (tmp < this.owner.getId()) {
-                int a = tmp + (int) Math.pow(2,this.size);
-                if (isBetween(key,this.owner.getId(),a)){
-                    return this.map.get(tmp);
-                }
-            }
-            if (isBetween(key,this.owner.getId(),tmp)){
-                return this.map.get(tmp);
+        for (i = this.size - 1; i >= 0; i--){
+            NodeInterface successor = this.map.get(getPosition(i));
+            int finger = successor.getId();
+            if (isBetween(finger, this.owner.getId(),key)){
+                return successor;
             }
         }
         return this.owner;
     }
 
-    private boolean isBetween(int key, int n,int tmp){
-        return key >= n && key <= tmp;
+    private boolean isBetween(int key, int initial,int end){
+        int maxNodes = (int) Math.pow(2,this.size);
+        if (end < initial){
+            end = end + maxNodes;
+            if (key < initial){
+                key = key + maxNodes;
+            }
+        }
+        return key > initial && key < end;
     }
 
     public void setSuccessor(int key, NodeInterface successor){
@@ -76,5 +80,14 @@ public class FingerTable {
             builder.append("          " + index + "                  " + node + "\n");
         }
         return builder.toString();
+    }
+
+    //update the first line of the finger table due to the change of the successor.
+    public void updateSuccessor(NodeInterface new_successor) {
+        int i = 0;
+        // TODO: 24/04/2019 implementation of update also for the other entries to improve performance
+        i = this.getPosition(i);
+        Debugger.print("-Update finger table due to change of successor for " + this.owner.toString() + " with couple < " + i + ", " + new_successor.toString() + " >");
+        this.map.put(i ,new_successor);
     }
 }

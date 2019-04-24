@@ -47,8 +47,8 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
 
     //key must the hash of the key of the item, in module 2^N
     //boolean linear define if the findSuccessor is made in linear or logarithmic time
-    public NodeInterface findSuccessor(int key, Boolean linear) throws RemoteException{
-        return NodeLogic.findSuccessor(key, linear, this);
+    public NodeInterface findSuccessor(int key) throws RemoteException{
+        return NodeLogic.findSuccessor(key, this);
     }
 
     //search for successor of item and store the item there

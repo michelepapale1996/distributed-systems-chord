@@ -12,7 +12,7 @@ public class NodeLogic {
         if (initialNode.hasItem(key)) return initialNode;
 
         //otherwise find the successor that has the item
-        NodeInterface successorForKey = initialNode.findSuccessor(key, initialNode.isSimpleLookupAlgorithm());
+        NodeInterface successorForKey = initialNode.findSuccessor(key);
         if (successorForKey.hasItem(key)){
             return successorForKey;
         } else {
@@ -20,18 +20,18 @@ public class NodeLogic {
         }
     }
 
-    public static NodeInterface findSuccessor(int key, Boolean linear, NodeInterface initialNode) throws RemoteException{
+    public static NodeInterface findSuccessor(int key, NodeInterface initialNode) throws RemoteException{
         NodeInterface successor;
-        if(linear){
+        if(initialNode.isSimpleLookupAlgorithm()){
             successor = initialNode.getSuccessor();
         }else{
-            successor = initialNode.getFingerTable().getSuccessor(key);
+            successor = initialNode.getFingerTable().getClosestPrecedingNode(key);
         }
 
-        if (NodeLogic.isBetween(initialNode.getId(), key, successor.getId(), initialNode.getNum_bits_identifiers()) || initialNode.getId() == successor.getId()){
-            return successor;
+        if (NodeLogic.isBetween(initialNode.getId(), key, initialNode.getSuccessor().getId(), initialNode.getNum_bits_identifiers()) || initialNode.getId() == successor.getId()){
+            return initialNode.getSuccessor();
         }else{
-            return successor.findSuccessor(key, linear);
+            return successor.findSuccessor(key);
         }
     }
 
@@ -50,7 +50,7 @@ public class NodeLogic {
                 throw new IllegalArgumentException("node cannot join the ring because there is already a node with his id.");
             }
         } else {
-            successor = knownNode.findSuccessor(incomingNode.getId(), incomingNode.isSimpleLookupAlgorithm());
+            successor = knownNode.findSuccessor(incomingNode.getId());
             if(incomingNode.getId() != successor.getId()){
                 incomingNode.setSuccessor(successor);
                 Debugger.print(incomingNode.print() + " joined and successor is: " + incomingNode.getSuccessor().print());
@@ -84,19 +84,20 @@ public class NodeLogic {
     }
 
     public static void storeItem(Item item, NodeInterface initialNode) throws RemoteException, IllegalArgumentException{
-        NodeInterface node = NodeLogic.findSuccessor(item.getKey(), true, initialNode);
+        NodeInterface node = NodeLogic.findSuccessor(item.getKey(), initialNode);
         if(node.hasItem(item.getKey())) throw new IllegalArgumentException("It already exists an item with the given id");
         node.addItem(item);
     }
 
-    public static boolean isBetween(int startInterval, int item_searched, int endInterval, int num_bits_identifiers){
+    public static boolean isBetween(int startInterval, int itemSearched, int endInterval, int num_bits_identifiers){
         int max_nodes = (int) Math.pow(2, num_bits_identifiers);
         if (startInterval > endInterval) {
-
-            if (item_searched <= endInterval) item_searched = item_searched + max_nodes;
             endInterval = endInterval + max_nodes;
+            if (itemSearched < startInterval){
+                itemSearched = itemSearched + max_nodes;
+            }
         }
-        return (item_searched > startInterval && item_searched <= endInterval);
+        return (itemSearched > startInterval && itemSearched <= endInterval);
     }
 
     public static void exitFromRing(Node node) throws  RemoteException{

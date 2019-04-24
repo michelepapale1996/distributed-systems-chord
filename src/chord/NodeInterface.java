@@ -5,7 +5,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 public interface NodeInterface extends Remote{
-    NodeInterface findSuccessor(int key, Boolean isLinear) throws RemoteException;
+    NodeInterface findSuccessor(int key) throws RemoteException;
     NodeInterface getSuccessor() throws RemoteException;
     NodeInterface getPredecessor() throws RemoteException;
     void setPredecessor(NodeInterface predecessor) throws RemoteException;
