@@ -84,7 +84,7 @@ public class StabilizeTask extends TimerTask {
                 this.owner.setEntryFingerTable(position,successor);
             }*/
             this.owner.setEntryFingerTable(position,successor);
-            Debugger.print("-FixFingers: update finger table for " + this.owner.toString() + " with couple < " + position + ", " + successor.toString() + " >");
+            Debugger.print("-FixFingers: update finger table for " + this.owner.print() + " with couple < " + position + ", " + successor.toString() + " >");
             Debugger.print(this.owner.getFingerTable().toString());
             bit = bit +1;
             bit = bit % this.owner.getRing().getNum_bits_identifiers();

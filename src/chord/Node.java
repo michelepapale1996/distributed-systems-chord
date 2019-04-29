@@ -149,10 +149,6 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         this.ring = new Ring(simpleKeyLocation,num_bits_identifiers);
     }
 
-    public String toString() {
-        return "[Node with id: " + this.id + "]";
-    }
-
     public String print(){return "[Node with id: " + this.id + "]";}
 
     public void setId(int id) {
