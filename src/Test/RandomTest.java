@@ -42,12 +42,11 @@ public class RandomTest {
 
                 case 1 : join(list, node0, nodesInTheNetwork); break;
                 case 2 : storeItems(list, node0, itemsInTheNetwork); break;
-                //case 3 : join(list, node0, nodesInTheNetwork); break;
-                case 4 : exit(nodesInTheNetwork); break;
+                case 3 : exit(nodesInTheNetwork); break;
             }
             System.out.println(ANSI_YELLOW + "-----" + nodesInTheNetwork + ANSI_RESET);
             System.out.println(ANSI_YELLOW + "-----" + itemsInTheNetwork + ANSI_RESET);
-            Thread.sleep(500);
+            Thread.sleep(1000);
         }
     }
 
@@ -76,7 +75,7 @@ public class RandomTest {
         cArg[0] = String.class;
         cArg[1] = int.class;
         String s = "prova";
-        int i = node.getNum_bits_identifiers();
+        int i = node.getRing().getNum_bits_identifiers();
         Item item = (Item) clazz.getDeclaredConstructor(cArg).newInstance(s,i);
         item.setKey((Integer) list.get(0));
         for (Item it: items) {
