@@ -1,6 +1,8 @@
 package chord;
 
-public class Ring {
+import java.io.Serializable;
+
+public class Ring implements Serializable{
     private int id;
     private boolean simpleLookupAlgorithm;
     private int num_bits_identifiers;

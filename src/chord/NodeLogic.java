@@ -12,7 +12,7 @@ public class NodeLogic {
         if (initialNode.hasItem(key)) return initialNode;
 
         //otherwise find the successor that has the item
-        NodeInterface successorForKey = initialNode.findSuccessor(key, initialNode.isSimpleLookupAlgorithm());
+        NodeInterface successorForKey = initialNode.findSuccessor(key, initialNode.getRing().isSimpleLookupAlgorithm());
         if (successorForKey.hasItem(key)){
             return successorForKey;
         } else {
@@ -28,7 +28,7 @@ public class NodeLogic {
             successor = initialNode.getFingerTable().getSuccessor(key);
         }
 
-        if (NodeLogic.isBetween(initialNode.getId(), key, successor.getId(), initialNode.getNum_bits_identifiers()) || initialNode.getId() == successor.getId()){
+        if (NodeLogic.isBetween(initialNode.getId(), key, successor.getId(), initialNode.getRing().getNum_bits_identifiers()) || initialNode.getId() == successor.getId()){
             return successor;
         }else{
             return successor.findSuccessor(key, linear);
@@ -37,7 +37,7 @@ public class NodeLogic {
 
     public static void join(NodeInterface knownNode, NodeInterface incomingNode) throws RemoteException, IllegalArgumentException{
         NodeInterface successor;
-        incomingNode.setRing(knownNode.isSimpleLookupAlgorithm(),knownNode.getNum_bits_identifiers());
+        incomingNode.setRing(knownNode.getRing().isSimpleLookupAlgorithm(),knownNode.getRing().getNum_bits_identifiers());
         // TODO: 17/04/2019 this line is used to set the id
         //incomingNode.initializeId();
         //if node has as successor himself, he is the only one in the ring -> he becomes my successor
@@ -50,7 +50,7 @@ public class NodeLogic {
                 throw new IllegalArgumentException("node cannot join the ring because there is already a node with his id.");
             }
         } else {
-            successor = knownNode.findSuccessor(incomingNode.getId(), incomingNode.isSimpleLookupAlgorithm());
+            successor = knownNode.findSuccessor(incomingNode.getId(), incomingNode.getRing().isSimpleLookupAlgorithm());
             if(incomingNode.getId() != successor.getId()){
                 incomingNode.setSuccessor(successor);
                 Debugger.print(incomingNode.print() + " joined and successor is: " + incomingNode.getSuccessor().print());
@@ -62,7 +62,7 @@ public class NodeLogic {
         Debugger.print(incomingNode + " join the ring");
         Debugger.print(incomingNode + "'s predecessor is null");
         incomingNode.setPredecessor(null);
-        if (!incomingNode.isSimpleLookupAlgorithm()) {
+        if (!incomingNode.getRing().isSimpleLookupAlgorithm()) {
             incomingNode.getFingerTable().initialize(successor);
         }
         //start tasks to stabilize node
@@ -77,7 +77,7 @@ public class NodeLogic {
         //initialNode.initializeId();
         Debugger.print(initialNode + "'s successor is " + initialNode);
         Debugger.print(initialNode + "'s predecessor is null");
-        if (!initialNode.isSimpleLookupAlgorithm()) {
+        if (!initialNode.getRing().isSimpleLookupAlgorithm()) {
             initialNode.getFingerTable().initialize(initialNode);
         }
         initialNode.getHandler().start();
