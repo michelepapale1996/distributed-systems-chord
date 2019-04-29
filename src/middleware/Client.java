@@ -28,7 +28,7 @@ public class Client {
         }
     }
 
-    void run() throws RemoteException{
+    void run() throws RemoteException, NullPointerException{
         boolean flag = true;
         while(flag){
             System.out.println("Welcome to Chord protocol.\nWhat do you want to do?");
@@ -46,12 +46,8 @@ public class Client {
                     this.mainMenu(myNode);
                     break;
                 case 2:
-                    try{
-                        myNode = this.connectToRing();
-                        this.mainMenu(myNode);
-                    }catch (NullPointerException e){
-
-                    }
+                    myNode = this.connectToRing();
+                    this.mainMenu(myNode);
                     break;
             }
         }
