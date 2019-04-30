@@ -29,12 +29,12 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         this.items = new ArrayList<>();
 
         this.successorList = new SuccessorList(); //at the creation of the node an immediate successor list is initialized
-        this.successorItems = new SuccessorItems();
         try {
             this.address = InetAddress.getLocalHost();
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
+        this.successorItems = new SuccessorItems();
     }
 
     //find the successor given the item's key

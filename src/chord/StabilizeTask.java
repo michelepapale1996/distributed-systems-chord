@@ -95,7 +95,7 @@ public class StabilizeTask extends TimerTask {
 
     private void fixSuccessorList() {
         if (this.owner.getSuccessor() == this.owner) {
-            Debugger.print("-SuccessorList for [" + this.owner.print() + "]: Network contains only " + this.owner);
+            Debugger.print("-SuccessorList for [" + this.owner.print() + "]: Network contains only " + this.owner.print());
             return;
         }
 
@@ -117,7 +117,7 @@ public class StabilizeTask extends TimerTask {
                 this.owner.getSuccessorList().setSuccessors(newSuccessorList);
                 this.owner.getSuccessorItems().setItems(newSuccessorItems);
 
-                Debugger.print("-SuccessorList for [" + this.owner.print() + "]: successorList of " + this.owner + " is: " + this.owner.getSuccessorList().print());
+                Debugger.print("-SuccessorList for [" + this.owner.print() + "]: successorList of " + this.owner.print() + " is: " + this.owner.getSuccessorList().print());
                 //Debugger.print("-SuccessorList for [" + this.owner.print() + "]: successorItems of " + this.owner + " is: " + newSuccessorItems);
                 this.owner.setSuccessor(newSuccessorList.get(0));
                 foundLivingSuccessor = true;

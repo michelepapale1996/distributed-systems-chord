@@ -59,8 +59,8 @@ public class NodeLogic {
             }
         }
 
-        Debugger.print(incomingNode + " join the ring");
-        Debugger.print(incomingNode + "'s predecessor is null");
+        Debugger.print(incomingNode.print() + " join the ring");
+        Debugger.print(incomingNode.print() + "'s predecessor is null");
         incomingNode.setPredecessor(null);
         if (!incomingNode.getRing().isSimpleLookupAlgorithm()) {
             incomingNode.getFingerTable().initialize(successor);
@@ -75,8 +75,8 @@ public class NodeLogic {
         initialNode.setRing(simpleLookUpAlgorithm,numBitsIdentifier);
         // TODO: 17/04/2019 this line is used to set the id
         //initialNode.initializeId();
-        Debugger.print(initialNode + "'s successor is " + initialNode);
-        Debugger.print(initialNode + "'s predecessor is null");
+        Debugger.print(initialNode.print() + "'s successor is " + initialNode.print());
+        Debugger.print(initialNode.print() + "'s predecessor is null");
         if (!initialNode.getRing().isSimpleLookupAlgorithm()) {
             initialNode.getFingerTable().initialize(initialNode);
         }
