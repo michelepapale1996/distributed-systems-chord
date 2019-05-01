@@ -1,6 +1,7 @@
 package middleware;
 
 import Test.Debugger;
+import chord.InfoNode;
 import chord.Item;
 import chord.Node;
 import chord.NodeInterface;
@@ -144,7 +145,7 @@ public class Client {
                     this.storeItem(myNode);
                     break;
                 case 3:
-                    this.infoCurrentNode(myNode);
+                    new InfoNode(myNode);
                     break;
                 default:
                     flag = false;
@@ -179,19 +180,6 @@ public class Client {
             System.out.println(e);
         }
 
-    }
-
-    private void infoCurrentNode(Node myNode) throws RemoteException {
-        System.out.println("Info current node:");
-        System.out.println("- Node id: " + myNode.print());
-        System.out.println("- Successor: " + myNode.getSuccessor().print());
-        try{
-            System.out.println("- Predecessor: " + myNode.getPredecessor().print());
-        }catch (NullPointerException e){
-            System.out.println("- Predecessor: null");
-        }
-        System.out.println("- SuccessorList: " + myNode.getSuccessorList().print());
-        System.out.println("- Items of the node: " + myNode.getItems());
     }
 
     private int checkRange(int lower, int upper){

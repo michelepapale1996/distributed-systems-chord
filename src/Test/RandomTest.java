@@ -1,5 +1,6 @@
 package Test;
 
+import chord.InfoNode;
 import chord.Item;
 import chord.Node;
 
@@ -29,6 +30,7 @@ public class RandomTest {
         Node node0 = new Node();
         node0.setId(0);
         node0.create(256, true);
+        nodesInTheNetwork.add(node0);
 
 
         List<Integer> list = new ArrayList<Integer>();
@@ -47,12 +49,14 @@ public class RandomTest {
             switch (actions.get(0)) {
                 case 1 : join(list, node0, nodesInTheNetwork); break;
                 case 2 : storeItems(list, node0, itemsInTheNetwork); break;
-                case 3 : exit(nodesInTheNetwork); break;
+                case 3 : exit(nodesInTheNetwork, node0); break;
             }
             System.out.print(ANSI_YELLOW + "-----");// + nodesInTheNetwork + ANSI_RESET);
+            System.out.print("[");
             for (Node nod: nodesInTheNetwork) {
                 System.out.print(nod.print());
             }
+            System.out.print("]");
             System.out.print("\n");
             System.out.println(ANSI_YELLOW + "-----" + itemsInTheNetwork + ANSI_RESET);
             Thread.sleep(1000);
@@ -107,13 +111,13 @@ public class RandomTest {
         return builder.toString();
     }
 
-    private static void exit(ArrayList<Node> nodes) throws RemoteException {
+    private static void exit(ArrayList<Node> nodes, Node node0) throws RemoteException {
         final String ANSI_GREEN = "\u001B[32m";
         final String ANSI_RESET = "\u001B[0m";
-        if (nodes.size()>0) {
-            ArrayList<Node> copyOfNodes = new ArrayList<>(nodes);
-            Collections.shuffle(copyOfNodes);
-            Node node = copyOfNodes.get(0);
+        ArrayList<Node> copyOfNodes = new ArrayList<>(nodes);
+        Collections.shuffle(copyOfNodes);
+        Node node = copyOfNodes.get(0);
+        if (nodes.size()>0 && node != node0 ) {
             System.out.println(ANSI_GREEN + "----------Exit of " + node.print() + ANSI_RESET);
             node.exitFromRing();
             nodes.remove(node);
@@ -133,20 +137,6 @@ public class RandomTest {
                     menu();
                 }
             }
-
-            private void infoCurrentNode(Node myNode) throws RemoteException {
-                System.out.println("Info current node:");
-                System.out.println("- Node id: " + myNode.print());
-                System.out.println("- Successor: " + myNode.getSuccessor().print());
-                try{
-                    System.out.println("- Predecessor: " + myNode.getPredecessor().print());
-                }catch (NullPointerException e){
-                    System.out.println("- Predecessor: null");
-                }
-                System.out.println("- SuccessorList: " + myNode.getSuccessorList().print());
-                System.out.println("- Items of the node: " + myNode.getItems());
-            }
-
             private void menu(){
                 boolean flag = true;
                 while(flag){
@@ -159,13 +149,15 @@ public class RandomTest {
                     System.out.println("Insert the id of the node to check:");
                     String id = scanner.nextLine();
                     Node chosen = null;
-                    for (Node nod:nodes) {
-                        if(nod.getId() == Integer.valueOf(id)){
+                    for (Node nod : nodes) {
+                        if (nod.getId() == Integer.valueOf(id)) {
                             chosen = nod;
                         }
                     }
                     try{
-                        infoCurrentNode(chosen);
+                        new InfoNode(chosen);
+                    }catch (NullPointerException e){
+                        System.out.println("The choosen node is not present there isn't in the network. Try again: ");
                     }catch (RemoteException e){
                         System.out.println(e);
                     }
