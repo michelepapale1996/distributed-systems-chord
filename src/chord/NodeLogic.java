@@ -84,9 +84,14 @@ public class NodeLogic {
     }
 
     public static void storeItem(Item item, NodeInterface initialNode) throws RemoteException, IllegalArgumentException{
-        NodeInterface node = NodeLogic.findSuccessor(item.getKey(), initialNode);
-        if(node.hasItem(item.getKey())) throw new IllegalArgumentException("It already exists an item with the given id");
-        node.addItem(item);
+        if (item.getKey() == initialNode.getId()){
+            if(initialNode.hasItem(item.getKey())) throw new IllegalArgumentException("It already exists an item with the given id");
+            initialNode.addItem(item);
+        }else{
+            NodeInterface node = NodeLogic.findSuccessor(item.getKey(), initialNode);
+            if(node.hasItem(item.getKey())) throw new IllegalArgumentException("It already exists an item with the given id");
+            node.addItem(item);
+        }
     }
 
     public static boolean isBetween(int startInterval, int itemSearched, int endInterval, int num_bits_identifiers){
