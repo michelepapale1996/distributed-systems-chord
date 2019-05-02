@@ -12,7 +12,7 @@ public class NodeLogic {
         if (initialNode.hasItem(key)) return initialNode;
 
         //otherwise find the successor that has the item
-        NodeInterface successorForKey = initialNode.findSuccessor(key, initialNode.getRing().isSimpleLookupAlgorithm());
+        NodeInterface successorForKey = initialNode.findSuccessor(key);
         if (successorForKey.hasItem(key)){
             return successorForKey;
         } else {
@@ -22,13 +22,13 @@ public class NodeLogic {
 
     public static NodeInterface findSuccessor(int key, NodeInterface initialNode) throws RemoteException{
         NodeInterface successor;
-        if(initialNode.isSimpleLookupAlgorithm()){
+        if(initialNode.getRing().isSimpleLookupAlgorithm()){
             successor = initialNode.getSuccessor();
         }else{
             successor = initialNode.getFingerTable().getClosestPrecedingNode(key);
         }
 
-        if (NodeLogic.isBetween(initialNode.getId(), key, initialNode.getSuccessor().getId(), initialNode.getNum_bits_identifiers()) || initialNode.getId() == successor.getId()){
+        if (NodeLogic.isBetween(initialNode.getId(), key, initialNode.getSuccessor().getId(), initialNode.getRing().getNum_bits_identifiers()) || initialNode.getId() == successor.getId()){
             return initialNode.getSuccessor();
         }else{
             return successor.findSuccessor(key);
