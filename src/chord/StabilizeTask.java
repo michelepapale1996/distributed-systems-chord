@@ -78,7 +78,8 @@ public class StabilizeTask extends TimerTask {
             this.bit = this.bit +1;
             this.bit = this.bit % this.owner.getRing().getNum_bits_identifiers();
         }catch(RemoteException e){
-            System.out.println(e);
+            int position = getPosition(this.bit);
+            this.owner.setEntryFingerTable(position,this.owner.getSuccessor());
         }
     }
 

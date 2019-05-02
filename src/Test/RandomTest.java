@@ -29,12 +29,12 @@ public class RandomTest {
 
         Node node0 = new Node();
         node0.setId(0);
-        node0.create(256, true);
+        node0.create(16, false);
         nodesInTheNetwork.add(node0);
 
 
         List<Integer> list = new ArrayList<Integer>();
-        for (int i = 1; i <= Math.pow(2, 16); i++) {
+        for (int i = 1; i <= Math.pow(2, 4); i++) {
             list.add(i);
         }
 

@@ -69,15 +69,14 @@ public class FingerTable {
         return this.owner;
     }
 
-    @Override
-    public String toString(){
+    public String print() throws RemoteException{
         StringBuilder builder = new StringBuilder();
         builder.append("==================== node " + this.owner.getId() + " ==================== \n"); //40
         int i;
         for (i = 0; i < this.size; i++){
             int index = this.getPosition(i);
             NodeInterface node = this.map.get(index);
-            builder.append("          " + index + "                  " + node + "\n");
+            builder.append("          " + index + "                  " + node.print() + "\n");
         }
         return builder.toString();
     }
