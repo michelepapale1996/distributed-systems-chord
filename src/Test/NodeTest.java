@@ -62,7 +62,7 @@ class NodeTest {
 
         Thread.sleep(3000);
 
-        assertEquals(node7.getId(), node1.findSuccessor(3, true).getId());
+        assertEquals(node7.getId(), node1.findSuccessor(3).getId());
 
     }
 
