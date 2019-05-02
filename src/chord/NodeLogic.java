@@ -111,10 +111,14 @@ public class NodeLogic {
         //set the successor's predecessor to leaving node predecessor
         //set the predecessor's successor to leaving node successor
         node.getSuccessor().getSuccessorList().remove(node);
-        node.getPredecessor().getSuccessorList().remove(node);
-        node.getPredecessor().setSuccessor(node.getSuccessor());
-        node.getSuccessor().setPredecessor(node.getPredecessor());
-        node.getHandler().stopTimer();
-        node.setInstance(null);
+        try{
+            node.getPredecessor().getSuccessorList().remove(node);
+            node.getPredecessor().setSuccessor(node.getSuccessor());
+            node.getSuccessor().setPredecessor(node.getPredecessor());
+            node.getHandler().stopTimer();
+            node.setInstance(null);
+        }catch (NullPointerException e){
+
+        }
     }
 }

@@ -68,12 +68,13 @@ public class Client {
             myNode = new Node();
             myNode.setId(nodeId);
             myNode.create(max_size,simpleLookUpAlgorithm);
+            String IpAddress = InetAddress.getLocalHost().getHostAddress();
+            System.setProperty("java.rmi.server.hostname", IpAddress);
 
             //create the registry at port "nodeId"
             Registry registry = LocateRegistry.createRegistry(nodeId + 2000);
             //bind the node on the registry
             registry.bind(String.valueOf(myNode.getId()), myNode);
-            InetAddress IpAddress = InetAddress.getLocalHost();
             System.out.println("IpAddress of current node: " + IpAddress);
         } catch (Exception e) {
             e.printStackTrace();
@@ -82,9 +83,9 @@ public class Client {
     }
 
     private Node connectToRing(){
-        //System.out.println("Insert the IP address of a node contained in the ring: ");
-        //String IpAddressKnownNode = scanner.nextLine();
-        String IpAddressKnownNode = "127.0.0.1";
+        System.out.println("Insert the IP address of a node contained in the ring: ");
+        String IpAddressKnownNode = scanner.nextLine();
+        //String IpAddressKnownNode = "127.0.0.1";
 
         System.out.println("Insert the id of the known node contained in the ring: ");
         int knownNodeId = getInt();
@@ -95,18 +96,21 @@ public class Client {
         Node myNode = null;
         try {
             //registry is at port "knownNodeId"
-            Registry registry = LocateRegistry.getRegistry(IpAddressKnownNode, knownNodeId + 2000);
+            int port =  knownNodeId + 2000;
+            Registry registry = LocateRegistry.getRegistry(IpAddressKnownNode, port);
             myNode = new Node();
             myNode.setId(nodeId);
 
+            //NodeInterface knownNode = (NodeInterface) registry.lookup("rmi://" + IpAddressKnownNode + ":" + port + "/" + String.valueOf(knownNodeId));
             NodeInterface knownNode = (NodeInterface) registry.lookup(String.valueOf(knownNodeId));
             System.out.println("Connected to ring containing node " + IpAddressKnownNode + " and nodeId " + knownNodeId);
 
+            InetAddress IpAddress = InetAddress.getLocalHost();
+            System.setProperty("java.rmi.server.hostname", IpAddress.getHostAddress());
             //create the registry at port "nodeId"
             Registry registry1 = LocateRegistry.createRegistry(nodeId + 2000);
             //bind the node on the registry
             registry1.bind(String.valueOf(myNode.getId()), myNode);
-            InetAddress IpAddress = InetAddress.getLocalHost();
             System.out.println("IpAddress of current node: " + IpAddress);
 
             myNode.join(knownNode);
