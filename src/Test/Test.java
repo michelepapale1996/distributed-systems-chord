@@ -23,7 +23,6 @@ public class Test {
             Node node6 = new Node();
             Node node7 = new Node();
 
-
             node0.setId(0);
             node1.setId(1);
             node2.setId(2);

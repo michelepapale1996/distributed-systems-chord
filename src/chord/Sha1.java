@@ -7,7 +7,7 @@ import java.security.NoSuchAlgorithmException;
 public class Sha1{
 
     //given String to convert and module it returns the id
-    public static int getSha1(String toConvert, String module) throws NoSuchAlgorithmException {
+    public static int getSha1(String toConvert, String module){
         try {
             // getInstance() method is called with algorithm SHA-1
             MessageDigest md = MessageDigest.getInstance("SHA-1");
@@ -33,7 +33,6 @@ public class Sha1{
             BigInteger result = ht.mod(m) ;
             return result.intValue();
         }
-
         // For specifying wrong message digest algorithms
         catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);

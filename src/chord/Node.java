@@ -6,13 +6,11 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 public class Node extends UnicastRemoteObject implements NodeInterface, Serializable{
     private Item instance;
     private Ring ring;
-
     private InetAddress address;
     private int id;
     private NodeInterface successor;
@@ -21,7 +19,7 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
     private ArrayList<Item> items;
     private Handler handler;
     private SuccessorList successorList;
-    private LinkedHashMap<Integer, ArrayList<Item>> successorItems;
+    private SuccessorItems successorItems;
 
     public Node() throws RemoteException{
         this.handler = new Handler(this);
@@ -31,12 +29,12 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         this.items = new ArrayList<>();
 
         this.successorList = new SuccessorList(); //at the creation of the node an immediate successor list is initialized
-        this.successorItems = new LinkedHashMap<>();
         try {
             this.address = InetAddress.getLocalHost();
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
+        this.successorItems = new SuccessorItems();
     }
 
     //find the successor given the item's key
@@ -65,7 +63,7 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
     //join a Chord ring containing node
     //throw IllegalArgumentException if the ring of node already contains a node with the id of who wants to join
     public void join(NodeInterface node) throws RemoteException, IllegalArgumentException{
-        if (!node.isSimpleLookupAlgorithm()) this.fingerTable = new FingerTable(this , node.getNum_bits_identifiers());
+        if (!node.getRing().isSimpleLookupAlgorithm()) this.fingerTable = new FingerTable(this , node.getRing().getNum_bits_identifiers());
         NodeLogic.join(node, this);
     }
 
@@ -91,6 +89,10 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         this.items.add(item);
     }
 
+    public Ring getRing(){
+        return this.ring;
+    }
+
     public NodeInterface getSuccessor() {
         return this.successor;
     }
@@ -99,7 +101,7 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         return successorList;
     }
 
-    public LinkedHashMap<Integer, ArrayList<Item>> getSuccessorItems() {
+    public SuccessorItems getSuccessorItems() {
         return successorItems;
     }
 
@@ -109,14 +111,6 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
 
     public int getId() {
         return this.id;
-    }
-
-    public boolean isSimpleLookupAlgorithm() {
-        return ring.isSimpleLookupAlgorithm();
-    }
-
-    public int getNum_bits_identifiers() {
-        return ring.getNum_bits_identifiers();
     }
 
     public Item getInstance(){
@@ -155,30 +149,14 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         this.ring = new Ring(simpleKeyLocation,num_bits_identifiers);
     }
 
-    public String toString() {
-        return "[Node with id: " + this.id + "]";
-    }
-
     public String print(){return "[Node with id: " + this.id + "]";}
-
-    public void setSuccessorItems(LinkedHashMap<Integer, ArrayList<Item>> successorItems) {
-        this.successorItems = successorItems;
-    }
-
-    public NodeInterface getNode(int key){
-        return this.fingerTable.getNode(key);
-    }
 
     public void setId(int id) {
         this.id = id;
     }
 
     public void initializeId(){
-        try {
-            String ipAddress = this.address.getHostAddress();
-            this.id = Sha1.getSha1(ipAddress, Integer.toString(this.ring.getNum_bits_identifiers()));
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
+        String ipAddress = this.address.getHostAddress();
+        this.id = Sha1.getSha1(ipAddress, Integer.toString(this.ring.getNum_bits_identifiers()));
     }
 }

@@ -1,7 +1,6 @@
 package chord;
 
 import java.io.Serializable;
-import java.security.NoSuchAlgorithmException;
 
 public class Item implements Serializable {
     
@@ -10,13 +9,7 @@ public class Item implements Serializable {
 
     public Item(String name, int module) {
         this.name = name;
-        try{
-            this.key = Sha1.getSha1(name, "" + module);
-        }catch(NoSuchAlgorithmException e){
-            e.printStackTrace();
-            this.key = -1;
-        }
-
+        this.key = Sha1.getSha1(name, "" + module);
     }
 
     public int getKey(){

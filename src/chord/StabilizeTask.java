@@ -23,7 +23,7 @@ public class StabilizeTask extends TimerTask {
             NodeInterface old_successor = this.owner.getSuccessor();
             //if the new_successor is between me and my successor -> he becomes my successor
             if (new_successor != null && new_successor.getInstance() != null) {
-                if (NodeLogic.isBetween(this.owner.getId(), new_successor.getId(), old_successor.getId(), this.owner.getNum_bits_identifiers())) {
+                if (NodeLogic.isBetween(this.owner.getId(), new_successor.getId(), old_successor.getId(), this.owner.getRing().getNum_bits_identifiers())) {
                     Debugger.print("-Stabilization for [" + this.owner.print() + "]: " + this.owner.print() + "'s successor is " + new_successor.print());
                     this.owner.setSuccessor(new_successor);
                     //change the first line of the finger table when the successor change
@@ -46,7 +46,7 @@ public class StabilizeTask extends TimerTask {
     private void notify(NodeInterface node, NodeInterface predecessor){
         try{
             node.getPredecessor().getInstance().getClass();
-            if(node.getPredecessor() == null || NodeLogic.isBetween(node.getPredecessor().getId(), predecessor.getId(), node.getId(), node.getNum_bits_identifiers())){
+            if(node.getPredecessor() == null || NodeLogic.isBetween(node.getPredecessor().getId(), predecessor.getId(), node.getId(), node.getRing().getNum_bits_identifiers())){
                 Debugger.print("-Notify for [" + this.owner.print() + "]: " + node.print() + "'s predecessor is " + predecessor.print());
                 node.setPredecessor(predecessor);
             }
@@ -73,10 +73,10 @@ public class StabilizeTask extends TimerTask {
             int position = getPosition(this.bit);
             NodeInterface successor = this.owner.findSuccessor(position);
             this.owner.setEntryFingerTable(position,successor);
-            Debugger.print("-FixFingers: update finger table for " + this.owner.toString() + " with couple < " + position + ", " + successor.toString() + " >");
+            Debugger.print("-FixFingers: update finger table for " + this.owner.print() + " with couple < " + position + ", " + successor.toString() + " >");
             Debugger.print(this.owner.getFingerTable().toString());
             this.bit = this.bit +1;
-            this.bit = this.bit % this.owner.getNum_bits_identifiers();
+            this.bit = this.bit % this.owner.getRing().getNum_bits_identifiers();
         }catch(RemoteException e){
             System.out.println(e);
         }
@@ -84,62 +84,43 @@ public class StabilizeTask extends TimerTask {
 
     private void fixSuccessorList() {
         if (this.owner.getSuccessor() == this.owner) {
-            Debugger.print("-SuccessorList for [" + this.owner.print() + "]: Network contains only " + this.owner);
+            Debugger.print("-SuccessorList for [" + this.owner.print() + "]: Network contains only " + this.owner.print());
             return;
         }
-        int size = this.owner.getNum_bits_identifiers();
-        NodeInterface newSuccessor;
+
+        int size = this.owner.getRing().getNum_bits_identifiers();
         boolean foundLivingSuccessor = false;
         int i = 0;
         NodeInterface successor = this.owner.getSuccessor();
         ArrayList<Item> itemsToFix = new ArrayList<>();
+        //iterate over fixSuccessorList until do not find the first successor alive
         while(!foundLivingSuccessor){
             try{
                 //used only to spawn the NullPointerException
                 successor.getInstance().getClass();
 
-                ArrayList<NodeInterface> newSuccessorList = new ArrayList<>();
-                LinkedHashMap<Integer, ArrayList<Item>> newSuccessorItems = new LinkedHashMap<>();
-                newSuccessorList.add(0, successor);
-
-                for (NodeInterface n: successor.getSuccessorList().getSuccessors()) {
-                    try {
-                        n.getInstance().getClass();
-                        if (n.getId() != this.owner.getId()) {
-                            newSuccessorList.add(n);
-                        }
-                    }catch (RemoteException | NullPointerException e){
-                    }
-                }
-
-                if (newSuccessorList.size() > size){
-                    newSuccessorList.remove(size);
-                }
-
-                for (NodeInterface node: newSuccessorList) {
-                    newSuccessorItems.put(node.getId(), node.getItems());
-                }
+                //get new successorList and successorItems
+                ArrayList<NodeInterface> newSuccessorList = SuccessorListHandler.getNewSuccessorsListFromSuccessor(successor, this.owner, size);
+                LinkedHashMap<Integer, ArrayList<Item>> newSuccessorItems = SuccessorItemsHandler.getNewSuccessorItemsFromSuccessor(newSuccessorList);
 
                 this.owner.getSuccessorList().setSuccessors(newSuccessorList);
-                this.owner.setSuccessorItems(newSuccessorItems);
-                Debugger.print("-SuccessorList for [" + this.owner.print() + "]: successorList of " + this.owner + " is: " + this.owner.getSuccessorList().print());
+                this.owner.getSuccessorItems().setItems(newSuccessorItems);
+
+                Debugger.print("-SuccessorList for [" + this.owner.print() + "]: successorList of " + this.owner.print() + " is: " + this.owner.getSuccessorList().print());
                 //Debugger.print("-SuccessorList for [" + this.owner.print() + "]: successorItems of " + this.owner + " is: " + newSuccessorItems);
-                newSuccessor = newSuccessorList.get(0);
-                this.owner.setSuccessor(newSuccessor);
+                this.owner.setSuccessor(newSuccessorList.get(0));
                 foundLivingSuccessor = true;
-            }catch (NullPointerException | RemoteException e){
-                if(i < this.owner.getSuccessorItems().values().toArray().length){
-                    for (Item item: (ArrayList<Item>) this.owner.getSuccessorItems().values().toArray()[i]) {
+            } catch(NullPointerException | RemoteException e){
+                //arrived here, the current successor is faulty
+                //add his items to itemsToFix
+                if(i < this.owner.getSuccessorItems().getItems().values().toArray().length){
+                    for (Item item: (ArrayList<Item>) this.owner.getSuccessorItems().getItems().values().toArray()[i]) {
                         itemsToFix.add(item);
                     }
                 }
                 i++;
                 //check if there is another successor
                 if(i < this.owner.getSuccessorList().size()){
-                    try {
-                        System.out.println(this.owner.getSuccessorList().print());
-                    } catch (RemoteException e1) {
-                    }
                     successor = this.owner.getSuccessorList().getNode(i);
                 }else{
                     this.owner.setSuccessor(this.owner);
@@ -147,9 +128,8 @@ public class StabilizeTask extends TimerTask {
                 }
             }
         }
-        if (itemsToFix.size() != 0) {
-            this.fixSuccessorItems(itemsToFix);
-        }
+
+        if (itemsToFix.size() != 0) this.fixSuccessorItems(itemsToFix);
     }
 
     private void fixSuccessorItems(ArrayList<Item> items) {
@@ -181,7 +161,7 @@ public class StabilizeTask extends TimerTask {
 
     //calculate id + 2^i
     public int getPosition(int i){
-        int m = (int) Math.pow(2,this.owner.getNum_bits_identifiers());
+        int m = (int) Math.pow(2,this.owner.getRing().getNum_bits_identifiers());
         i = (int) Math.pow(2,i);
         i = i + this.owner.getId();
         i = i % m;
@@ -192,6 +172,6 @@ public class StabilizeTask extends TimerTask {
         this.stabilize();
         this.fixSuccessorList();
         this.fixItems();
-        if (!this.owner.isSimpleLookupAlgorithm()) this.fixFingers();
+        if (!this.owner.getRing().isSimpleLookupAlgorithm()) this.fixFingers();
     }
 }
