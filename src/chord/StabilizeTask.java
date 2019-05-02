@@ -151,7 +151,12 @@ public class StabilizeTask extends TimerTask {
             for (Item item : new ArrayList<>(this.owner.getItems())) {
                 if (this.owner.findSuccessor(item.getKey()).getId() != this.owner.getId()){
                     this.owner.getItems().remove(item);
-                    this.owner.storeItem(item);
+                    try{
+                        this.owner.storeItem(item);
+                    }catch (IllegalArgumentException e){
+                        System.out.println(e);
+                    }
+
                     Debugger.print("-FixItems for [" + this.owner.print() + "]: " + item + " moved FROM " + this.owner + " TO " + this.owner.findSuccessor(item.getKey()));
                 }
             }
