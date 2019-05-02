@@ -16,6 +16,7 @@ public class InfoNode {
             System.out.println("- Predecessor: null");
         }
         System.out.println("- SuccessorList: " + myNode.getSuccessorList().print());
-        System.out.println("- Items of the node: " + myNode.getItems());
+        System.out.println("- Items of the node: " + myNode.getItems() + '\n');
+        if (!myNode.getRing().isSimpleLookupAlgorithm()) System.out.println(myNode.getFingerTable().print());
     }
 }

@@ -28,15 +28,15 @@ public class RandomTest {
         start(nodesInTheNetwork, itemsInTheNetwork);
 
         Node node0 = new Node();
+        int numBitsId = 3;
+        int size = (int) Math.pow(2,numBitsId);
+        Boolean simpleLookUpAlgorithm = false;
         node0.setId(0);
-        node0.create(256, true);
+        node0.create(numBitsId, simpleLookUpAlgorithm);
         nodesInTheNetwork.add(node0);
 
-
-        List<Integer> list = new ArrayList<Integer>();
-        for (int i = 1; i <= Math.pow(2, 16); i++) {
-            list.add(i);
-        }
+        Random random = new Random();
+        int idRandomNode;
 
         List<Integer> actions = new ArrayList<Integer>();
         for (int i = 1; i <= 3; i++) {
@@ -45,10 +45,10 @@ public class RandomTest {
 
         while(b) {
             Collections.shuffle(actions);
-
+            idRandomNode = random.nextInt(size - 1);
             switch (actions.get(0)) {
-                case 1 : join(list, node0, nodesInTheNetwork); break;
-                case 2 : storeItems(list, node0, itemsInTheNetwork); break;
+                case 1 : join(idRandomNode, node0, nodesInTheNetwork); break;
+                case 2 : storeItems(node0, itemsInTheNetwork); break;
                 case 3 : exit(nodesInTheNetwork, node0); break;
             }
             System.out.print(ANSI_YELLOW + "-----");// + nodesInTheNetwork + ANSI_RESET);
@@ -63,15 +63,13 @@ public class RandomTest {
         }
     }
 
-    private static void join(List list, Node node, ArrayList<Node> nodes) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, RemoteException {
+    private static void join(int id, Node node, ArrayList<Node> nodes) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, RemoteException {
         final String ANSI_GREEN = "\u001B[32m";
         final String ANSI_RESET = "\u001B[0m";
-        Collections.shuffle(list);
         Class<?> clazz = Class.forName("chord.Node");
         Constructor<?> ctor = clazz.getConstructor();
         Node newNode = (Node) ctor.newInstance();
         try {
-            Integer id = (Integer) list.get(0) % (node.getRing().getNum_bits_identifiers());
             newNode.setId(id);
             newNode.join(node);
             nodes.add(newNode);
@@ -81,10 +79,9 @@ public class RandomTest {
         }
     }
 
-    private static void storeItems(List list, Node node, ArrayList<Item> items) throws RemoteException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    private static void storeItems(Node node, ArrayList<Item> items) throws RemoteException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         final String ANSI_GREEN = "\u001B[32m";
         final String ANSI_RESET = "\u001B[0m";
-        Collections.shuffle(list);
         Class<?> clazz = Class.forName("chord.Item");
         Class[] cArg = new Class[2];
         cArg[0] = String.class;
