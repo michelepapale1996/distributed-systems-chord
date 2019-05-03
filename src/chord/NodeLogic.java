@@ -1,6 +1,8 @@
 package chord;
 
 import Test.Debugger;
+import Test.Parameters;
+
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
@@ -13,6 +15,8 @@ public class NodeLogic {
 
         //otherwise find the successor that has the item
         NodeInterface successorForKey = initialNode.findSuccessor(key);
+        //System.out.println("successor for key: " + key + " successor node: " + successorForKey.print());
+        //new InfoNode(successorForKey);
         if (successorForKey.hasItem(key)){
             return successorForKey;
         } else {
@@ -22,6 +26,7 @@ public class NodeLogic {
 
     public static NodeInterface findSuccessor(int key, NodeInterface initialNode) throws RemoteException{
         NodeInterface successor;
+        Parameters.add();
         if(initialNode.getRing().isSimpleLookupAlgorithm()){
             successor = initialNode.getSuccessor();
         }else{
