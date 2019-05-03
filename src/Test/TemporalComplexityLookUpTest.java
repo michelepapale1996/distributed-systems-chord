@@ -1,13 +1,15 @@
 package Test;
 
+import chord.InfoNode;
 import chord.Item;
 import chord.Node;
-import chord.InfoNode;
+import libs.StdDraw;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.NoSuchElementException;
 
 public class TemporalComplexityLookUpTest {
 
@@ -16,6 +18,12 @@ public class TemporalComplexityLookUpTest {
     private static HashMap <Integer, Long> points = new HashMap<>();
 
     public static void main (String args[]) throws RemoteException, InterruptedException {
+
+        StdDraw.setPenRadius(0.05);
+        StdDraw.setPenColor(StdDraw.BLUE);
+        StdDraw.point(0.5, 0.5);
+        StdDraw.setPenColor(StdDraw.MAGENTA);
+        StdDraw.line(0.2, 0.2, 0.8, 0.2);
         int bit;
         int N = 100;
         for (bit = 2; bit <= 5; bit++){
@@ -68,13 +76,17 @@ public class TemporalComplexityLookUpTest {
             System.out.println(node.print());
             System.out.println(item.toString());
 
-            long startTime = System.currentTimeMillis();
-            node.lookUp(item.getKey());
-            long endTime = System.currentTimeMillis();
-            totalTime = totalTime + endTime - startTime;
+            long startTime = System.nanoTime();
+            try {
+                node.lookUp(item.getKey());
+            }catch (NoSuchElementException e){
+                System.out.println(e);
+            }
+            long endTime = System.nanoTime();
+            totalTime = totalTime + (endTime - startTime);
             System.out.println(totalTime);
         }
-        return totalTime;
+        return totalTime / N;
     }
 
 
