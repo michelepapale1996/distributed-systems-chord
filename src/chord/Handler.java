@@ -16,7 +16,7 @@ public class Handler implements Serializable {
         this.timer = new Timer();
         TimerTask stabilizeTask = new StabilizeTask(this.owner);
 
-        timer.scheduleAtFixedRate(stabilizeTask, 0, 1000);
+        timer.scheduleAtFixedRate(stabilizeTask, 0, 100);
     }
 
     public void stopTimer(){

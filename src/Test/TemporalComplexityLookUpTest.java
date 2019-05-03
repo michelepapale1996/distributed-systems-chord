@@ -5,9 +5,7 @@ import chord.Node;
 import chord.InfoNode;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.*;
 
 public class TemporalComplexityLookUpTest {
 
@@ -16,9 +14,10 @@ public class TemporalComplexityLookUpTest {
     private static HashMap <Integer, Long> points = new HashMap<>();
 
     public static void main (String args[]) throws RemoteException, InterruptedException {
+        int N = 1000;
+        int M = 8;
         int bit;
-        int N = 100;
-        for (bit = 2; bit <= 5; bit++){
+        for (bit = 3; bit <= M; bit++){
             nodesInTheNetwork.clear();
             itemsInTheNetwork.clear();
             Node node0 = new Node();
@@ -28,7 +27,7 @@ public class TemporalComplexityLookUpTest {
             initialize(node0, bit);
             //get the total time for do N lookup
             long totalTime = setOfLookUp(N);
-            points.put(bit,totalTime);
+            points.put(bit,totalTime/N);
         }
         draw(points);
     }
@@ -49,7 +48,7 @@ public class TemporalComplexityLookUpTest {
             //Thread.sleep(200);
         }
         long start = System.currentTimeMillis();
-        long end = start + 30*1000; //  *1000 ms
+        long end = start + 20*1000; //  *1000 ms
         while (System.currentTimeMillis() < end){}
         for (Node tmp : nodesInTheNetwork) {
             new InfoNode(tmp);
@@ -65,14 +64,22 @@ public class TemporalComplexityLookUpTest {
             Collections.shuffle(itemsInTheNetwork);
             Node node = nodesInTheNetwork.get(0);
             Item item = itemsInTheNetwork.get(0);
-            System.out.println(node.print());
-            System.out.println(item.toString());
+            //prints of Node that start the lookUp and Item searched.
+            //System.out.println(node.print());
+            //System.out.println(item.toString());
 
-            long startTime = System.currentTimeMillis();
-            node.lookUp(item.getKey());
-            long endTime = System.currentTimeMillis();
+            long startTime = System.nanoTime();
+            try {
+                node.lookUp(item.getKey());
+            }catch (NoSuchElementException e){
+                for (Node tmp : nodesInTheNetwork) {
+                    new InfoNode(tmp);
+                }
+                throw new NoSuchElementException("Element not found");
+            }
+            long endTime = System.nanoTime();
             totalTime = totalTime + endTime - startTime;
-            System.out.println(totalTime);
+            //System.out.println(totalTime);
         }
         return totalTime;
     }
@@ -82,10 +89,18 @@ public class TemporalComplexityLookUpTest {
         StringBuilder builder = new StringBuilder();
         builder.append("===================================================\n");
         int i;
+        int maxNodes = (int) Math.pow(2,points.size() + 2);
+        Collection<Long> times =  points.values();
+        long maxTimes = Collections.max(times);
         for (i = 0; i < points.size(); i++){
-            int size = (int) Math.pow(2, i+3);
-            long time = points.get(i + 2);
+            Double size =  Math.pow(2, i+2);
+            Long time = points.get(i + 3);
+            System.out.println("time : " + time + " nodes : " + size + "\n");
             builder.append("time : " + time + " nodes : " + size + "\n");
+            StdDraw.setPenRadius(0.01);
+            StdDraw.setPenColor(StdDraw.BLUE);
+            time = time / maxTimes;
+            StdDraw.point(time.doubleValue(), size/maxNodes);
         }
         System.out.println(builder);
     }
