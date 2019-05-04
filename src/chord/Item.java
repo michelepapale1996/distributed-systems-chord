@@ -7,9 +7,9 @@ public class Item implements Serializable {
     private String name;
     private int key;
 
-    public Item(String name, int module) {
+    public Item(String name, int numBitsIdentifier) {
         this.name = name;
-        this.key = Sha1.getSha1(name, "" + module);
+        this.key = Sha1.getSha1(name, "" + (int) Math.pow(2, numBitsIdentifier));
     }
 
     public int getKey(){
