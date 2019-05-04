@@ -1,5 +1,7 @@
 package Test;
 
+import Utilities.CheckInput;
+import Utilities.Debugger;
 import chord.InfoNode;
 import chord.Item;
 import chord.Node;
@@ -12,7 +14,6 @@ import java.util.*;
 public class RandomTest{
     static Random random = new Random();
 
-
     public static void main(String args[]) throws RemoteException{
         Debugger.setDebug(false);
         ArrayList<Node> nodesInTheNetwork = new ArrayList<>();
@@ -20,19 +21,16 @@ public class RandomTest{
 
         Node node0 = new Node();
 
-        int numBitsId = 3;
+        int numBitsId = 2;
         Boolean simpleLookUpAlgorithm = false;
         node0.setId(0);
         node0.create(numBitsId, simpleLookUpAlgorithm);
         nodesInTheNetwork.add(node0);
 
-
-
         Timer timer1 = new Timer();
-        Timer timer2 = new Timer();
 
         long start = System.currentTimeMillis();
-        long end = start + 30*1000; //  *1000 ms
+        long end = start + 20*1000; //  *1000 ms
 
         TimerTask timerTask1 = new TimerTask() {
             @Override
@@ -46,28 +44,13 @@ public class RandomTest{
             }
         };
 
-        TimerTask timerTask2 = new TimerTask() {
-            @Override
-            public void run() {
-                try {
-                    random.setSeed(System.currentTimeMillis());
-                    runAction(nodesInTheNetwork, itemsInTheNetwork);
-                } catch (RemoteException | InterruptedException | IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException | ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        timer1.schedule(timerTask1, 0,100 +  random.nextInt(900));
-        //timer2.schedule(timerTask2, 0, 100 + random.nextInt(900));
+        timer1.schedule(timerTask1, 0,1000);
 
         while (System.currentTimeMillis() < end) {}
         timer1.cancel();
-        //timer2.cancel();
 
         menu(nodesInTheNetwork, itemsInTheNetwork);
     }
-
 
     private static void runAction(ArrayList<Node> nodes, ArrayList<Item> items) throws RemoteException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException, InterruptedException {
         int i = RandomTest.random.nextInt(4);
@@ -85,40 +68,21 @@ public class RandomTest{
         int size = (int) Math.pow(2,node.getRing().getNum_bits_identifiers());
 
         Random random = new Random();
-        int idRandomNode = random.nextInt(size -1 );
+        int idRandomNode = random.nextInt(size);
 
         Class<?> clazz = Class.forName("chord.Node");
         Constructor<?> ctor = clazz.getConstructor();
         Node newNode = (Node) ctor.newInstance();
         newNode.setId(idRandomNode);
-        System.out.println(ANSI_GREEN + "-----" + newNode.print() + " is trying to join the network" + ANSI_RESET);
+        System.out.println(ANSI_GREEN + newNode.print() + " is trying to join the network contacting " + node.print() + ANSI_RESET);
         try {
-            /*for (Node nod : nodes) {
-                if (nod.getId() == idRandomNode) return;
-            }*/
             newNode.join(node);
             nodes.add(newNode);
-            System.out.println(ANSI_GREEN + "-----" + newNode.print() + " join the network" + ANSI_RESET);
+            System.out.println(ANSI_GREEN + newNode.print() + " join the network" + ANSI_RESET);
             print(nodes, items);
         }catch (IllegalArgumentException e){
             System.out.println(e);
         }
-    }
-
-    private static void print(ArrayList<Node> nodes, ArrayList<Item> items){
-        try {
-            final String ANSI_RESET = "\u001B[0m";
-            final String ANSI_YELLOW = "\u001B[33m";
-            System.out.print(ANSI_YELLOW + "-----");// + nodesInTheNetwork + ANSI_RESET);
-            System.out.print("[");
-            for (Node nod : nodes) {
-                System.out.print(nod.print());
-            }
-            System.out.print("]");
-            System.out.print("\n");
-            System.out.println(ANSI_YELLOW + "-----" + items + ANSI_RESET);
-            Thread.sleep(1000);
-        }catch (InterruptedException e){}
     }
 
     private static void storeItems(Node node, ArrayList<Item> items, ArrayList<Node> nodes) throws RemoteException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
@@ -137,10 +101,48 @@ public class RandomTest{
             }*/
             node.storeItem(item);
             items.add(item);
-            System.out.println(ANSI_GREEN + "-----Added " + item.toString() + ANSI_RESET);
+            System.out.println(ANSI_GREEN + "Added " + item.toString() + ANSI_RESET);
             print(nodes, items);
         }catch (IllegalArgumentException e){
             System.out.println(e);
+        }
+    }
+
+    private static void exit(ArrayList<Node> nodes, Node node0, ArrayList<Item> items) throws RemoteException, InterruptedException {
+        final String ANSI_GREEN = "\u001B[32m";
+        final String ANSI_RESET = "\u001B[0m";
+        ArrayList<Node> copyOfNodes = new ArrayList<>(nodes);
+        Collections.shuffle(copyOfNodes);
+        Node node = copyOfNodes.get(0);
+        if (nodes.size()>0 && node != node0){
+            System.out.println(ANSI_GREEN + "Exit of " + node.print() + ANSI_RESET);
+            node.exitFromRing();
+            nodes.remove(node);
+            print(nodes, items);
+        }
+    }
+
+    private static void menu(ArrayList<Node> nodes, ArrayList<Item> items){
+        boolean flag = true;
+        while(flag){
+            System.out.print("[");
+            for (Node nod: nodes) {
+                System.out.print(nod.print());
+            }
+            System.out.println("]");
+            System.out.println(items);
+            System.out.println("Insert the id of the node to check:");
+            int id = CheckInput.getInt();
+            Node chosen = null;
+            for (Node nod : nodes) {
+                if (nod.getId() == id) {
+                    chosen = nod;
+                }
+            }
+            try{
+                new InfoNode(chosen);
+            }catch (NullPointerException | RemoteException e){
+            }
         }
     }
 
@@ -154,58 +156,16 @@ public class RandomTest{
         return builder.toString();
     }
 
-    private static void exit(ArrayList<Node> nodes, Node node0, ArrayList<Item> items) throws RemoteException, InterruptedException {
-        final String ANSI_GREEN = "\u001B[32m";
+    private static void print(ArrayList<Node> nodes, ArrayList<Item> items){
         final String ANSI_RESET = "\u001B[0m";
-        ArrayList<Node> copyOfNodes = new ArrayList<>(nodes);
-        Collections.shuffle(copyOfNodes);
-        Node node = copyOfNodes.get(0);
-        if (nodes.size()>0 && node != node0){
-            System.out.println(ANSI_GREEN + "-----Exit of " + node.print() + ANSI_RESET);
-            node.exitFromRing();
-            nodes.remove(node);
-            print(nodes, items);
+        final String ANSI_YELLOW = "\u001B[33m";
+        System.out.print(ANSI_YELLOW);// + nodesInTheNetwork + ANSI_RESET);
+        System.out.print("[");
+        for (Node nod : nodes) {
+            System.out.print(nod.print());
         }
-    }
-
-    private static void menu(ArrayList<Node> nodes, ArrayList<Item> items){
-        Scanner scanner = new Scanner(System.in);
-        boolean flag = true;
-        while(flag){
-            System.out.print("[");
-            for (Node nod: nodes) {
-                System.out.print(nod.print());
-            }
-            System.out.println("]");
-            System.out.println(items);
-            System.out.println("Insert the id of the node to check:");
-            int id;
-            while (true)
-                try {
-                    id = Integer.parseInt(scanner.nextLine());
-                    break;
-                } catch (NumberFormatException nfe) {
-                    System.out.println("Given input is not an integer. Try again: ");
-                    System.out.print("[");
-                    for (Node nod: nodes) {
-                        System.out.print(nod.print());
-                    }
-                    System.out.println("]");
-                    System.out.println(items);
-                }
-            Node chosen = null;
-            for (Node nod : nodes) {
-                if (nod.getId() == id) {
-                    chosen = nod;
-                }
-            }
-            try{
-                new InfoNode(chosen);
-            }catch (NullPointerException e){
-                System.out.println("The chosen node there isn't in the network. Try again: ");
-            }catch (RemoteException e){
-                System.out.println(e);
-            }
-        }
+        System.out.print("]");
+        System.out.print("\n");
+        System.out.println(ANSI_YELLOW + items + ANSI_RESET);
     }
 }
