@@ -186,6 +186,21 @@ public class Client {
 
     }
 
+    private int getInt(){
+        boolean isInt = false;
+        int inputToInt = -1;
+        while(!isInt){
+            String input = scanner.nextLine();
+            try{
+                inputToInt = Integer.parseInt(input);
+                isInt = true;
+            }catch (NumberFormatException e){
+                System.out.println("Given input is not an integer. Try again:");
+            }
+        }
+        return inputToInt;
+    }
+
     private int checkRange(int lower, int upper){
         boolean isInt = false;
         int inputToInt = -1;
@@ -198,21 +213,6 @@ public class Client {
                 }else{
                     System.out.println("The input must be between " + lower + " and " + upper + ". Try again:");
                 }
-            }catch (NumberFormatException e){
-                System.out.println("Given input is not an integer. Try again:");
-            }
-        }
-        return inputToInt;
-    }
-
-    private int getInt(){
-        boolean isInt = false;
-        int inputToInt = -1;
-        while(!isInt){
-            String input = scanner.nextLine();
-            try{
-                inputToInt = Integer.parseInt(input);
-                isInt = true;
             }catch (NumberFormatException e){
                 System.out.println("Given input is not an integer. Try again:");
             }
