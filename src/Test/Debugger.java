@@ -1,7 +1,7 @@
 package Test;
 
 public class Debugger {
-    private static boolean debug;
+    private static boolean debug = false;
 
     public static void setDebug(boolean debug) {
         Debugger.debug = debug;

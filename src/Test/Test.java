@@ -1,12 +1,8 @@
 package Test;
 
-import chord.FingerTable;
-import chord.Item;
 import chord.Node;
 
-import java.io.IOException;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
 public class Test {
@@ -72,17 +68,5 @@ public class Test {
         } catch(IllegalArgumentException e){
             System.out.println(e);
         }
-    }
-
-    private static void info(Node myNode) throws RemoteException {
-        System.out.println("[Info node]");
-        System.out.println("- Node id: " + myNode.print());
-        System.out.println("- Successor: " + myNode.getSuccessor().print());
-        try{
-            System.out.println("- Predecessor: " + myNode.getPredecessor().print());
-        }catch (NullPointerException e){
-            System.out.println("- Predecessor: null");
-        }
-        System.out.println("- Items of the node: " + myNode.getItems());
     }
 }

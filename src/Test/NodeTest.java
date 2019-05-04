@@ -15,7 +15,7 @@ class NodeTest {
     }
 
     @Test
-    void lookUp() throws RemoteException, InterruptedException {node1.create(3, true);
+    void lookUp() throws RemoteException, InterruptedException {
         node1.create(3, true);
         node1.setId(1);
 
@@ -63,7 +63,6 @@ class NodeTest {
         Thread.sleep(3000);
 
         assertEquals(node7.getId(), node1.findSuccessor(3).getId());
-
     }
 
     @Test
@@ -151,8 +150,6 @@ class NodeTest {
         assertEquals(node3.getId(), node1.getSuccessor().getId());
         assertEquals(node1.getId(), node3.getPredecessor().getId());
 
-        boolean b = true;
         assertFalse(node1.getSuccessorList().getSuccessors().contains(node2));
-
     }
 }

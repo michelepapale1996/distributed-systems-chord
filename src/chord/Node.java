@@ -133,6 +133,10 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         return fingerTable;
     }
 
+    public InetAddress getAddress() {
+        return address;
+    }
+
     public void setPredecessor(NodeInterface predecessor) {
         this.predecessor = predecessor;
     }
@@ -153,10 +157,5 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public void initializeId(){
-        String ipAddress = this.address.getHostAddress();
-        this.id = Sha1.getSha1(ipAddress, Integer.toString(this.ring.getNum_bits_identifiers()));
     }
 }

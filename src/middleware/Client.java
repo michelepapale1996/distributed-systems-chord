@@ -6,8 +6,6 @@ import chord.Item;
 import chord.Node;
 import chord.NodeInterface;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -68,14 +66,14 @@ public class Client {
             myNode = new Node();
             myNode.setId(nodeId);
             myNode.create(max_size,simpleLookUpAlgorithm);
-            String IpAddress = InetAddress.getLocalHost().getHostAddress();
-            System.setProperty("java.rmi.server.hostname", IpAddress);
+            System.setProperty("java.rmi.server.hostname", myNode.getAddress().getHostAddress());
+            System.out.println("IpAddress of current node: " + myNode.getAddress().getHostAddress());
 
             //create the registry at port "nodeId"
             Registry registry = LocateRegistry.createRegistry(nodeId + 2000);
             //bind the node on the registry
             registry.bind(String.valueOf(myNode.getId()), myNode);
-            System.out.println("IpAddress of current node: " + IpAddress);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -103,29 +101,27 @@ public class Client {
 
             //NodeInterface knownNode = (NodeInterface) registry.lookup("rmi://" + IpAddressKnownNode + ":" + port + "/" + String.valueOf(knownNodeId));
             NodeInterface knownNode = (NodeInterface) registry.lookup(String.valueOf(knownNodeId));
+            myNode.join(knownNode);
             System.out.println("Connected to ring containing node " + IpAddressKnownNode + " and nodeId " + knownNodeId);
 
-            InetAddress IpAddress = InetAddress.getLocalHost();
-            System.setProperty("java.rmi.server.hostname", IpAddress.getHostAddress());
+            System.setProperty("java.rmi.server.hostname", myNode.getAddress().getHostAddress());
+            System.out.println("IpAddress of current node: " + myNode.getAddress().getHostAddress());
+
             //create the registry at port "nodeId"
             Registry registry1 = LocateRegistry.createRegistry(nodeId + 2000);
             //bind the node on the registry
             registry1.bind(String.valueOf(myNode.getId()), myNode);
-            System.out.println("IpAddress of current node: " + IpAddress);
-
-            myNode.join(knownNode);
             return myNode;
+
         } catch (NotBoundException e) {
             System.out.println("There no exist a Chord ring containing the node you typed.");
             throw new NullPointerException();
         } catch (RemoteException e) {
-            e.printStackTrace();
+            System.out.println(e);
         } catch (IllegalArgumentException e){
             //Node cannot join the ring because there is already a node with his id.
             System.out.println(e);
         } catch (AlreadyBoundException e) {
-            e.printStackTrace();
-        } catch (UnknownHostException e) {
             e.printStackTrace();
         }
         return myNode;
