@@ -1,6 +1,6 @@
 package chord;
 
-import Test.Debugger;
+import Utilities.Debugger;
 
 import java.rmi.RemoteException;
 import java.util.TimerTask;
@@ -38,7 +38,7 @@ public class StabilizeTask extends TimerTask {
                 }
             }
         }catch(RemoteException | NullPointerException e){
-            System.out.println(e);
+            //System.out.println(e);
         }
         this.notify(this.owner.getSuccessor(), this.owner);
     }

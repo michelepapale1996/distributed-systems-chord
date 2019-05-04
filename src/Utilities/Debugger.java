@@ -1,4 +1,4 @@
-package Test;
+package Utilities;
 
 public class Debugger {
     private static boolean debug = false;
