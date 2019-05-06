@@ -77,7 +77,7 @@ public class Client {
         Node myNode = null;
         try {
             myNode = new Node();
-            myNode.setId(nodeId);
+            //myNode.setId(nodeId);
             myNode.create(max_size, simpleLookUpAlgorithm);
             System.setProperty("java.rmi.server.hostname", myNode.getAddress().getHostAddress());
             System.out.println("IpAddress of current node: " + myNode.getAddress().getHostAddress());
@@ -110,7 +110,7 @@ public class Client {
         int nodeId =  CheckInput.checkRange(0, (int) Math.pow(2, knownNode.getRing().getNum_bits_identifiers()) - 1);
 
         Node myNode = new Node();
-        myNode.setId(nodeId);
+        //myNode.setId(nodeId);
         myNode.join(knownNode);
         System.out.println("Connected to ring containing node " + IpAddressKnownNode + " and nodeId " + knownNodeId);
 

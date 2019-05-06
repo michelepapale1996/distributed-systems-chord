@@ -48,7 +48,7 @@ public class NodeLogic {
         NodeInterface successor;
         incomingNode.setRing(knownNode.getRing().isSimpleLookupAlgorithm(), knownNode.getRing().getNum_bits_identifiers());
         // TODO: 17/04/2019 this line is used to set the id
-        //incomingNode.initializeId();
+        incomingNode.initializeId(knownNode);
         //if knownNode has as successor himself, he is the only one in the ring -> the node becomes incomingNode's successor
         if(knownNode == knownNode.getSuccessor()){
             if(incomingNode.getId() != knownNode.getId()){
@@ -84,7 +84,7 @@ public class NodeLogic {
         initialNode.setPredecessor(null);
         initialNode.setRing(simpleLookUpAlgorithm,numBitsIdentifier);
         // TODO: 17/04/2019 this line is used to set the id
-        //initialNode.initializeId();
+        initialNode.initializeId();
         Debugger.print(initialNode.print() + "'s successor is " + initialNode.print());
         Debugger.print(initialNode.print() + "'s predecessor is null");
         if (!initialNode.getRing().isSimpleLookupAlgorithm()) {

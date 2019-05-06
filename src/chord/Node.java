@@ -89,6 +89,14 @@ public class Node extends UnicastRemoteObject implements NodeInterface, Serializ
         this.items.add(item);
     }
 
+    public void initializeId(NodeInterface knownNode) throws RemoteException{
+        this.id = Sha1.getSha1(this.address.getHostAddress(), knownNode.getRing().getNum_bits_identifiers());
+    }
+
+    public void initializeId() throws RemoteException{
+        this.id = Sha1.getSha1(this.address.getHostAddress(), this.getRing().getNum_bits_identifiers());
+    }
+
     public Ring getRing(){
         return this.ring;
     }

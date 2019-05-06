@@ -7,7 +7,7 @@ import java.security.NoSuchAlgorithmException;
 public class Sha1{
 
     //given String to convert and module it returns the id
-    public static int getSha1(String toConvert, String module){
+    public static int getSha1(String toConvert, int numBitsIdentifier){
         try {
             // getInstance() method is called with algorithm SHA-1
             MessageDigest md = MessageDigest.getInstance("SHA-1");
@@ -28,8 +28,10 @@ public class Sha1{
                 hashtext = "0" + hashtext;
             }
 
+            String module = String.valueOf((int) Math.pow(2, numBitsIdentifier));
+
             BigInteger ht = new BigInteger(hashtext,16);
-            BigInteger m = new BigInteger(module,10);
+            BigInteger m = new BigInteger(module ,10);
             BigInteger result = ht.mod(m) ;
             return result.intValue();
         }
