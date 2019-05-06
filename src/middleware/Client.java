@@ -7,7 +7,6 @@ import chord.Item;
 import chord.Node;
 import chord.NodeInterface;
 
-import java.net.InetAddress;
 import java.rmi.AlreadyBoundException;
 import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
@@ -16,11 +15,9 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.ExportException;
 import java.util.NoSuchElementException;
-import java.util.Scanner;
-import java.util.regex.Pattern;
+
 
 public class Client {
-    Scanner scanner = new Scanner(System.in);
 
     public static void main(String args[]) {
         Debugger.setDebug(false);
