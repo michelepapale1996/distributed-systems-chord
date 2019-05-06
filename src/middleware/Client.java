@@ -88,7 +88,7 @@ public class Client {
             registry.bind(String.valueOf(myNode.getId()), myNode);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(e);
         }
         return myNode;
     }
