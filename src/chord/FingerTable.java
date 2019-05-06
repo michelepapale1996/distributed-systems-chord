@@ -85,7 +85,6 @@ public class FingerTable {
     //update the first line of the finger table due to the change of the successor.
     public void updateSuccessor(NodeInterface new_successor) {
         int i = 0;
-        // TODO: 24/04/2019 implementation of update also for the other entries to improve performance
         i = this.getPosition(i);
         Debugger.print("-Update finger table due to change of successor for " + this.owner.toString() + " with couple < " + i + ", " + new_successor.toString() + " >");
         this.map.put(i ,new_successor);

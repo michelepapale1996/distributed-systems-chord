@@ -26,6 +26,7 @@ public class NodeLogic {
 
     public static NodeInterface findSuccessor(int key, NodeInterface initialNode) throws RemoteException{
         NodeInterface successor;
+        // TODO: 06/05/2019 sistemare la linea successiva per i test e i client.
         Parameters.add();
         if(initialNode.getRing().isSimpleLookupAlgorithm()){
             successor = initialNode.getSuccessor();
