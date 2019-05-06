@@ -7,14 +7,17 @@ import chord.Item;
 import chord.Node;
 import chord.NodeInterface;
 
+import java.net.InetAddress;
 import java.rmi.AlreadyBoundException;
 import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.ExportException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class Client {
     Scanner scanner = new Scanner(System.in);
@@ -87,17 +90,21 @@ public class Client {
             //bind the node on the registry
             registry.bind(String.valueOf(myNode.getId()), myNode);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (ExportException e) {
+            System.out.println("There already exists a ring with these parameters.  ");
+            System.exit(0);
+        } catch (RemoteException | AlreadyBoundException e) {
+
         }
         return myNode;
     }
 
     private Node connectToRing() throws NotBoundException, RemoteException, IllegalArgumentException, AlreadyBoundException {
         System.out.println("Insert the IP address of a node contained in the ring: ");
-        String IpAddressKnownNode = scanner.nextLine();
-        //String IpAddressKnownNode = "127.0.0.1";
+        String IpAddressKnownNode = CheckInput.validateIP();
 
+
+        //String IpAddressKnownNode = "127.0.0.1";
         System.out.println("Insert the id of the known node contained in the ring: ");
         int knownNodeId = CheckInput.getInt();
 
