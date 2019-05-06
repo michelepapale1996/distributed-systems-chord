@@ -8,6 +8,7 @@ import chord.Node;
 import chord.NodeInterface;
 
 import java.rmi.AlreadyBoundException;
+import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -51,10 +52,9 @@ public class Client {
                         flag = false;
                         break;
                 }
-            } catch (NotBoundException e) {
-                System.out.println("There no exists a Chord ring containing the node you typed.");
-            } catch (RemoteException e) {
-                System.out.println("There no exists a Chord ring containing the known node at the ip you typed.");
+            } catch (ConnectException | NotBoundException e) {
+                e.printStackTrace();
+                System.out.println("There no exists a Chord ring you want to connect.");
             } catch (IllegalArgumentException e) {
                 //Node cannot join the ring because there is already a node with his id.
                 System.out.println(e);
@@ -67,8 +67,8 @@ public class Client {
 
     private Node createNewRing() {
         System.out.println("What is the max num of bits of the identifiers of the ring?");
-        int max_size = CheckInput.getInt();
-        System.out.println("Do you want a simple lookup algorithm? y/n");
+        int max_size = CheckInput.checkRange(1, 31);
+        System.out.println("Do you want a simple look up algorithm? y/n");
         Boolean simpleLookUpAlgorithm = CheckInput.getBoolean();
 
         System.out.println("What is the id of your node?");
@@ -101,11 +101,12 @@ public class Client {
         System.out.println("Insert the id of the known node contained in the ring: ");
         int knownNodeId = CheckInput.getInt();
 
-        System.out.println("Insert the id of your node: ");
         //registry is at port "knownNodeId"
         int port = knownNodeId + 2000;
         Registry registry = LocateRegistry.getRegistry(IpAddressKnownNode, port);
         NodeInterface knownNode = (NodeInterface) registry.lookup(String.valueOf(knownNodeId));
+
+        System.out.println("Insert the id of your node: ");
         int nodeId =  CheckInput.checkRange(0, (int) Math.pow(2, knownNode.getRing().getNum_bits_identifiers()) - 1);
 
         Node myNode = new Node();
@@ -167,7 +168,7 @@ public class Client {
 
     private void storeItem(Node myNode) throws RemoteException {
         System.out.println("What is the id of the item?");
-        int itemId = CheckInput.getInt();
+        int itemId =  CheckInput.checkRange(0, (int) Math.pow(2, myNode.getRing().getNum_bits_identifiers()) - 1);
         Item item = new Item("prova", 8);
         item.setKey(itemId);
         try {
