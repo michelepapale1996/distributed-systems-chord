@@ -52,7 +52,7 @@ Each test run 10 different rings (starting from a ring containing 2 nodes to a r
 
 We have checked that the lookup in case of simpleKeyLocation is a **O(N)** where N is the number of max nodes in the ring.  
 
-![alt text](https://github.com/michelepapale1996/distributed-systems-chord/blob/master/src/Test/img1.PNG)
+![alt text](https://github.com/michelepapale1996/distributed-systems-chord/blob/master/src/Test/img2.PNG)
 
 It follows a **linear** curve as shown in the paper. 
 
