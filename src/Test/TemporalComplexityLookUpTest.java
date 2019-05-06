@@ -19,7 +19,7 @@ public class TemporalComplexityLookUpTest {
         //N = #lookUp; M = #bits; wait = amount of time in addition to wait for each additional bit;
         int N = 10000;
         int M = 10;
-        int wait = 2;
+        int wait = 10;
         int bit;
         Boolean simpleLookUpAlgorithm = false;
         for (bit = 1; bit <= M; bit++){
