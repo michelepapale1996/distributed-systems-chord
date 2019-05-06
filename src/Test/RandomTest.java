@@ -141,7 +141,7 @@ public class RandomTest{
             }
             try{
                 new InfoNode(chosen);
-            }catch (NullPointerException | RemoteException e){
+            }catch (NullPointerException e){
             }
         }
     }

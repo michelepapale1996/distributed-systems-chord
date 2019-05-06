@@ -53,7 +53,7 @@ public class Client {
                         break;
                 }
             } catch (ConnectException | NotBoundException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
                 System.out.println("There no exists a Chord ring you want to connect.");
             } catch (IllegalArgumentException e) {
                 //Node cannot join the ring because there is already a node with his id.
@@ -83,7 +83,7 @@ public class Client {
             System.out.println("IpAddress of current node: " + myNode.getAddress().getHostAddress());
 
             //create the registry at port "nodeId"
-            Registry registry = LocateRegistry.createRegistry(nodeId + 2000);
+            Registry registry = LocateRegistry.createRegistry(myNode.getId() + 2000);
             //bind the node on the registry
             registry.bind(String.valueOf(myNode.getId()), myNode);
 
@@ -118,7 +118,7 @@ public class Client {
         System.out.println("IpAddress of current node: " + myNode.getAddress().getHostAddress());
 
         //create the registry at port "nodeId"
-        Registry registry1 = LocateRegistry.createRegistry(nodeId + 2000);
+        Registry registry1 = LocateRegistry.createRegistry(myNode.getId() + 2000);
         //bind the node on the registry
         registry1.bind(String.valueOf(myNode.getId()), myNode);
         return myNode;
