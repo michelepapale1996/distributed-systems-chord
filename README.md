@@ -51,11 +51,15 @@ We have done 3 different types of tests:
 Each test run 10 different rings (starting from a ring containing 2 nodes to a ring containing 1024 nodes) and for each ring are done 1000 lookups.
 
 We have checked that the lookup in case of simpleKeyLocation is a **O(N)** where N is the number of max nodes in the ring.  
-//image 1
+
+![alt text](https://github.com/michelepapale1996/distributed-systems-chord/blob/master/src/Test/img1.PNG)
+
 It follows a **linear** curve as shown in the paper. 
 
 We have checked that the lookup in case of scalableKeyLocation is a **O(log(N))** where N is the number of max nodes in the ring.
-//image 2
+
+![alt text](https://github.com/michelepapale1996/distributed-systems-chord/blob/master/src/Test/img3.PNG)
+
 It follows a **logarithmic** curve as shown in the paper.
 
 ## Project Team
