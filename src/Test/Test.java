@@ -1,5 +1,6 @@
 package Test;
 
+import Utilities.Debugger;
 import chord.Node;
 
 import java.rmi.RemoteException;
@@ -43,10 +44,6 @@ public class Test {
             Thread.sleep(3000);
             node5.join(node4);
             Thread.sleep(3000);
-
-
-
-
 
 //            ArrayList<FingerTable> fingerTables = new ArrayList<>();
 //            fingerTables.add(node0.getFingerTable());
