@@ -61,7 +61,7 @@ public class StabilizeTask extends TimerTask {
                 Debugger.print("-Notify for [" + this.owner.print() + "]: " + node.print() + "'s predecessor is " + predecessor.print());
                 node.setPredecessor(predecessor);
             } catch (RemoteException e1) {
-                System.out.println(e1);
+                //System.out.println(e1);
             }
         }
     }
@@ -86,6 +86,7 @@ public class StabilizeTask extends TimerTask {
     private void fixSuccessorList() {
         if (this.owner.getSuccessor() == this.owner) {
             Debugger.print("-SuccessorList for [" + this.owner.print() + "]: Network contains only " + this.owner.print());
+            this.owner.getSuccessorList().setSuccessors(new ArrayList<>());
             return;
         }
 
@@ -108,7 +109,6 @@ public class StabilizeTask extends TimerTask {
                 this.owner.getSuccessorItems().setItems(newSuccessorItems);
 
                 Debugger.print("-SuccessorList for [" + this.owner.print() + "]: successorList of " + this.owner.print() + " is: " + this.owner.getSuccessorList().print());
-                //Debugger.print("-SuccessorList for [" + this.owner.print() + "]: successorItems of " + this.owner + " is: " + newSuccessorItems);
                 this.owner.setSuccessor(newSuccessorList.get(0));
                 foundLivingSuccessor = true;
             } catch(NullPointerException | RemoteException e){
@@ -128,8 +128,7 @@ public class StabilizeTask extends TimerTask {
                     this.owner.setSuccessor(this.owner);
                     foundLivingSuccessor = true;
                 }}catch (NullPointerException exc){
-                    exc.printStackTrace();
-                    System.out.println("---------------------- " + this.owner);
+                    //System.out.println("---------------------- " + this.owner);
                 }
             }
         }
@@ -145,7 +144,7 @@ public class StabilizeTask extends TimerTask {
                 this.owner.storeItem(item);
             }
         }catch(RemoteException | IllegalArgumentException e){
-            System.out.println(e);
+            //System.out.println(e);
         }
     }
 
@@ -165,7 +164,7 @@ public class StabilizeTask extends TimerTask {
                 }
             }
         }catch(RemoteException e){
-            System.out.println(e);
+            //System.out.println(e);
         }
     }
 
