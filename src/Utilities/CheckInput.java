@@ -1,8 +1,11 @@
 package Utilities;
 
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class CheckInput {
+    private static final Pattern PATTERN = Pattern.compile("^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
+
     static Scanner scanner = new Scanner(System.in);
     public static int getInt() {
         boolean isInt = false;
@@ -55,5 +58,22 @@ public class CheckInput {
             }
         }
         return simple;
+    }
+
+    public static String validateIP() {
+        boolean b = false;
+        String ip = null;
+        while(!b){
+            String input = scanner.nextLine();
+            
+            if (PATTERN.matcher(input).matches()) {
+                ip = input;
+                b = true;
+            }
+            else{
+                System.out.println("Given input is not an address. Try again: ");
+            }
+        }
+        return ip;
     }
 }
