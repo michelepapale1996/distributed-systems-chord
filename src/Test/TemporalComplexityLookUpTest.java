@@ -12,7 +12,7 @@ public class TemporalComplexityLookUpTest {
 
     private static ArrayList <Node> nodesInTheNetwork = new ArrayList<>();
     private static ArrayList <Item> itemsInTheNetwork = new ArrayList<>();
-    private static HashMap <Integer, Integer> pointsAccess = new HashMap<>();
+    private static HashMap <Integer, Double> pointsVisits = new HashMap<>();
     private static Parameters parameters = new Parameters(0);
 
     public static void main (String args[]) throws RemoteException{
@@ -21,7 +21,7 @@ public class TemporalComplexityLookUpTest {
         int M = 10;
         int wait = 2;
         int bit;
-        Boolean simpleLookUpAlgorithm = true;
+        Boolean simpleLookUpAlgorithm = false;
         for (bit = 1; bit <= M; bit++){
             System.out.println("iteration for number of bits: " + bit);
             nodesInTheNetwork.clear();
@@ -33,9 +33,9 @@ public class TemporalComplexityLookUpTest {
             initialize(node0, bit, wait, simpleLookUpAlgorithm);
             //do N lookup in the ring.
             setOfLookUp(N);
-            pointsAccess.put(bit, parameters.getCounter());
+            pointsVisits.put(bit,(double) parameters.getCounter()/N);
         }
-        draw(pointsAccess);
+        draw(pointsVisits);
     }
 
     //create a full ring with all items.
@@ -74,37 +74,34 @@ public class TemporalComplexityLookUpTest {
             try {
                 node.lookUp(item.getKey());
             }catch (NoSuchElementException e){
-                for (Node tmp : nodesInTheNetwork) {
-                    new InfoNode(tmp);
-                }
-                throw new NoSuchElementException("Element not found. Restart the program.");
+                System.out.println("element not found");
             }
         }
     }
 
     //plot the total number of visits of lookUp and the number of nodes in the ring.
-    private static void draw(HashMap<Integer, Integer> pointsAccess) {
+    private static void draw(HashMap<Integer, Double> pointsVisits) {
         int i;
         StringBuilder builder = new StringBuilder();
         builder.append("===================================================\n");
-        int maxNodes = (int) Math.pow(2,pointsAccess.size());
+        int maxNodes = (int) Math.pow(2,pointsVisits.size());
         StdDraw.setPenRadius(0.020);
-        Collection<Integer> accessList =  pointsAccess.values();
-        int maxAccess = Collections.max(accessList);
-        StdDraw.setXscale(-180, maxNodes + 180);
-        StdDraw.setYscale(0, maxAccess + 10000);
+        Collection<Double> accessList =  pointsVisits.values();
+        double maxAverageVisits = Collections.max(accessList);
+        StdDraw.setXscale(-180, maxNodes);
+        StdDraw.setYscale(0, maxAverageVisits);
         Font font = new Font("Arial", Font.BOLD, 12);
         StdDraw.setFont(font);
         StdDraw.setPenColor(StdDraw.BLACK);
-        StdDraw.text(maxNodes/2, 1000, "NUMBER OF NODES");
-        StdDraw.text(-125, maxAccess/2 + 5000, "NUMBER OF VISITS", 90);
+        StdDraw.text(maxNodes/2, 0.5, "NUMBER OF NODES");
+        StdDraw.text(-125, maxAverageVisits/2, "AVERAGE NUMBER OF VISITS", 90);
         StdDraw.setPenColor(StdDraw.BLUE);
-        for (i = 0; i < pointsAccess.size(); i++){
+        for (i = 0; i < pointsVisits.size(); i++){
             int size = (int) Math.pow(2, i+1);
-            int access = pointsAccess.get(i + 1);
-            builder.append("access : " + access + " nodes : " + size + "\n");
-            StdDraw.point(size, access);
-            StdDraw.text(size,access + 2000, "( " + size + ", " + access + " )");
+            double averageVisits = pointsVisits.get(i+1);
+            builder.append("average visits : " + averageVisits + " nodes : " + size + "\n");
+            StdDraw.point(size, averageVisits);
+            StdDraw.text(size,averageVisits + 0.25, "( " + size + ", " + averageVisits + " )");
         }
         System.out.println(builder);
     }
