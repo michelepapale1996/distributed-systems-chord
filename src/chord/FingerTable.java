@@ -1,8 +1,9 @@
 package chord;
 
+import Utilities.Debugger;
+
 import java.rmi.RemoteException;
 import java.util.HashMap;
-import Test.Debugger;
 
 public class FingerTable {
     private Node owner;

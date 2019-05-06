@@ -1,6 +1,6 @@
 package chord;
 
-import Test.Debugger;
+import Utilities.Debugger;
 
 import java.rmi.RemoteException;
 import java.util.TimerTask;
@@ -38,7 +38,7 @@ public class StabilizeTask extends TimerTask {
                 }
             }
         }catch(RemoteException | NullPointerException e){
-            System.out.println(e);
+            //System.out.println(e);
         }
         this.notify(this.owner.getSuccessor(), this.owner);
     }
@@ -114,6 +114,7 @@ public class StabilizeTask extends TimerTask {
             } catch(NullPointerException | RemoteException e){
                 //arrived here, the current successor is faulty
                 //add his items to itemsToFix
+                try{
                 if(i < this.owner.getSuccessorItems().getItems().values().toArray().length){
                     for (Item item: (ArrayList<Item>) this.owner.getSuccessorItems().getItems().values().toArray()[i]) {
                         itemsToFix.add(item);
@@ -126,6 +127,9 @@ public class StabilizeTask extends TimerTask {
                 }else{
                     this.owner.setSuccessor(this.owner);
                     foundLivingSuccessor = true;
+                }}catch (NullPointerException exc){
+                    exc.printStackTrace();
+                    System.out.println("---------------------- " + this.owner);
                 }
             }
         }
@@ -140,7 +144,7 @@ public class StabilizeTask extends TimerTask {
             for (Item item : items) {
                 this.owner.storeItem(item);
             }
-        }catch(RemoteException e){
+        }catch(RemoteException | IllegalArgumentException e){
             System.out.println(e);
         }
     }

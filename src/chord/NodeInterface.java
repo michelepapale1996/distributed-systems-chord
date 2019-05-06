@@ -22,6 +22,5 @@ public interface NodeInterface extends Remote{
     FingerTable getFingerTable() throws RemoteException;
     Ring getRing() throws RemoteException;
     void setRing(Boolean simpleKeyLocation, int num_bits_identifiers) throws RemoteException;
-    void initializeId() throws RemoteException;
 }
 

@@ -1,6 +1,6 @@
 package chord;
 
-import Test.Debugger;
+import Utilities.Debugger;
 import Test.Parameters;
 
 import java.rmi.RemoteException;
@@ -34,7 +34,8 @@ public class NodeLogic {
             successor = initialNode.getFingerTable().getClosestPrecedingNode(key);
         }
 
-        if (NodeLogic.isBetween(initialNode.getId(), key, initialNode.getSuccessor().getId(), initialNode.getRing().getNum_bits_identifiers()) || initialNode.getId() == successor.getId()){
+        if (NodeLogic.isBetween(initialNode.getId(), key, initialNode.getSuccessor().getId(), initialNode.getRing().getNum_bits_identifiers())
+                || initialNode.getId() == successor.getId()){
             return initialNode.getSuccessor();
         }else{
             return successor.findSuccessor(key);
@@ -42,18 +43,22 @@ public class NodeLogic {
     }
 
     public static void join(NodeInterface knownNode, NodeInterface incomingNode) throws RemoteException, IllegalArgumentException{
+        //if the two nodes have the same id -> throw exception
+        if(incomingNode.getId() == knownNode.getId()) throw new IllegalArgumentException("Node " + incomingNode.print() + " cannot join the ring because there is already a node with his id.");
+
         NodeInterface successor;
-        incomingNode.setRing(knownNode.getRing().isSimpleLookupAlgorithm(),knownNode.getRing().getNum_bits_identifiers());
+        incomingNode.setRing(knownNode.getRing().isSimpleLookupAlgorithm(), knownNode.getRing().getNum_bits_identifiers());
         // TODO: 17/04/2019 this line is used to set the id
         //incomingNode.initializeId();
-        //if node has as successor himself, he is the only one in the ring -> he becomes my successor
+        //if knownNode has as successor himself, he is the only one in the ring -> the node becomes incomingNode's successor
         if(knownNode == knownNode.getSuccessor()){
             if(incomingNode.getId() != knownNode.getId()){
                 successor = knownNode;
                 Debugger.print(incomingNode.print() + " joined and successor is: " + knownNode.print());
                 incomingNode.setSuccessor(knownNode);
             }else{
-                throw new IllegalArgumentException("node cannot join the ring because there is already a node with his id.");
+                //arrived here, there are only 2 nodes and incomingNode has the same id of knownNode
+                throw new IllegalArgumentException("Node " + incomingNode.print() + " cannot join the ring because there is already a node with his id.");
             }
         } else {
             successor = knownNode.findSuccessor(incomingNode.getId());
@@ -61,7 +66,7 @@ public class NodeLogic {
                 incomingNode.setSuccessor(successor);
                 Debugger.print(incomingNode.print() + " joined and successor is: " + incomingNode.getSuccessor().print());
             }else{
-                throw new IllegalArgumentException("Node cannot join the ring because there is already a node with his id.");
+                throw new IllegalArgumentException("Node " + incomingNode.print() +  " cannot join the ring because there is already a node with his id.");
             }
         }
 
@@ -111,7 +116,7 @@ public class NodeLogic {
         return (itemSearched > startInterval && itemSearched <= endInterval);
     }
 
-    public static void exitFromRing(Node node) throws  RemoteException{
+    public static void exitFromRing(Node node) throws RemoteException{
         //add the leaving node items to its successor
         ArrayList<Item> items = new ArrayList<>(node.getItems());
         NodeInterface successor = node.getSuccessor();
@@ -129,7 +134,6 @@ public class NodeLogic {
             node.getHandler().stopTimer();
             node.setInstance(null);
         }catch (NullPointerException e){
-
         }
     }
 }
