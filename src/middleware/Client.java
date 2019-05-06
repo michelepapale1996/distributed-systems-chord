@@ -15,10 +15,8 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.ExportException;
 import java.util.NoSuchElementException;
-import java.util.Scanner;
 
 public class Client {
-    Scanner scanner = new Scanner(System.in);
 
     public static void main(String args[]) {
         Debugger.setDebug(false);
