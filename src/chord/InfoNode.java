@@ -3,11 +3,11 @@ package chord;
 import java.rmi.RemoteException;
 
 public class InfoNode {
-    public InfoNode(Node chosen) throws RemoteException {
+    public InfoNode(Node chosen){
         run(chosen);
     }
 
-    public void run(Node myNode) throws RemoteException {
+    public void run(Node myNode){
         try {
             System.out.println("- Node id: " + myNode.print());
             System.out.println("- Successor: " + myNode.getSuccessor().print());
