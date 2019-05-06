@@ -72,7 +72,7 @@ public class Client {
         Boolean simpleLookUpAlgorithm = CheckInput.getBoolean();
 
         System.out.println("What is the id of your node?");
-        int nodeId =  CheckInput.checkRange(0, (int) Math.pow(2, max_size) - 1);
+        int nodeId = CheckInput.checkRange(0, (int) Math.pow(2, max_size) - 1);
 
         Node myNode = null;
         try {
@@ -83,7 +83,7 @@ public class Client {
             System.out.println("IpAddress of current node: " + myNode.getAddress().getHostAddress());
 
             //create the registry at port "nodeId"
-            Registry registry = LocateRegistry.createRegistry(myNode.getId() + 2000);
+            Registry registry = LocateRegistry.createRegistry(nodeId + 2000);
             //bind the node on the registry
             registry.bind(String.valueOf(myNode.getId()), myNode);
 
@@ -118,7 +118,7 @@ public class Client {
         System.out.println("IpAddress of current node: " + myNode.getAddress().getHostAddress());
 
         //create the registry at port "nodeId"
-        Registry registry1 = LocateRegistry.createRegistry(myNode.getId() + 2000);
+        Registry registry1 = LocateRegistry.createRegistry(nodeId + 2000);
         //bind the node on the registry
         registry1.bind(String.valueOf(myNode.getId()), myNode);
         return myNode;

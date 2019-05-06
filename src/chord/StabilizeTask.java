@@ -69,26 +69,29 @@ public class StabilizeTask extends TimerTask {
     //called periodically
     //Checks the validity of entry of the finger table.
     public void fixFingers(){
+        this.bit = this.bit + 1;
+        this.bit = this.bit % this.owner.getRing().getNum_bits_identifiers();
         try{
             int position = getPosition(this.bit);
             NodeInterface successor = this.owner.findSuccessor(position);
             this.owner.setEntryFingerTable(position,successor);
-            Debugger.print("-FixFingers: update finger table for " + this.owner.print() + " with couple < " + position + ", " + successor.toString() + " >");
-            Debugger.print(this.owner.getFingerTable().toString());
-            this.bit = this.bit +1;
-            this.bit = this.bit % this.owner.getRing().getNum_bits_identifiers();
+            Debugger.print("-FixFingers: update finger table for " + this.owner.print() + " with couple < " + position + ", " + successor.print() + " >");
+            Debugger.print(this.owner.getFingerTable().print());
         }catch(RemoteException e){
+            //e.printStackTrace();
             int position = getPosition(this.bit);
-            this.owner.setEntryFingerTable(position,this.owner.getSuccessor());
+            this.owner.setEntryFingerTable(position, this.owner.getSuccessor());
         }
     }
 
     private void fixSuccessorList() {
-        if (this.owner.getSuccessor() == this.owner) {
-            Debugger.print("-SuccessorList for [" + this.owner.print() + "]: Network contains only " + this.owner.print());
-            this.owner.getSuccessorList().setSuccessors(new ArrayList<>());
-            return;
-        }
+        try {
+            if (this.owner.getSuccessor().getId() == this.owner.getId()) {
+                Debugger.print("-SuccessorList for [" + this.owner.print() + "]: Network contains only " + this.owner.print());
+                this.owner.getSuccessorList().setSuccessors(new ArrayList<>());
+                return;
+            }
+        }catch (RemoteException e){}
 
         int size = this.owner.getRing().getNum_bits_identifiers();
         boolean foundLivingSuccessor = false;
@@ -151,16 +154,19 @@ public class StabilizeTask extends TimerTask {
 
     public void fixItems(){
         try{
-            for (Item item : new ArrayList<>(this.owner.getItems())) {
-                if (this.owner.findSuccessor(item.getKey()).getId() != this.owner.getId()){
-                    this.owner.getItems().remove(item);
-                    try{
-                        this.owner.storeItem(item);
-                    }catch (IllegalArgumentException e){
-                        System.out.println(e);
+            ArrayList<Item> copy = new ArrayList<>(this.owner.getItems());
+            for (Item item : copy) {
+                if(item.getKey() != this.owner.getId()){
+                    if (this.owner.findSuccessor(item.getKey()).getId() != this.owner.getId()){
+                        this.owner.getItems().remove(item);
+                        try{
+                            this.owner.storeItem(item);
+                            System.out.println("-FixItems for [" + this.owner.print() + "]: " + item + " moved FROM " + this.owner.print() + " TO " + this.owner.findSuccessor(item.getKey()).print());
+                        }catch (IllegalArgumentException e){
+                            System.out.println(e);
+                        }
+                        Debugger.print("-FixItems for [" + this.owner.print() + "]: " + item + " moved FROM " + this.owner.print() + " TO " + this.owner.findSuccessor(item.getKey()).print());
                     }
-
-                    Debugger.print("-FixItems for [" + this.owner.print() + "]: " + item + " moved FROM " + this.owner + " TO " + this.owner.findSuccessor(item.getKey()));
                 }
             }
         }catch(RemoteException e){
