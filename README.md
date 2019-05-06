@@ -28,19 +28,19 @@ The library contains 4 different packages:
     
 ### Local
 To run the Chord library in local you need:
-- to initialize some nodes (through its constructor Node())
+- to initialize some nodes (through its constructor **Node()**)
 - use its main methods: 
-    - Node.create(int numBitsIdentifier, boolean isSimpleLookupAlgorithm)
-    - Node.join(Node knownNode)
-    - Node.lookUp(int key)
-    - Node.storeItem(Item item)
-    - Node.exitFromRing()
+    - **Node.create(int numBitsIdentifier, boolean isSimpleLookupAlgorithm)**
+    - **Node.join(Node knownNode)**
+    - **Node.lookUp(int key)**
+    - **Node.storeItem(Item item)**
+    - **Node.exitFromRing()**
 
-To create an Item you can use its constructor Item(String name, int module) where module is the max number of nodes in the ring
+To create an Item you can use its constructor **Item(String name, int module)** where module is the max number of nodes in the ring
 
 ### Distributed
 To use the protocol in a distributed environment, check the example that can be found under middleware/Client.
-Please, note that in a distributed environment you have to set the id of the node (through Node.setId(int id)) before to create or join a new Chord ring.
+Please, note that in a distributed environment you have to set the id of the node (through **Node.setId(int id)**) before to create or join a new Chord ring.
 
 ## Testing
 We have done 3 different types of tests:
@@ -50,13 +50,13 @@ We have done 3 different types of tests:
 - Test to show the temporal Complexity for the lookup: we have tested the temporal complexity for the lookup (you can find it in Test/TemporalComplexityLookUpTest)
 Each test run 10 different rings (starting from a ring containing 2 nodes to a ring containing 1024 nodes) and for each ring are done 1000 lookups.
 
-We have checked that the lookup in case of simpleKeyLocation is a O(N) where N is the number of max nodes in the ring.  
+We have checked that the lookup in case of simpleKeyLocation is a **O(N)** where N is the number of max nodes in the ring.  
 //image 1
-It follows a linear curve as shown in the paper. 
+It follows a **linear** curve as shown in the paper. 
 
-We have checked that the lookup in case of scalableKeyLocation is a O(log(N)) where N is the number of max nodes in the ring.
+We have checked that the lookup in case of scalableKeyLocation is a **O(log(N))** where N is the number of max nodes in the ring.
 //image 2
-It follows a logarithmic curve as shown in the paper.
+It follows a **logarithmic** curve as shown in the paper.
 
 ## Project Team
 - [Papale Michele](https://github.com/michelepapale1996)
