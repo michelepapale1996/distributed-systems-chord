@@ -82,7 +82,7 @@ public class Client {
             System.out.println("IpAddress of current node: " + myNode.getAddress().getHostAddress());
 
             //create the registry at port "nodeId"
-            Registry registry = LocateRegistry.createRegistry(nodeId + 2000);
+            Registry registry = LocateRegistry.createRegistry((nodeId % 60000) + 2000);
             //bind the node on the registry
             registry.bind(String.valueOf(myNode.getId()), myNode);
 
@@ -121,7 +121,7 @@ public class Client {
         System.out.println("IpAddress of current node: " + myNode.getAddress().getHostAddress());
 
         //create the registry at port "nodeId"
-        Registry registry1 = LocateRegistry.createRegistry(nodeId + 2000);
+        Registry registry1 = LocateRegistry.createRegistry((nodeId % 60000) + 2000);
         //bind the node on the registry
         registry1.bind(String.valueOf(myNode.getId()), myNode);
         return myNode;
