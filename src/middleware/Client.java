@@ -71,7 +71,7 @@ public class Client {
         Boolean simpleLookUpAlgorithm = CheckInput.getBoolean();
 
         System.out.println("What is the id of your node?");
-        int nodeId = CheckInput.checkRange(0, (int) Math.pow(2, max_size) - 1);
+        int nodeId = CheckInput.checkRange(0, (long) Math.pow(2, max_size) - 1);
 
         Node myNode = null;
         try {

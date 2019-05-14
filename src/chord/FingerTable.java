@@ -56,10 +56,11 @@ public class FingerTable {
 
     //calculate id + 2^i
     public int getPosition(int i){
-        int m = (int) Math.pow(2,this.bit);
-        i = (int) Math.pow(2,i);
-        long tmp = (i % m) + (this.owner.getId() % m);
-        i = (int) tmp % m;
+        long m = (long) Math.pow(2,this.bit);
+        long a = (long) Math.pow(2,i);
+        long tmp = (a % m) + (this.owner.getId() % m);
+        tmp = tmp % m;
+        i = (int) tmp;
         return i;
     }
 
