@@ -16,7 +16,7 @@ public class NodeLogic {
         //otherwise find the successor that has the item
         NodeInterface successorForKey = initialNode.findSuccessor(key);
         //System.out.println("successor for key: " + key + " successor node: " + successorForKey.print());
-        //new InfoNode(successorForKey);
+        //InfoNode.show(successorForKey);
         if (successorForKey.hasItem(key)){
             return successorForKey;
         } else {

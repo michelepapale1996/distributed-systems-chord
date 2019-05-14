@@ -30,9 +30,9 @@ public class Test {
             node5.join(node4);
             Thread.sleep(3000);
 
-            new InfoNode(node0);
-            new InfoNode(node1);
-            new InfoNode(node2);
+            InfoNode.show(node0);
+            InfoNode.show(node1);
+            InfoNode.show(node2);
 //            ArrayList<FingerTable> fingerTables = new ArrayList<>();
 //            fingerTables.add(node0.getFingerTable());
 //            fingerTables.add(node2.getFingerTable());

@@ -58,7 +58,7 @@ public class TemporalComplexityLookUpTest {
         while (System.currentTimeMillis() < end){}
         for (Node tmp : nodesInTheNetwork) {
             tmp.getHandler().stopTimer();
-            new InfoNode(tmp);
+            InfoNode.show(tmp);
         }
     }
 

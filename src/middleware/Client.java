@@ -144,7 +144,7 @@ public class Client {
                     this.storeItem(myNode);
                     break;
                 case 3:
-                    new InfoNode(myNode);
+                    InfoNode.show(myNode);
                     break;
                 default:
                     flag = false;

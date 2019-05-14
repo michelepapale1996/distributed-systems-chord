@@ -13,7 +13,6 @@ import java.util.*;
 
 public class RandomTest{
     static Random random = new Random();
-
     public static void main(String args[]) throws RemoteException{
         Debugger.setDebug(false);
         ArrayList<Node> nodesInTheNetwork = new ArrayList<>();
@@ -140,7 +139,7 @@ public class RandomTest{
                 }
             }
             try{
-                new InfoNode(chosen);
+                InfoNode.show(chosen);
             }catch (NullPointerException e){
             }
         }
