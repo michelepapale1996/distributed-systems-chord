@@ -22,7 +22,7 @@ public class CheckInput {
         return inputToInt;
     }
 
-    public static int checkRange(int lower, int upper) {
+    public static int checkRange(int lower, long upper) {
         boolean isInt = false;
         int inputToInt = -1;
         while (!isInt) {
@@ -36,6 +36,7 @@ public class CheckInput {
                 }
             } catch (NumberFormatException e) {
                 System.out.println("Given input is not an integer. Try again:");
+                System.out.println("The input must be between " + lower + " and " + upper + ". Try again:");
             }
         }
         return inputToInt;
