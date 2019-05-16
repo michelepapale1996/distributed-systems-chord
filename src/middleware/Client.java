@@ -60,7 +60,7 @@ public class Client {
 
     private Node createNewRing() {
         System.out.println("What is the max num of bits of the identifiers of the ring?");
-        int max_size = CheckInput.checkRange(1, 31);
+        int max_size = CheckInput.checkRange(1, 15);
         System.out.println("Do you want a simple look up algorithm? y/n");
         Boolean simpleLookUpAlgorithm = CheckInput.getBoolean();
 

@@ -39,7 +39,7 @@ public class FingerTable {
                 tmp2 = key + maxNodes;
             }
         }
-        return tmp2 > initial && key < tmp1;
+        return tmp2 > initial && tmp2 < tmp1;
     }
 
     public void setSuccessor(int key, NodeInterface successor){

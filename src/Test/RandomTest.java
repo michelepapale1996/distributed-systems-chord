@@ -20,7 +20,7 @@ public class RandomTest{
 
         Node node0 = new Node();
 
-        int numBitsId = 3;
+        int numBitsId = 8;
         Boolean simpleLookUpAlgorithm = false;
         node0.setId(0);
         node0.create(numBitsId, simpleLookUpAlgorithm);
