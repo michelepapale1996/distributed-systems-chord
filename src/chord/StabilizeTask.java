@@ -111,7 +111,7 @@ public class StabilizeTask extends TimerTask {
                 this.owner.getSuccessorList().setSuccessors(newSuccessorList);
                 this.owner.getSuccessorItems().setItems(newSuccessorItems);
 
-                Debugger.print("-SuccessorList for [" + this.owner.print() + "]: successorList of " + this.owner.print() + " is: " + this.owner.getSuccessorList().print());
+                Debugger.print("-SuccessorList for [" + this.owner.print() + "]: " + this.owner.getSuccessorList().print());
                 this.owner.setSuccessor(newSuccessorList.get(0));
                 foundLivingSuccessor = true;
             } catch(NullPointerException | RemoteException e){

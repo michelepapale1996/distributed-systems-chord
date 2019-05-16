@@ -22,14 +22,14 @@ public class FingerTable {
         for (i = this.bit - 1; i >= 0; i--){
             NodeInterface successor = this.map.get(getPosition(i));
             int finger = successor.getId();
-            if (isBetween(finger, this.owner.getId(),key)){
+            if (isBetween(finger, this.owner.getId(), key)){
                 return successor;
             }
         }
         return this.owner;
     }
 
-    private boolean isBetween(int key, int initial,int end){
+    private boolean isBetween(int key, int initial, int end){
         int maxNodes = (int) Math.pow(2,this.bit);
         long tmp1 = end;
         long tmp2 = key;

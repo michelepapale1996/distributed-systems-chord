@@ -1,5 +1,6 @@
 package Test;
 
+import chord.InfoNode;
 import chord.Item;
 import chord.Node;
 import org.junit.jupiter.api.Test;
@@ -53,15 +54,15 @@ class NodeTest {
 
     @Test
     void findSuccessor() throws RemoteException, InterruptedException {
-        node1.create(3, true);
         node1.setId(1);
-
+        node1.create(3, true);
+        Thread.sleep(3000);
         Node node7 = new Node();
         node7.setId(7);
         node7.join(node1);
 
         Thread.sleep(3000);
-
+        InfoNode.show(node1);
         assertEquals(node7.getId(), node1.findSuccessor(3).getId());
     }
 

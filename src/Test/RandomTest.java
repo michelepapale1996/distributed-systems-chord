@@ -20,7 +20,7 @@ public class RandomTest{
 
         Node node0 = new Node();
 
-        int numBitsId = 2;
+        int numBitsId = 3;
         Boolean simpleLookUpAlgorithm = false;
         node0.setId(0);
         node0.create(numBitsId, simpleLookUpAlgorithm);
@@ -47,7 +47,6 @@ public class RandomTest{
 
         while (System.currentTimeMillis() < end) {}
         timer1.cancel();
-
         menu(nodesInTheNetwork, itemsInTheNetwork);
     }
 
@@ -122,6 +121,9 @@ public class RandomTest{
     }
 
     private static void menu(ArrayList<Node> nodes, ArrayList<Item> items){
+        System.out.println("--------------------------------------------------------------------------");
+        System.out.println("--------------------------------------------------------------------------");
+
         boolean flag = true;
         while(flag){
             System.out.print("[");
@@ -133,11 +135,14 @@ public class RandomTest{
             System.out.println("Insert the id of the node to check:");
             int id = CheckInput.getInt();
             Node chosen = null;
+            boolean exist = false;
             for (Node nod : nodes) {
                 if (nod.getId() == id) {
                     chosen = nod;
+                    exist = true;
                 }
             }
+            if (!exist) System.out.println("ID inserted is not in the network. Try again: ");
             try{
                 InfoNode.show(chosen);
             }catch (NullPointerException e){

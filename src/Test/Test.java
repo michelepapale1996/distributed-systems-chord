@@ -12,27 +12,25 @@ public class Test {
         try {
             Debugger.setDebug(false);
             Node node0 = new Node();
-            Node node1 = new Node();
-            Node node2 = new Node();
-            Node node3 = new Node();
-            Node node4 = new Node();
-            Node node5 = new Node();
-            Node node6 = new Node();
-            Node node7 = new Node();
+            Node node10 = new Node();
+            Node node15 = new Node();
 
-            node0.create(10, false);
-            node2.join(node0);
-            node6.join(node2);
-            node3.join(node6);
-            node7.join(node3);
-            node1.join(node7);
-            node4.join(node1);
-            node5.join(node4);
+            node10.setId(10);
+            node15.setId(15);
+
+            node0.create(4, false);
             Thread.sleep(3000);
-
+            System.out.println("Node10 join");
+            node10.join(node0);
+            Thread.sleep(3000);
+            System.out.println("Node15 join");
+            node15.join(node10);
+            Thread.sleep(500);
             InfoNode.show(node0);
-            InfoNode.show(node1);
-            InfoNode.show(node2);
+            InfoNode.show(node10);
+            InfoNode.show(node15);
+
+
 //            ArrayList<FingerTable> fingerTables = new ArrayList<>();
 //            fingerTables.add(node0.getFingerTable());
 //            fingerTables.add(node2.getFingerTable());

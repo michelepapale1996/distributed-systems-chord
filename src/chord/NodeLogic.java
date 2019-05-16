@@ -32,9 +32,10 @@ public class NodeLogic {
             successor = initialNode.getSuccessor();
         }else{
             successor = initialNode.getFingerTable().getClosestPrecedingNode(key);
+            //System.out.println("Il nodo è "+ initialNode.print() + " e il successore trovato per k " + key + " è " +  successor.print());
         }
 
-        if (NodeLogic.isBetween(initialNode.getId(), key, initialNode.getSuccessor().getId(), initialNode.getRing().getNum_bits_identifiers())
+        if (NodeLogic.isBetween(initialNode.getId(), key, successor.getId(), initialNode.getRing().getNum_bits_identifiers())
                 || initialNode.getId() == successor.getId()){
             return initialNode.getSuccessor();
         }else{
@@ -100,7 +101,7 @@ public class NodeLogic {
             initialNode.addItem(item);
         }else{
             NodeInterface node = NodeLogic.findSuccessor(item.getKey(), initialNode);
-            if(node.hasItem(item.getKey())) throw new IllegalArgumentException("It already exists an item with the given id");
+            if(node.hasItem(item.getKey())) throw new IllegalArgumentException("It already exists an item with the given id " + item.getKey());
             node.addItem(item);
         }
     }
