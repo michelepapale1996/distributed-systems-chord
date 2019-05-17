@@ -34,7 +34,7 @@ public class NodeLogic {
             //System.out.println("Il nodo è "+ initialNode.print() + " e il successore trovato per k " + key + " è " +  successor.print());
         }
 
-        if (NodeLogic.isBetween(initialNode.getId(), key, initialNode.getSuccessor().getId(), initialNode.getRing().getNum_bits_identifiers())
+        if (NodeLogic.isBetween(initialNode.getId(), key, successor.getId(), initialNode.getRing().getNum_bits_identifiers())
                 || initialNode.getId() == successor.getId()){
             return initialNode.getSuccessor();
         }else{
